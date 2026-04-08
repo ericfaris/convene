@@ -2,12 +2,16 @@ import { useState } from 'react';
 import { createEvent } from '../api/client.js';
 
 export default function CreateEvent() {
+  const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6];
+  const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
   const [form, setForm] = useState({
     name: '',
     description: '',
     dateWindow: { start: '', end: '' },
     deadline: '',
-    families: ['']
+    families: [''],
+    allowedDays: [0, 1, 2, 3, 4, 5, 6]
   });
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
@@ -36,13 +40,27 @@ export default function CreateEvent() {
     setField('families', form.families.filter((_, idx) => idx !== i));
   }
 
+  function toggleDay(dow) {
+    setForm(f => {
+      const has = f.allowedDays.includes(dow);
+      // Don't allow deselecting all days
+      if (has && f.allowedDays.length === 1) return f;
+      return {
+        ...f,
+        allowedDays: has ? f.allowedDays.filter(d => d !== dow) : [...f.allowedDays, dow].sort((a, b) => a - b)
+      };
+    });
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
       const families = form.families.map(f => f.trim()).filter(Boolean);
-      const data = await createEvent({ ...form, families });
+      // If all 7 days are selected, send empty array (no filter)
+      const allowedDays = form.allowedDays.length === 7 ? [] : form.allowedDays;
+      const data = await createEvent({ ...form, families, allowedDays });
       setResult(data);
     } catch (err) {
       setError(err.message);
@@ -88,7 +106,7 @@ export default function CreateEvent() {
             </div>
           </div>
 
-          <button className="btn btn-secondary" onClick={() => { setResult(null); setForm({ name: '', description: '', dateWindow: { start: '', end: '' }, deadline: '', families: [''] }); }}>
+          <button className="btn btn-secondary" onClick={() => { setResult(null); setForm({ name: '', description: '', dateWindow: { start: '', end: '' }, deadline: '', families: [''], allowedDays: [0,1,2,3,4,5,6] }); }}>
             Create Another Event
           </button>
         </div>
@@ -154,6 +172,42 @@ export default function CreateEvent() {
               value={form.deadline}
               onChange={e => setField('deadline', e.target.value)}
             />
+          </div>
+
+          <div className="field">
+            <label>Days of week to show</label>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
+              {ALL_DAYS.map(dow => {
+                const active = form.allowedDays.includes(dow);
+                return (
+                  <button
+                    key={dow}
+                    type="button"
+                    onClick={() => toggleDay(dow)}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: 20,
+                      border: '2px solid',
+                      borderColor: active ? '#2563eb' : '#e5e7eb',
+                      background: active ? '#eff6ff' : '#fff',
+                      color: active ? '#1d4ed8' : '#9ca3af',
+                      fontWeight: active ? 600 : 400,
+                      fontSize: '.85rem',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      transition: 'all .15s',
+                    }}
+                  >
+                    {DAY_NAMES[dow]}
+                  </button>
+                );
+              })}
+            </div>
+            {form.allowedDays.length < 7 && (
+              <div style={{ fontSize: '.8rem', color: '#6b7280', marginTop: 6 }}>
+                Only {form.allowedDays.map(d => DAY_NAMES[d]).join(', ')} will be shown to participants.
+              </div>
+            )}
           </div>
 
           <div className="field">

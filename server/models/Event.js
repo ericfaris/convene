@@ -11,6 +11,7 @@ const eventSchema = new mongoose.Schema({
   adminToken: { type: String, required: true, unique: true },
   participantToken: { type: String, required: true, unique: true },
   families: [{ type: String }],
+  allowedDays: [{ type: Number }],            // 0=Sun..6=Sat, empty = all days
   status: { type: String, enum: ['open', 'closed', 'finalized'], default: 'open' },
   finalizedDates: {
     start: { type: String, default: null },

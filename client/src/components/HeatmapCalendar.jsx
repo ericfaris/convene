@@ -17,91 +17,72 @@ function textColor(count, max) {
   return t >= 0.5 ? '#fff' : '#1e3a8a';
 }
 
-function generateDates(start, end) {
-  const dates = [];
-  const current = new Date(start + 'T00:00:00');
-  const endDate = new Date(end + 'T00:00:00');
-  while (current <= endDate) {
-    dates.push(current.toISOString().split('T')[0]);
-    current.setDate(current.getDate() + 1);
+function buildFinalizedSet(finalizedDates) {
+  if (!finalizedDates?.start || !finalizedDates?.end) return new Set();
+  const s = new Set();
+  const cur = new Date(finalizedDates.start + 'T00:00:00');
+  const end = new Date(finalizedDates.end + 'T00:00:00');
+  while (cur <= end) {
+    s.add(cur.toISOString().split('T')[0]);
+    cur.setDate(cur.getDate() + 1);
   }
-  return dates;
+  return s;
 }
 
-function groupByMonth(dates) {
-  const months = new Map();
-  for (const d of dates) {
-    const key = d.slice(0, 7);
-    if (!months.has(key)) months.set(key, []);
-    months.get(key).push(d);
-  }
-  return months;
-}
+function buildWeekRows(dateWindow, allowedDays) {
+  const cols = allowedDays.length > 0
+    ? [...allowedDays].sort((a, b) => a - b)
+    : [0, 1, 2, 3, 4, 5, 6];
 
-function MonthGrid({ dates, heatmap, maxCount, finalizedDates }) {
-  const firstDate = new Date(dates[0] + 'T00:00:00');
-  const startDow = firstDate.getDay();
-  const label = firstDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const start = new Date(dateWindow.start + 'T00:00:00');
+  const end = new Date(dateWindow.end + 'T00:00:00');
 
-  const finalizedSet = useMemo(() => {
-    if (!finalizedDates?.start || !finalizedDates?.end) return new Set();
-    const s = new Set();
-    const cur = new Date(finalizedDates.start + 'T00:00:00');
-    const end = new Date(finalizedDates.end + 'T00:00:00');
-    while (cur <= end) {
-      s.add(cur.toISOString().split('T')[0]);
-      cur.setDate(cur.getDate() + 1);
+  const cursor = new Date(start);
+  cursor.setDate(cursor.getDate() - cursor.getDay());
+
+  const rows = [];
+  let lastMonth = null;
+
+  while (cursor <= end) {
+    const cells = [];
+    let monthLabel = null;
+
+    for (const dow of cols) {
+      const d = new Date(cursor);
+      d.setDate(cursor.getDate() + dow);
+      const dateStr = d.toISOString().split('T')[0];
+      const inRange = dateStr >= dateWindow.start && dateStr <= dateWindow.end;
+
+      if (inRange) {
+        const month = dateStr.slice(0, 7);
+        if (month !== lastMonth) {
+          if (!monthLabel) {
+            monthLabel = d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+          }
+          lastMonth = month;
+        }
+      }
+
+      cells.push(inRange ? dateStr : null);
     }
-    return s;
-  }, [finalizedDates]);
 
-  const cells = [...Array(startDow).fill(null), ...dates];
+    if (cells.some(c => c !== null)) {
+      rows.push({ cells, monthLabel });
+    }
 
-  return (
-    <div style={{ marginBottom: 24 }}>
-      <div style={{ fontWeight: 600, marginBottom: 8 }}>{label}</div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3 }}>
-        {DAY_NAMES.map(d => (
-          <div key={d} style={{ textAlign: 'center', fontSize: '.7rem', fontWeight: 600, color: '#6b7280', paddingBottom: 4 }}>
-            {d}
-          </div>
-        ))}
-        {cells.map((date, i) =>
-          date ? (
-            <div
-              key={date}
-              title={date + (heatmap[date] ? `: ${heatmap[date]} families` : '')}
-              style={{
-                minHeight: 44,
-                borderRadius: 6,
-                background: finalizedSet.has(date) ? '#fbbf24' : heatColor(heatmap[date] || 0, maxCount),
-                color: finalizedSet.has(date) ? '#78350f' : textColor(heatmap[date] || 0, maxCount),
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '.8rem',
-                border: finalizedSet.has(date) ? '2px solid #f59e0b' : '1px solid transparent',
-              }}
-            >
-              <div style={{ fontWeight: 600 }}>{parseInt(date.slice(8), 10)}</div>
-              {heatmap[date] ? <div style={{ fontSize: '.65rem' }}>{heatmap[date]}</div> : null}
-            </div>
-          ) : (
-            <div key={`e-${i}`} />
-          )
-        )}
-      </div>
-    </div>
-  );
+    cursor.setDate(cursor.getDate() + 7);
+  }
+
+  return { cols, rows };
 }
 
-export default function HeatmapCalendar({ dateWindow, heatmap, finalizedDates }) {
-  const months = useMemo(
-    () => groupByMonth(generateDates(dateWindow.start, dateWindow.end)),
-    [dateWindow.start, dateWindow.end]
+export default function HeatmapCalendar({ dateWindow, heatmap, finalizedDates, allowedDays = [] }) {
+  const { cols, rows } = useMemo(
+    () => buildWeekRows(dateWindow, allowedDays),
+    [dateWindow.start, dateWindow.end, allowedDays.join(',')]
   );
   const maxCount = Math.max(0, ...Object.values(heatmap));
+  const finalizedSet = useMemo(() => buildFinalizedSet(finalizedDates), [finalizedDates]);
 
   return (
     <div>
@@ -123,14 +104,60 @@ export default function HeatmapCalendar({ dateWindow, heatmap, finalizedDates })
           </span>
         )}
       </div>
-      {[...months.entries()].map(([key, dates]) => (
-        <MonthGrid
-          key={key}
-          dates={dates}
-          heatmap={heatmap}
-          maxCount={maxCount}
-          finalizedDates={finalizedDates}
-        />
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${cols.length}, 1fr)`,
+        gap: 3,
+        marginBottom: 4
+      }}>
+        {cols.map(dow => (
+          <div key={dow} style={{ textAlign: 'center', fontSize: '.7rem', fontWeight: 600, color: '#6b7280', paddingBottom: 4 }}>
+            {DAY_NAMES[dow]}
+          </div>
+        ))}
+      </div>
+
+      {rows.map((row, rowIdx) => (
+        <div key={rowIdx}>
+          {row.monthLabel && (
+            <div style={{ fontWeight: 600, fontSize: '.9rem', color: '#374151', margin: '12px 0 6px' }}>
+              {row.monthLabel}
+            </div>
+          )}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${cols.length}, 1fr)`,
+            gap: 3,
+            marginBottom: 3
+          }}>
+            {row.cells.map((date, i) =>
+              date ? (
+                <div
+                  key={date}
+                  title={date + (heatmap[date] ? `: ${heatmap[date]} families` : '')}
+                  style={{
+                    minHeight: 44,
+                    borderRadius: 6,
+                    background: finalizedSet.has(date) ? '#fbbf24' : heatColor(heatmap[date] || 0, maxCount),
+                    color: finalizedSet.has(date) ? '#78350f' : textColor(heatmap[date] || 0, maxCount),
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '.8rem',
+                    border: finalizedSet.has(date) ? '2px solid #f59e0b' : '1px solid transparent',
+                  }}
+                >
+                  <div style={{ fontWeight: 600 }}>{parseInt(date.slice(8), 10)}</div>
+                  {heatmap[date] ? <div style={{ fontSize: '.65rem' }}>{heatmap[date]}</div> : null}
+                </div>
+              ) : (
+                <div key={`e-${rowIdx}-${i}`} />
+              )
+            )}
+          </div>
+        </div>
       ))}
     </div>
   );

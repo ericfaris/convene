@@ -68,12 +68,12 @@ function addDays(date, n) {
 // POST /api/events — create event
 router.post('/', async (req, res) => {
   try {
-    const { name, description, dateWindow, deadline, families } = req.body;
+    const { name, description, dateWindow, deadline, families, allowedDays = [] } = req.body;
     const adminToken = crypto.randomBytes(24).toString('hex');
     const participantToken = crypto.randomBytes(16).toString('hex');
 
     const event = await Event.create({
-      name, description, dateWindow, deadline, families,
+      name, description, dateWindow, deadline, families, allowedDays,
       adminToken, participantToken
     });
 
@@ -104,6 +104,7 @@ router.get('/:participantToken', async (req, res) => {
       status: event.status,
       finalizedDates: event.status === 'finalized' ? event.finalizedDates : null,
       families: event.families,
+      allowedDays: event.allowedDays,
       respondedFamilies
     });
   } catch (err) {
@@ -123,6 +124,8 @@ router.get('/:participantToken/summary', async (req, res) => {
     res.json({
       name: event.name,
       deadline: event.deadline,
+      dateWindow: event.dateWindow,
+      allowedDays: event.allowedDays,
       totalFamilies: event.families.length,
       respondedCount: responses.length,
       heatmap,

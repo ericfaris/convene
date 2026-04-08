@@ -122,6 +122,7 @@ export default function ParticipantView() {
                   selected={selectedDates}
                   onToggle={toggleDate}
                   disabled={false}
+                  allowedDays={event.allowedDays || []}
                 />
               </div>
 

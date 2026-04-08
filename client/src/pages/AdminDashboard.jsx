@@ -163,6 +163,7 @@ export default function AdminDashboard() {
           dateWindow={event.dateWindow}
           heatmap={heatmap}
           finalizedDates={event.finalizedDates}
+          allowedDays={event.allowedDays || []}
         />
       </div>
 

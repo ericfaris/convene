@@ -61,9 +61,10 @@ export default function SummaryView() {
             Showing dates where at least one family is available. Individual family details are not shown here.
           </p>
           <HeatmapCalendar
-            dateWindow={{ start: dates[0], end: dates[dates.length - 1] }}
+            dateWindow={summary.dateWindow || { start: dates[0], end: dates[dates.length - 1] }}
             heatmap={summary.heatmap}
             finalizedDates={summary.finalizedDates}
+            allowedDays={summary.allowedDays || []}
           />
         </div>
       )}

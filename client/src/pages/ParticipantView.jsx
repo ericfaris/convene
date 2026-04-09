@@ -30,6 +30,19 @@ export default function ParticipantView() {
     });
   }
 
+  function toggleGroup(dates) {
+    setSelectedDates(prev => {
+      const next = new Set(prev);
+      const allSelected = dates.every(d => next.has(d));
+      if (allSelected) {
+        dates.forEach(d => next.delete(d));
+      } else {
+        dates.forEach(d => next.add(d));
+      }
+      return next;
+    });
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     if (!selectedFamily) return;
@@ -121,6 +134,7 @@ export default function ParticipantView() {
                   dateWindow={event.dateWindow}
                   selected={selectedDates}
                   onToggle={toggleDate}
+                  onToggleGroup={toggleGroup}
                   disabled={false}
                   allowedDays={event.allowedDays || []}
                 />

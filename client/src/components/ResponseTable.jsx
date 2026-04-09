@@ -29,21 +29,38 @@ export default function ResponseTable({ families, responses }) {
             const r = responseMap.get(name);
             return (
               <tr key={name}>
-                <td style={{ fontWeight: 500 }}>{name}</td>
-                <td style={{ fontFamily: 'monospace', fontSize: '.8rem' }}>
+                <td style={{ fontWeight: 700, color: '#1C1917' }}>{name}</td>
+                <td style={{ fontFamily: 'monospace', fontSize: '.8rem', color: '#78716C' }}>
                   {r ? formatDates(r.availableDates) : '—'}
                 </td>
-                <td style={{ color: '#6b7280', maxWidth: 200 }}>
+                <td style={{ color: '#A8A29E', maxWidth: 200, fontSize: '.9rem' }}>
                   {r?.notes || '—'}
                 </td>
-                <td style={{ whiteSpace: 'nowrap', color: '#6b7280', fontSize: '.85rem' }}>
+                <td style={{ whiteSpace: 'nowrap', color: '#A8A29E', fontSize: '.85rem' }}>
                   {r ? formatDate(r.updatedAt) : '—'}
                 </td>
                 <td>
                   {r ? (
-                    <span className="tag tag-open">Responded</span>
+                    <span style={{
+                      display: 'inline-block',
+                      fontSize: '.75rem',
+                      fontWeight: 800,
+                      color: '#65A30D',
+                      background: '#ECFCCB',
+                      padding: '3px 10px',
+                      borderRadius: 999,
+                      letterSpacing: '.02em',
+                    }}>✓ Done</span>
                   ) : (
-                    <span className="tag" style={{ background: '#f3f4f6', color: '#6b7280' }}>Pending</span>
+                    <span style={{
+                      display: 'inline-block',
+                      fontSize: '.75rem',
+                      fontWeight: 700,
+                      color: '#A8A29E',
+                      background: '#F5F0EB',
+                      padding: '3px 10px',
+                      borderRadius: 999,
+                    }}>Pending</span>
                   )}
                 </td>
               </tr>

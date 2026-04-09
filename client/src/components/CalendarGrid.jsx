@@ -50,11 +50,10 @@ function GroupedButtons({ dateWindow, allowedDays, selected, onToggleGroup, disa
     return groupConsecutive(filtered);
   }, [dateWindow.start, dateWindow.end, allowedDays.join(',')]);
 
-  // Track which month each group belongs to for labeling
   let lastMonth = null;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {groups.map((dates, i) => {
         const allSelected = dates.every(d => selected.has(d));
         const someSelected = !allSelected && dates.some(d => selected.has(d));
@@ -68,7 +67,14 @@ function GroupedButtons({ dateWindow, allowedDays, selected, onToggleGroup, disa
         return (
           <div key={i}>
             {monthLabel && (
-              <div style={{ fontWeight: 600, fontSize: '.85rem', color: '#6b7280', margin: '12px 0 6px', textTransform: 'uppercase', letterSpacing: '.05em' }}>
+              <div style={{
+                fontWeight: 800,
+                fontSize: '.8rem',
+                color: '#78716C',
+                margin: '16px 0 8px',
+                textTransform: 'uppercase',
+                letterSpacing: '.08em',
+              }}>
                 {monthLabel}
               </div>
             )}
@@ -77,25 +83,26 @@ function GroupedButtons({ dateWindow, allowedDays, selected, onToggleGroup, disa
               disabled={disabled}
               style={{
                 width: '100%',
-                padding: '12px 16px',
+                padding: '14px 18px',
                 border: '2px solid',
-                borderColor: allSelected ? '#16a34a' : someSelected ? '#86efac' : '#e5e7eb',
-                borderRadius: 8,
-                background: allSelected ? '#22c55e' : someSelected ? '#f0fdf4' : disabled ? '#f9fafb' : '#fff',
-                color: allSelected ? '#fff' : someSelected ? '#15803d' : disabled ? '#9ca3af' : '#111827',
+                borderColor: allSelected ? '#65A30D' : someSelected ? '#FED7AA' : '#E8DDD4',
+                borderRadius: 12,
+                background: allSelected ? '#65A30D' : someSelected ? '#FFF7ED' : disabled ? '#F5F0EB' : '#fff',
+                color: allSelected ? '#fff' : someSelected ? '#EA580C' : disabled ? '#A8A29E' : '#1C1917',
                 fontFamily: 'inherit',
                 fontSize: '1rem',
-                fontWeight: allSelected ? 600 : 400,
+                fontWeight: 700,
                 cursor: disabled ? 'default' : 'pointer',
                 textAlign: 'left',
                 transition: 'all .15s',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                boxShadow: allSelected ? '0 2px 8px rgba(101,163,13,.2)' : 'none',
               }}
             >
               <span>{groupLabel(dates)}</span>
-              {allSelected && <span style={{ fontSize: '.85rem' }}>✓</span>}
+              {allSelected && <span style={{ fontSize: '.9rem' }}>✓</span>}
               {someSelected && <span style={{ fontSize: '.75rem', opacity: .7 }}>partial</span>}
             </button>
           </div>
@@ -105,7 +112,7 @@ function GroupedButtons({ dateWindow, allowedDays, selected, onToggleGroup, disa
   );
 }
 
-// --- Full grid mode (when all days are shown) ---
+// --- Full grid mode ---
 
 function buildWeekRows(dateWindow) {
   const cols = [0, 1, 2, 3, 4, 5, 6];
@@ -145,9 +152,17 @@ function FullGrid({ dateWindow, selected, onToggle, disabled }) {
 
   return (
     <div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3, marginBottom: 4 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 4 }}>
         {DAY_NAMES.map(d => (
-          <div key={d} style={{ textAlign: 'center', fontSize: '.7rem', fontWeight: 600, color: '#6b7280', paddingBottom: 4 }}>
+          <div key={d} style={{
+            textAlign: 'center',
+            fontSize: '.7rem',
+            fontWeight: 800,
+            color: '#A8A29E',
+            paddingBottom: 6,
+            letterSpacing: '.04em',
+            textTransform: 'uppercase',
+          }}>
             {d}
           </div>
         ))}
@@ -155,11 +170,18 @@ function FullGrid({ dateWindow, selected, onToggle, disabled }) {
       {rows.map((row, rowIdx) => (
         <div key={rowIdx}>
           {row.monthLabel && (
-            <div style={{ fontWeight: 600, fontSize: '.9rem', color: '#374151', margin: '12px 0 6px' }}>
+            <div style={{
+              fontWeight: 800,
+              fontSize: '.8rem',
+              color: '#78716C',
+              margin: '14px 0 8px',
+              textTransform: 'uppercase',
+              letterSpacing: '.06em',
+            }}>
               {row.monthLabel}
             </div>
           )}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3, marginBottom: 3 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 4 }}>
             {row.cells.map((date, i) =>
               date ? (
                 <button
@@ -167,16 +189,21 @@ function FullGrid({ dateWindow, selected, onToggle, disabled }) {
                   onClick={() => !disabled && onToggle(date)}
                   disabled={disabled}
                   style={{
-                    minHeight: 44, minWidth: 0,
-                    border: '1px solid',
-                    borderColor: selected.has(date) ? '#16a34a' : '#e5e7eb',
-                    borderRadius: 6,
-                    background: selected.has(date) ? '#22c55e' : disabled ? '#f3f4f6' : '#fff',
-                    color: selected.has(date) ? '#fff' : disabled ? '#9ca3af' : '#111827',
-                    fontWeight: selected.has(date) ? 600 : 400,
-                    fontSize: '.875rem',
+                    minHeight: 48, minWidth: 0,
+                    border: '2px solid',
+                    borderColor: selected.has(date) ? '#65A30D' : '#E8DDD4',
+                    borderRadius: 10,
+                    background: selected.has(date) ? '#65A30D' : disabled ? '#F5F0EB' : '#fff',
+                    color: selected.has(date) ? '#fff' : disabled ? '#A8A29E' : '#1C1917',
+                    fontFamily: 'inherit',
+                    fontWeight: 700,
+                    fontSize: '.9rem',
                     cursor: disabled ? 'default' : 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all .12s',
+                    boxShadow: selected.has(date) ? '0 2px 6px rgba(101,163,13,.25)' : 'none',
                   }}
                 >
                   {parseInt(date.slice(8), 10)}

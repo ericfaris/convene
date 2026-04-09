@@ -3,18 +3,18 @@ import { useMemo } from 'react';
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 function heatColor(count, max) {
-  if (!count) return '#f3f4f6';
+  if (!count) return '#F5F0EB';
   const t = max > 0 ? count / max : 0;
-  if (t < 0.25) return '#dbeafe';
-  if (t < 0.5)  return '#93c5fd';
-  if (t < 0.75) return '#3b82f6';
-  return '#1d4ed8';
+  if (t < 0.25) return '#FEF3C7';
+  if (t < 0.5)  return '#FED7AA';
+  if (t < 0.75) return '#FB923C';
+  return '#EA580C';
 }
 
 function textColor(count, max) {
-  if (!count) return '#9ca3af';
+  if (!count) return '#A8A29E';
   const t = max > 0 ? count / max : 0;
-  return t >= 0.5 ? '#fff' : '#1e3a8a';
+  return t >= 0.5 ? '#fff' : '#78350F';
 }
 
 function buildFinalizedSet(finalizedDates) {
@@ -86,42 +86,74 @@ export default function HeatmapCalendar({ dateWindow, heatmap, finalizedDates, a
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
-        <span style={{ fontSize: '.8rem', color: '#6b7280' }}>Families available:</span>
+      {/* Legend */}
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: '.8rem', color: '#78716C', fontWeight: 600 }}>Families available:</span>
         {[0.25, 0.5, 0.75, 1].map(t => {
           const count = Math.round(t * maxCount);
           return (
-            <span key={t} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '.75rem' }}>
-              <span style={{ width: 16, height: 16, borderRadius: 3, background: heatColor(count, maxCount), display: 'inline-block', border: '1px solid #e5e7eb' }} />
+            <span key={t} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '.75rem', fontWeight: 600, color: '#78716C' }}>
+              <span style={{
+                width: 16,
+                height: 16,
+                borderRadius: 4,
+                background: heatColor(count, maxCount),
+                display: 'inline-block',
+                border: '1px solid rgba(0,0,0,.06)',
+              }} />
               {count === maxCount ? `${count} (max)` : count}
             </span>
           );
         })}
         {finalizedDates?.start && (
-          <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '.75rem' }}>
-            <span style={{ width: 16, height: 16, borderRadius: 3, background: '#fbbf24', display: 'inline-block', border: '2px solid #f59e0b' }} />
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '.75rem', fontWeight: 600, color: '#78716C' }}>
+            <span style={{
+              width: 16,
+              height: 16,
+              borderRadius: 4,
+              background: '#65A30D',
+              display: 'inline-block',
+              border: '2px solid #4D7C0F',
+            }} />
             Finalized
           </span>
         )}
       </div>
 
+      {/* Day headers */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${cols.length}, 1fr)`,
         gap: 3,
-        marginBottom: 4
+        marginBottom: 4,
       }}>
         {cols.map(dow => (
-          <div key={dow} style={{ textAlign: 'center', fontSize: '.7rem', fontWeight: 600, color: '#6b7280', paddingBottom: 4 }}>
+          <div key={dow} style={{
+            textAlign: 'center',
+            fontSize: '.7rem',
+            fontWeight: 800,
+            color: '#A8A29E',
+            paddingBottom: 6,
+            letterSpacing: '.04em',
+            textTransform: 'uppercase',
+          }}>
             {DAY_NAMES[dow]}
           </div>
         ))}
       </div>
 
+      {/* Calendar rows */}
       {rows.map((row, rowIdx) => (
         <div key={rowIdx}>
           {row.monthLabel && (
-            <div style={{ fontWeight: 600, fontSize: '.9rem', color: '#374151', margin: '12px 0 6px' }}>
+            <div style={{
+              fontWeight: 800,
+              fontSize: '.8rem',
+              color: '#78716C',
+              margin: '14px 0 8px',
+              textTransform: 'uppercase',
+              letterSpacing: '.06em',
+            }}>
               {row.monthLabel}
             </div>
           )}
@@ -129,28 +161,34 @@ export default function HeatmapCalendar({ dateWindow, heatmap, finalizedDates, a
             display: 'grid',
             gridTemplateColumns: `repeat(${cols.length}, 1fr)`,
             gap: 3,
-            marginBottom: 3
+            marginBottom: 3,
           }}>
             {row.cells.map((date, i) =>
               date ? (
                 <div
                   key={date}
-                  title={date + (heatmap[date] ? `: ${heatmap[date]} families` : '')}
+                  title={date + (heatmap[date] ? `: ${heatmap[date]} families available` : ': no responses')}
                   style={{
-                    minHeight: 44,
-                    borderRadius: 6,
-                    background: finalizedSet.has(date) ? '#fbbf24' : heatColor(heatmap[date] || 0, maxCount),
-                    color: finalizedSet.has(date) ? '#78350f' : textColor(heatmap[date] || 0, maxCount),
+                    minHeight: 48,
+                    borderRadius: 10,
+                    background: finalizedSet.has(date) ? '#65A30D' : heatColor(heatmap[date] || 0, maxCount),
+                    color: finalizedSet.has(date) ? '#fff' : textColor(heatmap[date] || 0, maxCount),
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '.8rem',
-                    border: finalizedSet.has(date) ? '2px solid #f59e0b' : '1px solid transparent',
+                    border: finalizedSet.has(date)
+                      ? '2px solid #4D7C0F'
+                      : '1px solid rgba(0,0,0,.04)',
+                    boxShadow: finalizedSet.has(date) ? '0 2px 8px rgba(101,163,13,.25)' : 'none',
+                    transition: 'all .1s',
                   }}
                 >
-                  <div style={{ fontWeight: 600 }}>{parseInt(date.slice(8), 10)}</div>
-                  {heatmap[date] ? <div style={{ fontSize: '.65rem' }}>{heatmap[date]}</div> : null}
+                  <div style={{ fontWeight: 700 }}>{parseInt(date.slice(8), 10)}</div>
+                  {heatmap[date] ? (
+                    <div style={{ fontSize: '.65rem', fontWeight: 600, opacity: .85 }}>{heatmap[date]}</div>
+                  ) : null}
                 </div>
               ) : (
                 <div key={`e-${rowIdx}-${i}`} />

@@ -22,7 +22,6 @@ export default function ParticipantView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // screen: 'list' | 'dates' | 'confirm'
   const [screen, setScreen] = useState('list');
   const [selectedFamily, setSelectedFamily] = useState('');
   const [selectedDates, setSelectedDates] = useState(new Set());
@@ -86,58 +85,60 @@ export default function ParticipantView() {
     }
   }
 
-  if (loading) return <div className="container"><p>Loading…</p></div>;
+  if (loading) return <div className="container"><p style={{ color: '#78716C', fontWeight: 600 }}>Loading…</p></div>;
   if (error) return <div className="container"><div className="error">{error}</div></div>;
   if (!event) return null;
 
   const isFinalized = event.status === 'finalized';
   const isClosed = event.status === 'closed' || isFinalized;
 
-  // --- Event header (shown on all screens) ---
   const header = (
-    <div className="card">
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
-        <h1 style={{ margin: 0 }}>{event.name}</h1>
+    <div className="card" style={{ marginBottom: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
+        <h1 style={{ margin: 0, fontSize: '1.6rem' }}>{event.name}</h1>
         <span className={`tag tag-${event.status}`}>{event.status}</span>
       </div>
-      {event.description && <p style={{ color: '#6b7280', margin: '0 0 4px' }}>{event.description}</p>}
-      <div style={{ fontSize: '.85rem', color: '#6b7280' }}>
+      {event.description && <p style={{ color: '#78716C', margin: '0 0 6px', fontWeight: 500 }}>{event.description}</p>}
+      <div style={{ fontSize: '.85rem', color: '#A8A29E', fontWeight: 600 }}>
         📅 {event.dateWindow.start} → {event.dateWindow.end}
       </div>
     </div>
   );
 
-  // --- Finalized banner ---
   if (isFinalized && event.finalizedDates?.start) {
     return (
       <div className="container">
         {header}
         <div className="banner">
-          <strong>🎉 Dates finalized:</strong> {event.finalizedDates.start} → {event.finalizedDates.end}
+          🎉 Dates finalized: <strong>{event.finalizedDates.start} → {event.finalizedDates.end}</strong>
         </div>
       </div>
     );
   }
 
-  // --- Closed ---
   if (isClosed) {
     return (
       <div className="container">
         {header}
-        <div className="card" style={{ background: '#fef3c7', border: '1px solid #fcd34d' }}>
-          <strong>⛔ Submissions closed.</strong>
+        <div className="card" style={{ background: '#FEF9EE', border: '2px solid #FCD34D', textAlign: 'center', padding: '32px 24px' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: 8 }}>⏳</div>
+          <strong style={{ fontSize: '1.1rem' }}>Submissions are closed.</strong>
+          <p style={{ color: '#78716C', margin: '8px 0 0', fontWeight: 500 }}>Waiting on the organizer to finalize dates.</p>
         </div>
       </div>
     );
   }
 
-  // --- Screen: list ---
+  // Screen: list
   if (screen === 'list') {
     return (
       <div className="container">
         {header}
         <div className="card">
-          <h2 style={{ marginTop: 0 }}>Who are you?</h2>
+          <h2 style={{ marginTop: 0 }}>Who are you? 👋</h2>
+          <p style={{ color: '#78716C', fontWeight: 500, margin: '0 0 16px', fontSize: '.95rem' }}>
+            Tap your family's name to pick your available dates.
+          </p>
           <FamilyList
             families={event.families}
             respondedFamilies={event.respondedFamilies}
@@ -150,8 +151,10 @@ export default function ParticipantView() {
     );
   }
 
-  // --- Screen: dates ---
+  // Screen: dates
   if (screen === 'dates') {
+    const isUpdating = (event.respondedFamilies || []).includes(selectedFamily);
+    const groupCount = countGroups(selectedDates);
     return (
       <div className="container">
         {header}
@@ -159,17 +162,33 @@ export default function ParticipantView() {
           <button
             type="button"
             onClick={() => setScreen('list')}
-            style={{ background: 'none', border: 'none', color: '#2563eb', cursor: 'pointer', padding: 0, fontSize: '.9rem', marginBottom: 12, fontFamily: 'inherit' }}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#F97316',
+              cursor: 'pointer',
+              padding: 0,
+              fontSize: '.9rem',
+              fontWeight: 700,
+              marginBottom: 14,
+              fontFamily: 'inherit',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+            }}
           >
             ← Back
           </button>
           <h2 style={{ marginTop: 0 }}>
-            {(event.respondedFamilies || []).includes(selectedFamily)
-              ? `Update your availability, ${selectedFamily}.`
-              : `Hi, ${selectedFamily}! Pick your available dates.`}
+            {isUpdating
+              ? `Update your picks, ${selectedFamily}! ✏️`
+              : `Hi, ${selectedFamily}! 👋 Pick your dates.`}
           </h2>
-          <p style={{ color: '#6b7280', fontSize: '.9rem', margin: '0 0 16px' }}>
-            Select all the dates that work for you. <strong>{countGroups(selectedDates)} weekend{countGroups(selectedDates) !== 1 ? 's' : ''} selected.</strong>
+          <p style={{ color: '#78716C', fontSize: '.95rem', fontWeight: 500, margin: '0 0 18px' }}>
+            Select all the weekends that work for you.{' '}
+            <strong style={{ color: groupCount > 0 ? '#65A30D' : '#A8A29E' }}>
+              {groupCount} weekend{groupCount !== 1 ? 's' : ''} selected.
+            </strong>
           </p>
           <CalendarGrid
             dateWindow={event.dateWindow}
@@ -183,9 +202,9 @@ export default function ParticipantView() {
 
         <div className="card">
           <div className="field">
-            <label>Notes (optional)</label>
+            <label>Any notes? (optional)</label>
             <textarea
-              placeholder="e.g. Weekends only work best for us"
+              placeholder="e.g. We can't do the last weekend in July…"
               value={notes}
               onChange={e => setNotes(e.target.value)}
             />
@@ -195,24 +214,24 @@ export default function ParticipantView() {
             className="btn btn-primary"
             disabled={submitting || selectedDates.size === 0}
             onClick={handleSubmit}
-            style={{ width: '100%', justifyContent: 'center', padding: 12 }}
+            style={{ width: '100%', justifyContent: 'center', padding: '14px', fontSize: '1.05rem' }}
           >
-            {submitting ? 'Submitting…' : 'Submit Availability'}
+            {submitting ? 'Saving…' : isUpdating ? 'Update My Availability ✓' : 'Submit My Availability 🎉'}
           </button>
         </div>
       </div>
     );
   }
 
-  // --- Screen: confirm ---
+  // Screen: confirm
   return (
     <div className="container">
       {header}
-      <div className="card" style={{ textAlign: 'center', padding: '40px 24px' }}>
-        <div style={{ fontSize: '3rem', marginBottom: 16 }}>🎉</div>
-        <h2 style={{ marginTop: 0 }}>Thank you, {selectedFamily}!</h2>
-        <p style={{ color: '#6b7280', marginBottom: 0 }}>
-          Your availability has been saved. We'll let you know when dates are finalized.
+      <div className="card" style={{ textAlign: 'center', padding: '48px 28px' }}>
+        <div style={{ fontSize: '4rem', marginBottom: 12, lineHeight: 1 }}>🎉</div>
+        <h2 style={{ marginTop: 0, fontSize: '1.6rem' }}>Thanks, {selectedFamily}!</h2>
+        <p style={{ color: '#78716C', fontWeight: 500, margin: '0', maxWidth: 320, marginInline: 'auto', lineHeight: 1.7 }}>
+          Your availability has been saved. We'll let everyone know once dates are finalized.
         </p>
       </div>
     </div>

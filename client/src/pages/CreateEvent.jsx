@@ -90,37 +90,38 @@ export default function CreateEvent() {
     return (
       <div className="container">
         <div className="card">
-          <h1>Event Created!</h1>
-          <p className="subtitle">Share the participant link with your families. Save your admin link — it cannot be recovered.</p>
+          <div style={{ fontSize: '3rem', marginBottom: 8, lineHeight: 1 }}>🎊</div>
+          <h1 style={{ marginBottom: 4 }}>You're all set!</h1>
+          <p className="subtitle">Share the link below with your families. Keep your admin link somewhere safe — you'll need it to manage the event.</p>
 
-          <div className="card" style={{ background: '#fff7ed', border: '1px solid #fed7aa' }}>
-            <h3>⚠️ Save Your Admin Link</h3>
-            <p style={{ margin: '0 0 12px', fontSize: '.9rem', color: '#92400e' }}>
-              This is the only time your admin link will be shown. If you lose it, you won't be able to manage this event.
+          <div className="card" style={{ background: '#FFF7ED', border: '2px solid #FED7AA', marginBottom: 0 }}>
+            <h3 style={{ color: '#92400e' }}>⚠️ Save your admin link</h3>
+            <p style={{ margin: '0 0 12px', fontSize: '.9rem', color: '#92400e', fontWeight: 500 }}>
+              This is the only time it'll be shown. Don't lose it!
             </p>
-            <label>Admin Link (private — keep this safe)</label>
+            <label>Admin Link (keep this private)</label>
             <div className="copy-box">
               <input readOnly value={result.adminUrl} />
               <button className="btn btn-secondary btn-sm" onClick={() => copy('admin', result.adminUrl)}>
-                {copied.admin ? 'Copied!' : 'Copy'}
+                {copied.admin ? '✓ Copied!' : 'Copy'}
               </button>
             </div>
           </div>
-
-          <div className="field">
-            <label>Participant Link (share this with everyone)</label>
-            <div className="copy-box">
-              <input readOnly value={result.participantUrl} />
-              <button className="btn btn-primary btn-sm" onClick={() => copy('participant', result.participantUrl)}>
-                {copied.participant ? 'Copied!' : 'Copy'}
-              </button>
-            </div>
-          </div>
-
-          <button className="btn btn-secondary" onClick={() => { setResult(null); setForm({ name: '', description: '', dateWindow: { start: '', end: '' }, families: [''], allowedDays: [0,1,2,3,4,5,6] }); }}>
-            Create Another Event
-          </button>
         </div>
+
+        <div className="card">
+          <label>Participant Link — share this with everyone 🎉</label>
+          <div className="copy-box">
+            <input readOnly value={result.participantUrl} />
+            <button className="btn btn-primary btn-sm" onClick={() => copy('participant', result.participantUrl)}>
+              {copied.participant ? '✓ Copied!' : 'Copy'}
+            </button>
+          </div>
+        </div>
+
+        <button className="btn btn-secondary" onClick={() => { setResult(null); setForm({ name: '', description: '', dateWindow: { start: '', end: '' }, families: [''], allowedDays: [0,1,2,3,4,5,6] }); }}>
+          ← Create Another Event
+        </button>
       </div>
     );
   }
@@ -128,8 +129,9 @@ export default function CreateEvent() {
   return (
     <div className="container">
       <div className="card">
+        <img src="/logo.png" alt="Convene" style={{ width: 72, height: 72, borderRadius: 16, marginBottom: 10, display: 'block' }} />
         <h1>Convene</h1>
-        <p className="subtitle">Find the best dates for your group gathering.</p>
+        <p className="subtitle">Find the best dates for your family gathering.</p>
 
         {error && <div className="error">{error}</div>}
 
@@ -139,7 +141,7 @@ export default function CreateEvent() {
             <input
               type="text"
               required
-              placeholder="Smith Family Reunion 2025"
+              placeholder="Piercefield Summer Bash 2026"
               value={form.name}
               onChange={e => setField('name', e.target.value)}
             />
@@ -148,7 +150,7 @@ export default function CreateEvent() {
           <div className="field">
             <label>Description</label>
             <textarea
-              placeholder="Add any details for your group..."
+              placeholder="Any details your family should know…"
               value={form.description}
               onChange={e => setField('description', e.target.value)}
             />
@@ -186,13 +188,13 @@ export default function CreateEvent() {
                     type="button"
                     onClick={() => toggleDay(dow)}
                     style={{
-                      padding: '6px 12px',
-                      borderRadius: 20,
+                      padding: '7px 14px',
+                      borderRadius: 999,
                       border: '2px solid',
-                      borderColor: active ? '#2563eb' : '#e5e7eb',
-                      background: active ? '#eff6ff' : '#fff',
-                      color: active ? '#1d4ed8' : '#9ca3af',
-                      fontWeight: active ? 600 : 400,
+                      borderColor: active ? '#F97316' : '#E8DDD4',
+                      background: active ? '#FFF7ED' : '#fff',
+                      color: active ? '#EA580C' : '#A8A29E',
+                      fontWeight: active ? 700 : 500,
                       fontSize: '.85rem',
                       cursor: 'pointer',
                       fontFamily: 'inherit',
@@ -205,7 +207,7 @@ export default function CreateEvent() {
               })}
             </div>
             {form.allowedDays.length < 7 && (
-              <div style={{ fontSize: '.8rem', color: '#6b7280', marginTop: 6 }}>
+              <div style={{ fontSize: '.8rem', color: '#78716C', marginTop: 6, fontWeight: 500 }}>
                 Only {form.allowedDays.map(d => DAY_NAMES[d]).join(', ')} will be shown to participants.
               </div>
             )}
@@ -238,8 +240,8 @@ export default function CreateEvent() {
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%', justifyContent: 'center', padding: '12px' }}>
-            {loading ? 'Creating...' : 'Create Event'}
+          <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%', justifyContent: 'center', padding: '14px', fontSize: '1.05rem', marginTop: 4 }}>
+            {loading ? 'Creating…' : 'Create Event 🎉'}
           </button>
         </form>
       </div>

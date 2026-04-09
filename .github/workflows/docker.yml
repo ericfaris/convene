@@ -36,3 +36,23 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/convene:${{ steps.version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+          IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/convene
+          SERVICE_ID: d1f69594-3c76-497b-acdb-7465218763f9
+          ENV_ID: 85487614-bf51-4a8d-ac1b-0624ae7ff23b
+        run: |
+          curl -sf -X POST https://backboard.railway.app/graphql/v2 \
+            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\": \"mutation { serviceInstanceUpdate(serviceId: \\\"$SERVICE_ID\\\", environmentId: \\\"$ENV_ID\\\", input: { source: { image: \\\"$IMAGE:$VERSION\\\" } }) }\"}"
+
+          curl -sf -X POST https://backboard.railway.app/graphql/v2 \
+            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\": \"mutation { serviceInstanceDeploy(serviceId: \\\"$SERVICE_ID\\\", environmentId: \\\"$ENV_ID\\\") }\"}"
+
+          echo "Deployed $IMAGE:$VERSION to Railway"

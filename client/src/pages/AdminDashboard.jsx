@@ -66,7 +66,6 @@ export default function AdminDashboard() {
         {event.description && <p style={{ color: '#6b7280', margin: '0 0 12px' }}>{event.description}</p>}
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: '.85rem', color: '#6b7280', marginBottom: 16 }}>
           <span>📅 {event.dateWindow.start} → {event.dateWindow.end}</span>
-          <span>⏰ Deadline: {event.deadline}</span>
         </div>
 
         <div style={{ marginBottom: 8, display: 'flex', justifyContent: 'space-between', fontSize: '.9rem' }}>

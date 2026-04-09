@@ -16,11 +16,6 @@ router.post('/:participantToken/respond', async (req, res) => {
       return res.status(403).json({ error: 'Event is not accepting responses' });
     }
 
-    const today = new Date().toISOString().split('T')[0];
-    if (today > event.deadline) {
-      return res.status(403).json({ error: 'Submission deadline has passed' });
-    }
-
     if (!event.families.includes(familyName)) {
       return res.status(400).json({ error: 'Family not found in this event' });
     }

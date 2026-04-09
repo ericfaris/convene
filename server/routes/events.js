@@ -68,12 +68,12 @@ function addDays(date, n) {
 // POST /api/events — create event
 router.post('/', async (req, res) => {
   try {
-    const { name, description, dateWindow, deadline, families, allowedDays = [] } = req.body;
+    const { name, description, dateWindow, families, allowedDays = [] } = req.body;
     const adminToken = crypto.randomBytes(24).toString('hex');
     const participantToken = crypto.randomBytes(16).toString('hex');
 
     const event = await Event.create({
-      name, description, dateWindow, deadline, families, allowedDays,
+      name, description, dateWindow, families, allowedDays,
       adminToken, participantToken
     });
 
@@ -95,43 +95,35 @@ router.get('/:participantToken', async (req, res) => {
 
     const responses = await Response.find({ eventId: event._id });
     const respondedFamilies = responses.map(r => r.familyName);
+    const familyResponses = {};
+    responses.forEach(r => { familyResponses[r.familyName] = { availableDates: r.availableDates, notes: r.notes }; });
 
     res.json({
       name: event.name,
       description: event.description,
       dateWindow: event.dateWindow,
-      deadline: event.deadline,
       status: event.status,
       finalizedDates: event.status === 'finalized' ? event.finalizedDates : null,
       families: event.families,
       allowedDays: event.allowedDays,
-      respondedFamilies
+      respondedFamilies,
+      familyResponses
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// GET /api/events/:participantToken/summary — public summary
-router.get('/:participantToken/summary', async (req, res) => {
+// GET /api/events/:participantToken/response/:familyName — fetch existing response
+router.get('/:participantToken/response/:familyName', async (req, res) => {
   try {
     const event = await Event.findOne({ participantToken: req.params.participantToken });
     if (!event) return res.status(404).json({ error: 'Event not found' });
 
-    const responses = await Response.find({ eventId: event._id });
-    const heatmap = buildHeatmap(responses);
+    const response = await Response.findOne({ eventId: event._id, familyName: req.params.familyName });
+    if (!response) return res.json({ availableDates: [], notes: '' });
 
-    res.json({
-      name: event.name,
-      deadline: event.deadline,
-      dateWindow: event.dateWindow,
-      allowedDays: event.allowedDays,
-      totalFamilies: event.families.length,
-      respondedCount: responses.length,
-      heatmap,
-      status: event.status,
-      finalizedDates: event.status === 'finalized' ? event.finalizedDates : null
-    });
+    res.json({ availableDates: response.availableDates, notes: response.notes });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

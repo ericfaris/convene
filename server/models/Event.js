@@ -7,7 +7,6 @@ const eventSchema = new mongoose.Schema({
     start: { type: String, required: true },
     end:   { type: String, required: true }
   },
-  deadline: { type: String, required: true },
   adminToken: { type: String, required: true, unique: true },
   participantToken: { type: String, required: true, unique: true },
   families: [{ type: String }],

@@ -9,6 +9,7 @@ export default function FamilyList({ families, respondedFamilies, selected, onSe
         return (
           <button
             key={name}
+            type="button"
             onClick={() => !disabled && onSelect(name)}
             disabled={disabled}
             style={{

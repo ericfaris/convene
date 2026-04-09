@@ -1,6 +1,18 @@
 import { useState } from 'react';
 import { createEvent } from '../api/client.js';
 
+const DEFAULT_FAMILIES = [
+  'April & Eric',
+  'Roy & Katy',
+  'Jane',
+  'Betty & Rob',
+  'Luk & Lauren',
+  'Lindsey & Jamie',
+  'Alice & Danny',
+  'Tyler & Abbie',
+  'Derek & Whitney',
+];
+
 export default function CreateEvent() {
   const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6];
   const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -9,7 +21,6 @@ export default function CreateEvent() {
     name: '',
     description: '',
     dateWindow: { start: '', end: '' },
-    deadline: '',
     families: [''],
     allowedDays: [0, 1, 2, 3, 4, 5, 6]
   });
@@ -106,7 +117,7 @@ export default function CreateEvent() {
             </div>
           </div>
 
-          <button className="btn btn-secondary" onClick={() => { setResult(null); setForm({ name: '', description: '', dateWindow: { start: '', end: '' }, deadline: '', families: [''], allowedDays: [0,1,2,3,4,5,6] }); }}>
+          <button className="btn btn-secondary" onClick={() => { setResult(null); setForm({ name: '', description: '', dateWindow: { start: '', end: '' }, families: [''], allowedDays: [0,1,2,3,4,5,6] }); }}>
             Create Another Event
           </button>
         </div>
@@ -165,16 +176,6 @@ export default function CreateEvent() {
           </div>
 
           <div className="field">
-            <label>Response Deadline *</label>
-            <input
-              type="date"
-              required
-              value={form.deadline}
-              onChange={e => setField('deadline', e.target.value)}
-            />
-          </div>
-
-          <div className="field">
             <label>Days of week to show</label>
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
               {ALL_DAYS.map(dow => {
@@ -226,9 +227,14 @@ export default function CreateEvent() {
                   )}
                 </div>
               ))}
-              <button type="button" className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={addFamily}>
-                + Add Family
-              </button>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button type="button" className="btn btn-secondary btn-sm" onClick={addFamily}>
+                  + Add Family
+                </button>
+                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setField('families', DEFAULT_FAMILIES)}>
+                  Load Defaults
+                </button>
+              </div>
             </div>
           </div>
 

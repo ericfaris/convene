@@ -162,4 +162,16 @@ router.patch('/:adminToken/finalize', adminAuth, async (req, res) => {
   }
 });
 
+// DELETE /api/events/:adminToken — delete event and its responses (admin only)
+router.delete('/:adminToken', adminAuth, async (req, res) => {
+  try {
+    const event = req.event;
+    await Response.deleteMany({ eventId: event._id });
+    await event.deleteOne();
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

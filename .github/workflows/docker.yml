@@ -22,6 +22,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Get version
+        id: version
+        run: echo "version=$(node -p "require('./server/package.json').version")" >> $GITHUB_OUTPUT
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -29,6 +33,6 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/convene:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/convene:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/convene:${{ steps.version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

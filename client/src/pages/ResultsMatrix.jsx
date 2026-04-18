@@ -7,7 +7,6 @@ function getWeekendBlocks(dateWindow, allowedDays) {
   const end = new Date(dateWindow.end + 'T00:00:00');
   const cur = new Date(dateWindow.start + 'T00:00:00');
   const allowed = new Set(allowedDays.length ? allowedDays : [0, 1, 2, 3, 4, 5, 6]);
-
   let block = [];
   while (cur <= end) {
     if (allowed.has(cur.getDay())) {
@@ -23,10 +22,8 @@ function getWeekendBlocks(dateWindow, allowedDays) {
 }
 
 function blockLabel(dates) {
-  const start = new Date(dates[0] + 'T00:00:00');
-  const end = new Date(dates[dates.length - 1] + 'T00:00:00');
-  const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  return `${fmt(start)} – ${fmt(end)}`;
+  const fmt = d => new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return `${fmt(dates[0])} – ${fmt(dates[dates.length - 1])}`;
 }
 
 export default function ResultsMatrix() {
@@ -51,18 +48,15 @@ export default function ResultsMatrix() {
   const families = event.families;
   const responses = event.familyResponses || {};
 
-  // count total families available per block
-  const blockTotals = blocks.map(dates => {
-    const dateSet = new Set(dates);
-    return families.filter(f => {
+  const blockTotals = blocks.map(dates =>
+    families.filter(f => {
       const avail = new Set(responses[f]?.availableDates || []);
       return dates.every(d => avail.has(d));
-    }).length;
-  });
+    }).length
+  );
 
   const maxTotal = Math.max(...blockTotals, 1);
 
-  // per-family totals (blocks where they're fully available)
   const familyTotals = families.map(f => {
     const avail = new Set(responses[f]?.availableDates || []);
     return blocks.filter(dates => dates.every(d => avail.has(d))).length;
@@ -71,7 +65,7 @@ export default function ResultsMatrix() {
   const notResponded = families.filter(f => !responses[f]);
 
   return (
-    <div className="container" style={{ maxWidth: 780 }}>
+    <div className="container">
       {/* Header */}
       <div className="card" style={{ marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
@@ -84,10 +78,7 @@ export default function ResultsMatrix() {
         <div style={{ fontSize: '.85rem', color: '#A8A29E', fontWeight: 600, marginBottom: 16 }}>
           📅 {event.dateWindow.start} → {event.dateWindow.end}
         </div>
-        <button
-          className="btn btn-secondary btn-sm"
-          onClick={() => navigate(`/e/${token}`)}
-        >
+        <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/e/${token}`)}>
           ← Back
         </button>
       </div>
@@ -108,49 +99,30 @@ export default function ResultsMatrix() {
       )}
 
       {/* Matrix */}
-      <div className="card" style={{ padding: '20px 0', overflowX: 'auto' }}>
-        <h2 style={{ margin: '0 0 16px', paddingInline: 24 }}>Weekend Availability</h2>
-        <table style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          fontSize: '.82rem',
-          tableLayout: 'auto',
-        }}>
+      <div className="card" style={{ padding: 0, overflowX: 'auto' }}>
+        <h2 style={{ padding: '24px 24px 0' }}>Weekend Availability</h2>
+        <table style={{ tableLayout: 'auto', fontSize: '.85rem' }}>
           <thead>
             <tr>
-              <th style={thStyle('left', true)}>Weekend</th>
+              <th style={{ paddingLeft: 24, minWidth: 130 }}>Weekend</th>
               {families.map(f => (
-                <th key={f} style={thStyle('center', true)}>
-                  <div style={{ writingMode: 'horizontal-tb', whiteSpace: 'nowrap', fontSize: '.75rem' }}>
-                    {f}
-                  </div>
-                </th>
+                <th key={f} style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{f}</th>
               ))}
-              <th style={thStyle('center', true)}>Total</th>
+              <th style={{ textAlign: 'center' }}>Total</th>
             </tr>
           </thead>
           <tbody>
             {blocks.map((dates, bi) => {
               const total = blockTotals[bi];
               const isTop = total === maxTotal && total > 0;
-              const rowBg = isTop ? 'var(--green-pale)' : bi % 2 === 0 ? '#fff' : 'var(--gray-light)';
               return (
-                <tr key={bi} style={{ background: rowBg }}>
-                  <td style={{ ...tdStyle('left'), fontWeight: 600, whiteSpace: 'nowrap', paddingLeft: 24 }}>
+                <tr key={bi} style={{ background: isTop ? 'var(--green-pale)' : undefined }}>
+                  <td style={{ paddingLeft: 24, fontWeight: 600, whiteSpace: 'nowrap', borderBottom: '1px solid var(--gray-light)' }}>
                     {blockLabel(dates)}
                     {isTop && (
-                      <span style={{
-                        marginLeft: 6,
-                        fontSize: '.65rem',
-                        fontWeight: 800,
-                        textTransform: 'uppercase',
-                        letterSpacing: '.4px',
-                        background: 'var(--green)',
-                        color: '#fff',
-                        borderRadius: 4,
-                        padding: '1px 5px',
-                        verticalAlign: 'middle',
-                      }}>best</span>
+                      <span className="tag tag-open" style={{ marginLeft: 8, fontSize: '.65rem', padding: '1px 6px', verticalAlign: 'middle' }}>
+                        best
+                      </span>
                     )}
                   </td>
                   {families.map(f => {
@@ -158,17 +130,17 @@ export default function ResultsMatrix() {
                     const hasAll = dates.every(d => avail.has(d));
                     const hasSome = dates.some(d => avail.has(d));
                     return (
-                      <td key={f} style={{ ...tdStyle('center') }}>
+                      <td key={f} style={{ textAlign: 'center', borderBottom: '1px solid var(--gray-light)', verticalAlign: 'middle' }}>
                         {hasAll
-                          ? <span style={{ color: 'var(--green)', fontSize: '1rem', fontWeight: 800 }}>✓</span>
+                          ? <span style={{ color: 'var(--green)', fontSize: '1.1rem', fontWeight: 800 }}>✓</span>
                           : hasSome
-                          ? <span style={{ color: 'var(--yellow)', fontSize: '.8rem', fontWeight: 700 }} title="Partial availability">~</span>
-                          : <span style={{ color: 'var(--border)', fontSize: '.9rem' }}>—</span>
+                          ? <span style={{ color: 'var(--yellow)', fontWeight: 700 }} title="Partial availability">~</span>
+                          : <span style={{ color: 'var(--border)' }}>—</span>
                         }
                       </td>
                     );
                   })}
-                  <td style={{ ...tdStyle('center'), fontWeight: 800, color: total > 0 ? 'var(--green-dark)' : 'var(--text-muted)' }}>
+                  <td style={{ textAlign: 'center', fontWeight: 800, borderBottom: '1px solid var(--gray-light)', verticalAlign: 'middle', color: total > 0 ? 'var(--green-dark)' : 'var(--text-muted)' }}>
                     {total}
                   </td>
                 </tr>
@@ -176,48 +148,23 @@ export default function ResultsMatrix() {
             })}
           </tbody>
           <tfoot>
-            <tr style={{ borderTop: '2px solid var(--border)', background: 'var(--gray-light)' }}>
-              <td style={{ ...tdStyle('left'), fontWeight: 700, fontSize: '.78rem', color: 'var(--text-muted)', paddingLeft: 24 }}>
+            <tr style={{ background: 'var(--gray-light)', borderTop: '2px solid var(--border)' }}>
+              <td style={{ paddingLeft: 24, fontWeight: 700, color: 'var(--text-muted)', fontSize: '.78rem', borderBottom: 'none' }}>
                 Weekends available
               </td>
               {familyTotals.map((t, i) => (
-                <td key={i} style={{ ...tdStyle('center'), fontWeight: 800, color: t > 0 ? 'var(--green-dark)' : 'var(--text-muted)' }}>
+                <td key={i} style={{ textAlign: 'center', fontWeight: 800, color: t > 0 ? 'var(--green-dark)' : 'var(--text-muted)', borderBottom: 'none' }}>
                   {t}
                 </td>
               ))}
-              <td />
+              <td style={{ borderBottom: 'none' }} />
             </tr>
           </tfoot>
         </table>
-      </div>
-
-      {/* Legend */}
-      <div style={{ textAlign: 'center', fontSize: '.78rem', color: 'var(--text-muted)', marginTop: 4 }}>
-        <span style={{ marginInline: 8 }}>✓ = all days available</span>
-        <span style={{ marginInline: 8 }}>~ = partial</span>
-        <span style={{ marginInline: 8 }}>— = not available</span>
+        <p style={{ padding: '12px 24px', margin: 0, fontSize: '.78rem', color: 'var(--text-muted)', borderTop: '1px solid var(--gray-light)' }}>
+          ✓ = all days available &nbsp;·&nbsp; ~ = partial &nbsp;·&nbsp; — = not available
+        </p>
       </div>
     </div>
   );
-}
-
-function thStyle(align, header) {
-  return {
-    padding: '10px 8px',
-    textAlign: align,
-    fontWeight: 700,
-    fontSize: '.78rem',
-    color: header ? 'var(--text-muted)' : 'var(--text)',
-    borderBottom: '2px solid var(--border)',
-    background: 'var(--gray-light)',
-    whiteSpace: 'nowrap',
-  };
-}
-
-function tdStyle(align) {
-  return {
-    padding: '9px 8px',
-    textAlign: align,
-    borderBottom: '1px solid var(--border)',
-  };
 }

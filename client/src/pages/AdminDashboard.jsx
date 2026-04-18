@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getAdminDashboard, finalizeEvent } from '../api/client.js';
 import HeatmapCalendar from '../components/HeatmapCalendar.jsx';
 import ResponseTable from '../components/ResponseTable.jsx';
 
 export default function AdminDashboard() {
   const { token } = useParams();
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -79,6 +80,9 @@ export default function AdminDashboard() {
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button className="btn btn-secondary btn-sm" onClick={copyParticipantLink}>
             {copied ? '✓ Copied!' : '🔗 Copy Participant Link'}
+          </button>
+          <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/e/${event.participantToken}/results`)}>
+            📊 See Results
           </button>
           {event.status !== 'finalized' && (
             <button className="btn btn-primary btn-sm" onClick={() => setShowFinalize(f => !f)}>

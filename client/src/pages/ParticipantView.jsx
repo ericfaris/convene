@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getEvent, submitResponse } from '../api/client.js';
 import CalendarGrid from '../components/CalendarGrid.jsx';
 import FamilyList from '../components/FamilyList.jsx';
@@ -18,6 +18,7 @@ function countGroups(selectedDates) {
 
 export default function ParticipantView() {
   const { token } = useParams();
+  const navigate = useNavigate();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -135,8 +136,16 @@ export default function ParticipantView() {
       <div className="container">
         {header}
         <div className="card">
-          <h2 style={{ marginTop: 0 }}>Who are you? 👋</h2>
-          <p style={{ color: '#78716C', fontWeight: 500, margin: '0 0 16px', fontSize: '.95rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+            <h2 style={{ marginTop: 0, marginBottom: 0 }}>Who are you? 👋</h2>
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => navigate(`/e/${token}/results`)}
+            >
+              📊 See Results
+            </button>
+          </div>
+          <p style={{ color: '#78716C', fontWeight: 500, margin: '12px 0 16px', fontSize: '.95rem' }}>
             Tap your family's name to pick your available dates.
           </p>
           <FamilyList

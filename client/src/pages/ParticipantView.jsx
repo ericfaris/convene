@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getEvent, submitResponse } from '../api/client.js';
 import CalendarGrid from '../components/CalendarGrid.jsx';
-import FamilyList from '../components/FamilyList.jsx';
+import AttendeeList from '../components/AttendeeList.jsx';
 
 function countGroups(selectedDates) {
   const sorted = [...selectedDates].sort();
@@ -16,6 +16,11 @@ function countGroups(selectedDates) {
   return groups;
 }
 
+// True when the organizer restricted to only weekend-adjacent days (Fri/Sat/Sun)
+function isWeekendOnly(allowedDays) {
+  return allowedDays.length > 0 && allowedDays.every(d => [0, 5, 6].includes(d));
+}
+
 export default function ParticipantView() {
   const { token } = useParams();
   const navigate = useNavigate();
@@ -24,7 +29,7 @@ export default function ParticipantView() {
   const [error, setError] = useState('');
 
   const [screen, setScreen] = useState('list');
-  const [selectedFamily, setSelectedFamily] = useState('');
+  const [selectedAttendee, setSelectedAttendee] = useState('');
   const [selectedDates, setSelectedDates] = useState(new Set());
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -36,9 +41,9 @@ export default function ParticipantView() {
       .finally(() => setLoading(false));
   }, [token]);
 
-  function selectFamily(name) {
-    const existing = event.familyResponses?.[name];
-    setSelectedFamily(name);
+  function selectAttendee(name) {
+    const existing = event.attendeeResponses?.[name];
+    setSelectedAttendee(name);
     setSelectedDates(existing ? new Set(existing.availableDates) : new Set());
     setNotes(existing?.notes || '');
     setScreen('dates');
@@ -69,14 +74,14 @@ export default function ParticipantView() {
     setSubmitting(true);
     try {
       await submitResponse(token, {
-        familyName: selectedFamily,
+        attendeeName: selectedAttendee,
         availableDates: [...selectedDates].sort(),
         notes
       });
       setEvent(ev => ({
         ...ev,
-        respondedFamilies: [...(ev.respondedFamilies || []).filter(f => f !== selectedFamily), selectedFamily],
-        familyResponses: { ...ev.familyResponses, [selectedFamily]: { availableDates: [...selectedDates].sort(), notes } }
+        respondedAttendees: [...(ev.respondedAttendees || []).filter(f => f !== selectedAttendee), selectedAttendee],
+        attendeeResponses: { ...ev.attendeeResponses, [selectedAttendee]: { availableDates: [...selectedDates].sort(), notes } }
       }));
       setScreen('confirm');
     } catch (err) {
@@ -146,13 +151,13 @@ export default function ParticipantView() {
             </button>
           </div>
           <p style={{ color: '#78716C', fontWeight: 500, margin: '12px 0 16px', fontSize: '.95rem' }}>
-            Tap your family's name to pick your available dates.
+            Tap your name to pick your available dates.
           </p>
-          <FamilyList
-            families={event.families}
-            respondedFamilies={event.respondedFamilies}
+          <AttendeeList
+            attendees={event.attendees}
+            respondedAttendees={event.respondedAttendees}
             selected=""
-            onSelect={selectFamily}
+            onSelect={selectAttendee}
             disabled={false}
           />
         </div>
@@ -162,8 +167,10 @@ export default function ParticipantView() {
 
   // Screen: dates
   if (screen === 'dates') {
-    const isUpdating = (event.respondedFamilies || []).includes(selectedFamily);
-    const groupCount = countGroups(selectedDates);
+    const isUpdating = (event.respondedAttendees || []).includes(selectedAttendee);
+    const weekendOnly = isWeekendOnly(event.allowedDays || []);
+    const selectionCount = weekendOnly ? countGroups(selectedDates) : selectedDates.size;
+    const selectionLabel = weekendOnly ? `weekend${selectionCount !== 1 ? 's' : ''}` : `date${selectionCount !== 1 ? 's' : ''}`;
     return (
       <div className="container">
         {header}
@@ -190,13 +197,13 @@ export default function ParticipantView() {
           </button>
           <h2 style={{ marginTop: 0 }}>
             {isUpdating
-              ? `Update your picks, ${selectedFamily}! ✏️`
-              : `Hi, ${selectedFamily}! 👋 Pick your dates.`}
+              ? `Update your picks, ${selectedAttendee}! ✏️`
+              : `Hi, ${selectedAttendee}! 👋 Pick your dates.`}
           </h2>
           <p style={{ color: '#78716C', fontSize: '.95rem', fontWeight: 500, margin: '0 0 18px' }}>
-            Select all the weekends that work for you.{' '}
-            <strong style={{ color: groupCount > 0 ? '#65A30D' : '#A8A29E' }}>
-              {groupCount} weekend{groupCount !== 1 ? 's' : ''} selected.
+            Select all the dates that work for you.{' '}
+            <strong style={{ color: selectionCount > 0 ? '#65A30D' : '#A8A29E' }}>
+              {selectionCount} {selectionLabel} selected.
             </strong>
           </p>
           <CalendarGrid
@@ -238,7 +245,7 @@ export default function ParticipantView() {
       {header}
       <div className="card" style={{ textAlign: 'center', padding: '48px 28px' }}>
         <div style={{ fontSize: '4rem', marginBottom: 12, lineHeight: 1 }}>🎉</div>
-        <h2 style={{ marginTop: 0, fontSize: '1.6rem' }}>Thanks, {selectedFamily}!</h2>
+        <h2 style={{ marginTop: 0, fontSize: '1.6rem' }}>Thanks, {selectedAttendee}!</h2>
         <p style={{ color: '#78716C', fontWeight: 500, margin: '0', maxWidth: 320, marginInline: 'auto', lineHeight: 1.7 }}>
           Your availability has been saved. We'll let everyone know once dates are finalized.
         </p>

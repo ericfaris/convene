@@ -1,5 +1,5 @@
-export default function ResponseTable({ families, responses }) {
-  const responseMap = new Map(responses.map(r => [r.familyName, r]));
+export default function ResponseTable({ attendees, responses }) {
+  const responseMap = new Map(responses.map(r => [r.attendeeName, r]));
 
   function formatDates(dates) {
     if (!dates || dates.length === 0) return '—';
@@ -17,7 +17,7 @@ export default function ResponseTable({ families, responses }) {
       <table>
         <thead>
           <tr>
-            <th>Family</th>
+            <th>Attendee</th>
             <th>Available Dates</th>
             <th>Notes</th>
             <th>Responded</th>
@@ -25,7 +25,7 @@ export default function ResponseTable({ families, responses }) {
           </tr>
         </thead>
         <tbody>
-          {families.map(name => {
+          {attendees.map(name => {
             const r = responseMap.get(name);
             return (
               <tr key={name}>

@@ -1,6 +1,6 @@
 # Convene
 
-A lightweight family gathering availability scheduler. The organizer creates an event with a date window and a list of families. Each family gets a link where they pick the weekends they're available. The admin sees all responses and finalizes dates.
+A lightweight gathering availability scheduler. The organizer creates an event with a date window and a list of attendees. Each attendee gets a link where they pick the weekends they're available. The admin sees all responses and finalizes dates.
 
 **Live:** [convene.mooseflip.com](https://convene.mooseflip.com)
 

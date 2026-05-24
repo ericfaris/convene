@@ -49,8 +49,8 @@ export default function SummaryView() {
   if (error) return <div className="container"><div className="error">{error}</div></div>;
   if (!summary || !event) return null;
 
-  const pct = summary.totalFamilies > 0
-    ? Math.round((summary.respondedCount / summary.totalFamilies) * 100)
+  const pct = summary.totalAttendees > 0
+    ? Math.round((summary.respondedCount / summary.totalAttendees) * 100)
     : 0;
 
   const dates = Object.keys(summary.heatmap).sort();
@@ -59,7 +59,7 @@ export default function SummaryView() {
   const isClosed = summary.status === 'closed';
   const canSubmit = !isFinalized && !isClosed;
 
-  const respondedSet = new Set(event.respondedFamilies || []);
+  const respondedSet = new Set(event.respondedAttendees || []);
 
   function formatDate(str) {
     if (!str) return '';
@@ -119,7 +119,7 @@ export default function SummaryView() {
       <div className="card">
         <h2 style={{ marginTop: 0 }}>Responses</h2>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '.9rem', marginBottom: 6 }}>
-          <span>{summary.respondedCount} of {summary.totalFamilies} families responded</span>
+          <span>{summary.respondedCount} of {summary.totalAttendees} attendees responded</span>
           <span style={{ fontWeight: 600 }}>{pct}%</span>
         </div>
         <div className="progress-bar-wrap" style={{ marginBottom: 16 }}>
@@ -127,9 +127,9 @@ export default function SummaryView() {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {event.families.map(name => {
+          {event.attendees.map(name => {
             const responded = respondedSet.has(name);
-            const dates = summary.familyDates?.[name] || [];
+            const dates = summary.attendeeDates?.[name] || [];
             const isOpen = expanded === name;
             return (
               <div key={name} style={{
@@ -201,7 +201,7 @@ export default function SummaryView() {
         <div className="card">
           <h2 style={{ marginTop: 0 }}>Availability Overview</h2>
           <p style={{ color: '#6b7280', fontSize: '.9rem', margin: '0 0 16px' }}>
-            Darker = more families available that day.
+            Darker = more attendees available that day.
           </p>
           <HeatmapCalendar
             dateWindow={summary.dateWindow}
@@ -214,7 +214,7 @@ export default function SummaryView() {
 
       {!hasHeatmap && !isFinalized && (
         <div className="card" style={{ textAlign: 'center', color: '#6b7280', padding: '40px 24px' }}>
-          No availability data yet — check back after families respond.
+          No availability data yet — check back after attendees respond.
         </div>
       )}
 

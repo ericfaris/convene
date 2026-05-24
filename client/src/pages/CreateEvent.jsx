@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createEvent } from '../api/client.js';
 
-const DEFAULT_FAMILIES = [
+const DEFAULT_ATTENDEES = [
   'April & Eric',
   'Roy & Katy',
   'Jane',
@@ -21,7 +21,7 @@ export default function CreateEvent() {
     name: '',
     description: '',
     dateWindow: { start: '', end: '' },
-    families: [''],
+    attendees: [''],
     allowedDays: [0, 1, 2, 3, 4, 5, 6]
   });
   const [result, setResult] = useState(null);
@@ -37,24 +37,23 @@ export default function CreateEvent() {
     setForm(f => ({ ...f, dateWindow: { ...f.dateWindow, [key]: value } }));
   }
 
-  function updateFamily(i, val) {
-    const families = [...form.families];
-    families[i] = val;
-    setField('families', families);
+  function updateAttendee(i, val) {
+    const attendees = [...form.attendees];
+    attendees[i] = val;
+    setField('attendees', attendees);
   }
 
-  function addFamily() {
-    setField('families', [...form.families, '']);
+  function addAttendee() {
+    setField('attendees', [...form.attendees, '']);
   }
 
-  function removeFamily(i) {
-    setField('families', form.families.filter((_, idx) => idx !== i));
+  function removeAttendee(i) {
+    setField('attendees', form.attendees.filter((_, idx) => idx !== i));
   }
 
   function toggleDay(dow) {
     setForm(f => {
       const has = f.allowedDays.includes(dow);
-      // Don't allow deselecting all days
       if (has && f.allowedDays.length === 1) return f;
       return {
         ...f,
@@ -68,10 +67,9 @@ export default function CreateEvent() {
     setError('');
     setLoading(true);
     try {
-      const families = form.families.map(f => f.trim()).filter(Boolean);
-      // If all 7 days are selected, send empty array (no filter)
+      const attendees = form.attendees.map(f => f.trim()).filter(Boolean);
       const allowedDays = form.allowedDays.length === 7 ? [] : form.allowedDays;
-      const data = await createEvent({ ...form, families, allowedDays });
+      const data = await createEvent({ ...form, attendees, allowedDays });
       setResult(data);
     } catch (err) {
       setError(err.message);
@@ -92,7 +90,7 @@ export default function CreateEvent() {
         <div className="card">
           <div style={{ fontSize: '3rem', marginBottom: 8, lineHeight: 1 }}>🎊</div>
           <h1 style={{ marginBottom: 4 }}>You're all set!</h1>
-          <p className="subtitle">Share the link below with your families. Keep your admin link somewhere safe — you'll need it to manage the event.</p>
+          <p className="subtitle">Share the link below with your attendees. Keep your admin link somewhere safe — you'll need it to manage the event.</p>
 
           <div className="card" style={{ background: '#FFF7ED', border: '2px solid #FED7AA', marginBottom: 0 }}>
             <h3 style={{ color: '#92400e' }}>⚠️ Save your admin link</h3>
@@ -119,7 +117,7 @@ export default function CreateEvent() {
           </div>
         </div>
 
-        <button className="btn btn-secondary" onClick={() => { setResult(null); setForm({ name: '', description: '', dateWindow: { start: '', end: '' }, families: [''], allowedDays: [0,1,2,3,4,5,6] }); }}>
+        <button className="btn btn-secondary" onClick={() => { setResult(null); setForm({ name: '', description: '', dateWindow: { start: '', end: '' }, attendees: [''], allowedDays: [0,1,2,3,4,5,6] }); }}>
           ← Create Another Event
         </button>
       </div>
@@ -131,7 +129,7 @@ export default function CreateEvent() {
       <div className="card">
         <img src="/logo.png" alt="Convene" style={{ width: 72, height: 72, borderRadius: 16, marginBottom: 10, display: 'block' }} />
         <h1>Convene</h1>
-        <p className="subtitle">Find the best dates for your family gathering.</p>
+        <p className="subtitle">Find the best dates for your gathering.</p>
 
         {error && <div className="error">{error}</div>}
 
@@ -150,7 +148,7 @@ export default function CreateEvent() {
           <div className="field">
             <label>Description</label>
             <textarea
-              placeholder="Any details your family should know…"
+              placeholder="Any details attendees should know…"
               value={form.description}
               onChange={e => setField('description', e.target.value)}
             />
@@ -214,26 +212,26 @@ export default function CreateEvent() {
           </div>
 
           <div className="field">
-            <label>Families</label>
+            <label>Attendees</label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {form.families.map((fam, i) => (
+              {form.attendees.map((attendee, i) => (
                 <div key={i} style={{ display: 'flex', gap: 8 }}>
                   <input
                     type="text"
-                    placeholder={`Family ${i + 1} name`}
-                    value={fam}
-                    onChange={e => updateFamily(i, e.target.value)}
+                    placeholder={`Attendee ${i + 1} name`}
+                    value={attendee}
+                    onChange={e => updateAttendee(i, e.target.value)}
                   />
-                  {form.families.length > 1 && (
-                    <button type="button" className="btn btn-danger btn-sm" onClick={() => removeFamily(i)}>✕</button>
+                  {form.attendees.length > 1 && (
+                    <button type="button" className="btn btn-danger btn-sm" onClick={() => removeAttendee(i)}>✕</button>
                   )}
                 </div>
               ))}
               <div style={{ display: 'flex', gap: 8 }}>
-                <button type="button" className="btn btn-secondary btn-sm" onClick={addFamily}>
-                  + Add Family
+                <button type="button" className="btn btn-secondary btn-sm" onClick={addAttendee}>
+                  + Add Attendee
                 </button>
-                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setField('families', DEFAULT_FAMILIES)}>
+                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setField('attendees', DEFAULT_ATTENDEES)}>
                   Load Defaults
                 </button>
               </div>

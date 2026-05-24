@@ -32,7 +32,7 @@ function getSuggestedWindows(dateWindow, heatmap) {
         const d2 = toDateStr(d2Date);
         const d3 = toDateStr(d3Date);
         const score = (heatmap[d1] || 0) + (heatmap[d2] || 0) + (heatmap[d3] || 0);
-        windows.push({ start: d1, end: d3, familyCount: score });
+        windows.push({ start: d1, end: d3, attendeeCount: score });
       }
     }
 
@@ -45,14 +45,14 @@ function getSuggestedWindows(dateWindow, heatmap) {
         const d2 = toDateStr(d2Date);
         const d3 = toDateStr(d3Date);
         const score = (heatmap[d1] || 0) + (heatmap[d2] || 0) + (heatmap[d3] || 0);
-        windows.push({ start: d1, end: d3, familyCount: score });
+        windows.push({ start: d1, end: d3, attendeeCount: score });
       }
     }
 
     current.setDate(current.getDate() + 1);
   }
 
-  return windows.sort((a, b) => b.familyCount - a.familyCount).slice(0, 3);
+  return windows.sort((a, b) => b.attendeeCount - a.attendeeCount).slice(0, 3);
 }
 
 function toDateStr(date) {
@@ -68,12 +68,12 @@ function addDays(date, n) {
 // POST /api/events — create event
 router.post('/', async (req, res) => {
   try {
-    const { name, description, dateWindow, families, allowedDays = [] } = req.body;
+    const { name, description, dateWindow, attendees, allowedDays = [] } = req.body;
     const adminToken = crypto.randomBytes(24).toString('hex');
     const participantToken = crypto.randomBytes(16).toString('hex');
 
     const event = await Event.create({
-      name, description, dateWindow, families, allowedDays,
+      name, description, dateWindow, attendees, allowedDays,
       adminToken, participantToken
     });
 
@@ -94,9 +94,9 @@ router.get('/:participantToken', async (req, res) => {
     if (!event) return res.status(404).json({ error: 'Event not found' });
 
     const responses = await Response.find({ eventId: event._id });
-    const respondedFamilies = responses.map(r => r.familyName);
-    const familyResponses = {};
-    responses.forEach(r => { familyResponses[r.familyName] = { availableDates: r.availableDates, notes: r.notes }; });
+    const respondedAttendees = responses.map(r => r.attendeeName);
+    const attendeeResponses = {};
+    responses.forEach(r => { attendeeResponses[r.attendeeName] = { availableDates: r.availableDates, notes: r.notes }; });
 
     res.json({
       name: event.name,
@@ -104,23 +104,50 @@ router.get('/:participantToken', async (req, res) => {
       dateWindow: event.dateWindow,
       status: event.status,
       finalizedDates: event.status === 'finalized' ? event.finalizedDates : null,
-      families: event.families,
+      attendees: event.attendees,
       allowedDays: event.allowedDays,
-      respondedFamilies,
-      familyResponses
+      respondedAttendees,
+      attendeeResponses
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// GET /api/events/:participantToken/response/:familyName — fetch existing response
-router.get('/:participantToken/response/:familyName', async (req, res) => {
+// GET /api/events/:participantToken/summary — public summary view
+router.get('/:participantToken/summary', async (req, res) => {
   try {
     const event = await Event.findOne({ participantToken: req.params.participantToken });
     if (!event) return res.status(404).json({ error: 'Event not found' });
 
-    const response = await Response.findOne({ eventId: event._id, familyName: req.params.familyName });
+    const responses = await Response.find({ eventId: event._id });
+    const heatmap = buildHeatmap(responses);
+    const attendeeDates = {};
+    responses.forEach(r => { attendeeDates[r.attendeeName] = r.availableDates; });
+
+    res.json({
+      name: event.name,
+      status: event.status,
+      dateWindow: event.dateWindow,
+      finalizedDates: event.status === 'finalized' ? event.finalizedDates : null,
+      allowedDays: event.allowedDays,
+      totalAttendees: event.attendees.length,
+      respondedCount: responses.length,
+      heatmap,
+      attendeeDates,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/events/:participantToken/response/:attendeeName — fetch existing response
+router.get('/:participantToken/response/:attendeeName', async (req, res) => {
+  try {
+    const event = await Event.findOne({ participantToken: req.params.participantToken });
+    if (!event) return res.status(404).json({ error: 'Event not found' });
+
+    const response = await Response.findOne({ eventId: event._id, attendeeName: req.params.attendeeName });
     if (!response) return res.json({ availableDates: [], notes: '' });
 
     res.json({ availableDates: response.availableDates, notes: response.notes });
@@ -143,6 +170,24 @@ router.get('/:adminToken/admin', adminAuth, async (req, res) => {
       heatmap,
       suggestedWindows
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/events/:adminToken/attendees — add an attendee
+router.post('/:adminToken/attendees', adminAuth, async (req, res) => {
+  try {
+    const { name } = req.body;
+    if (!name || !name.trim()) return res.status(400).json({ error: 'Name is required' });
+    const event = req.event;
+    const trimmed = name.trim();
+    if (event.attendees.includes(trimmed)) {
+      return res.status(400).json({ error: 'Attendee already exists' });
+    }
+    event.attendees.push(trimmed);
+    await event.save();
+    res.json({ success: true, attendees: event.attendees });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -88,7 +88,7 @@ export default function HeatmapCalendar({ dateWindow, heatmap, finalizedDates, a
     <div>
       {/* Legend */}
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
-        <span style={{ fontSize: '.8rem', color: '#78716C', fontWeight: 600 }}>Families available:</span>
+        <span style={{ fontSize: '.8rem', color: '#78716C', fontWeight: 600 }}>Attendees available:</span>
         {[0.25, 0.5, 0.75, 1].map(t => {
           const count = Math.round(t * maxCount);
           return (
@@ -167,7 +167,7 @@ export default function HeatmapCalendar({ dateWindow, heatmap, finalizedDates, a
               date ? (
                 <div
                   key={date}
-                  title={date + (heatmap[date] ? `: ${heatmap[date]} families available` : ': no responses')}
+                  title={date + (heatmap[date] ? `: ${heatmap[date]} attendees available` : ': no responses')}
                   style={{
                     minHeight: 48,
                     borderRadius: 10,

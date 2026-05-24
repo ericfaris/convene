@@ -1,9 +1,9 @@
-export default function FamilyList({ families, respondedFamilies, selected, onSelect, disabled }) {
-  const respondedSet = new Set(respondedFamilies || []);
+export default function AttendeeList({ attendees, respondedAttendees, selected, onSelect, disabled }) {
+  const respondedSet = new Set(respondedAttendees || []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      {families.map(name => {
+      {attendees.map(name => {
         const responded = respondedSet.has(name);
         const isSelected = selected === name;
         return (

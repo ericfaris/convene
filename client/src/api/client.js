@@ -39,3 +39,10 @@ export function finalizeEvent(adminToken, body) {
     body: JSON.stringify(body)
   });
 }
+
+export function addAttendee(adminToken, name) {
+  return request(`${BASE}/${adminToken}/attendees`, {
+    method: 'POST',
+    body: JSON.stringify({ name })
+  });
+}

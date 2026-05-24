@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getAdminDashboard, finalizeEvent } from '../api/client.js';
+import { getAdminDashboard, finalizeEvent, addAttendee } from '../api/client.js';
 import HeatmapCalendar from '../components/HeatmapCalendar.jsx';
 import ResponseTable from '../components/ResponseTable.jsx';
 
@@ -15,6 +15,9 @@ export default function AdminDashboard() {
   const [finalizing, setFinalizing] = useState(false);
   const [finalizeError, setFinalizeError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [newAttendee, setNewAttendee] = useState('');
+  const [addingAttendee, setAddingAttendee] = useState(false);
+  const [attendeeError, setAttendeeError] = useState('');
 
   useEffect(() => {
     getAdminDashboard(token)
@@ -39,6 +42,23 @@ export default function AdminDashboard() {
     }
   }
 
+  async function handleAddAttendee(e) {
+    e.preventDefault();
+    if (!newAttendee.trim()) return;
+    setAttendeeError('');
+    setAddingAttendee(true);
+    try {
+      await addAttendee(token, newAttendee.trim());
+      const updated = await getAdminDashboard(token);
+      setData(updated);
+      setNewAttendee('');
+    } catch (err) {
+      setAttendeeError(err.message);
+    } finally {
+      setAddingAttendee(false);
+    }
+  }
+
   function copyParticipantLink() {
     const base = window.location.origin;
     const url = `${base}/e/${data.event.participantToken}`;
@@ -53,8 +73,8 @@ export default function AdminDashboard() {
 
   const { event, responses, heatmap, suggestedWindows } = data;
   const respondedCount = responses.length;
-  const totalFamilies = event.families.length;
-  const pct = totalFamilies > 0 ? (respondedCount / totalFamilies) * 100 : 0;
+  const totalAttendees = event.attendees.length;
+  const pct = totalAttendees > 0 ? (respondedCount / totalAttendees) * 100 : 0;
 
   return (
     <div className="container">
@@ -70,7 +90,7 @@ export default function AdminDashboard() {
         </div>
 
         <div style={{ marginBottom: 8, display: 'flex', justifyContent: 'space-between', fontSize: '.9rem', fontWeight: 600 }}>
-          <span style={{ color: '#78716C' }}>{respondedCount} of {totalFamilies} families responded</span>
+          <span style={{ color: '#78716C' }}>{respondedCount} of {totalAttendees} attendees responded</span>
           <span style={{ color: '#F97316' }}>{Math.round(pct)}%</span>
         </div>
         <div className="progress-bar-wrap" style={{ marginBottom: 16 }}>
@@ -143,7 +163,7 @@ export default function AdminDashboard() {
                   {i === 0 ? '⭐ Best pick' : `#${i + 1}`}
                 </div>
                 <div style={{ fontSize: '.9rem', fontWeight: 600, marginBottom: 4 }}>{w.start} → {w.end}</div>
-                <div style={{ fontSize: '.8rem', color: '#A8A29E', fontWeight: 500, marginBottom: 8 }}>{w.familyCount} families available</div>
+                <div style={{ fontSize: '.8rem', color: '#A8A29E', fontWeight: 500, marginBottom: 8 }}>{w.attendeeCount} attendees available</div>
                 {event.status !== 'finalized' && (
                   <button
                     className="btn btn-secondary btn-sm"
@@ -171,8 +191,23 @@ export default function AdminDashboard() {
 
       {/* Response table */}
       <div className="card">
-        <h2>Responses</h2>
-        <ResponseTable families={event.families} responses={responses} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
+          <h2 style={{ margin: 0 }}>Responses</h2>
+          <form onSubmit={handleAddAttendee} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <input
+              type="text"
+              placeholder="Add attendee…"
+              value={newAttendee}
+              onChange={e => setNewAttendee(e.target.value)}
+              style={{ padding: '6px 10px', fontSize: '.9rem', borderRadius: 8, border: '1.5px solid #E8DDD4', fontFamily: 'inherit' }}
+            />
+            <button type="submit" className="btn btn-secondary btn-sm" disabled={addingAttendee || !newAttendee.trim()}>
+              {addingAttendee ? '…' : '+ Add'}
+            </button>
+          </form>
+        </div>
+        {attendeeError && <div className="error" style={{ marginBottom: 12 }}>{attendeeError}</div>}
+        <ResponseTable attendees={event.attendees} responses={responses} />
       </div>
     </div>
   );

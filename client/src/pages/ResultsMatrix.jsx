@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getEvent } from '../api/client.js';
 
+function isWeekendOnly(allowedDays) {
+  return allowedDays.length > 0 && allowedDays.every(d => [0, 5, 6].includes(d));
+}
+
 function getWeekendBlocks(dateWindow, allowedDays) {
   const blocks = [];
   const end = new Date(dateWindow.end + 'T00:00:00');
@@ -44,12 +48,14 @@ export default function ResultsMatrix() {
   if (error) return <div className="container"><div className="error">{error}</div></div>;
   if (!event) return null;
 
-  const blocks = getWeekendBlocks(event.dateWindow, event.allowedDays || []);
-  const families = event.families;
-  const responses = event.familyResponses || {};
+  const allowedDays = event.allowedDays || [];
+  const weekendOnly = isWeekendOnly(allowedDays);
+  const blocks = getWeekendBlocks(event.dateWindow, allowedDays);
+  const attendees = event.attendees;
+  const responses = event.attendeeResponses || {};
 
   const blockTotals = blocks.map(dates =>
-    families.filter(f => {
+    attendees.filter(f => {
       const avail = new Set(responses[f]?.availableDates || []);
       return dates.every(d => avail.has(d));
     }).length
@@ -57,12 +63,12 @@ export default function ResultsMatrix() {
 
   const maxTotal = Math.max(...blockTotals, 1);
 
-  const familyTotals = families.map(f => {
+  const attendeeTotals = attendees.map(f => {
     const avail = new Set(responses[f]?.availableDates || []);
     return blocks.filter(dates => dates.every(d => avail.has(d))).length;
   });
 
-  const notResponded = families.filter(f => !responses[f]);
+  const notResponded = attendees.filter(f => !responses[f]);
 
   return (
     <div className="container">
@@ -100,12 +106,12 @@ export default function ResultsMatrix() {
 
       {/* Matrix */}
       <div className="card" style={{ padding: 0, overflowX: 'auto' }}>
-        <h2 style={{ padding: '24px 24px 0' }}>Weekend Availability</h2>
+        <h2 style={{ padding: '24px 24px 0' }}>{weekendOnly ? 'Weekend' : 'Date'} Availability</h2>
         <table style={{ tableLayout: 'auto', fontSize: '.85rem' }}>
           <thead>
             <tr>
-              <th style={{ paddingLeft: 24, minWidth: 130 }}>Weekend</th>
-              {families.map(f => (
+              <th style={{ paddingLeft: 24, minWidth: 130 }}>{weekendOnly ? 'Weekend' : 'Dates'}</th>
+              {attendees.map(f => (
                 <th key={f} style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{f}</th>
               ))}
               <th style={{ textAlign: 'center' }}>Total</th>
@@ -125,7 +131,7 @@ export default function ResultsMatrix() {
                       </span>
                     )}
                   </td>
-                  {families.map(f => {
+                  {attendees.map(f => {
                     const avail = new Set(responses[f]?.availableDates || []);
                     const hasAll = dates.every(d => avail.has(d));
                     const hasSome = dates.some(d => avail.has(d));
@@ -150,9 +156,9 @@ export default function ResultsMatrix() {
           <tfoot>
             <tr style={{ background: 'var(--gray-light)', borderTop: '2px solid var(--border)' }}>
               <td style={{ paddingLeft: 24, fontWeight: 700, color: 'var(--text-muted)', fontSize: '.78rem', borderBottom: 'none' }}>
-                Weekends available
+                {weekendOnly ? 'Weekends' : 'Dates'} available
               </td>
-              {familyTotals.map((t, i) => (
+              {attendeeTotals.map((t, i) => (
                 <td key={i} style={{ textAlign: 'center', fontWeight: 800, color: t > 0 ? 'var(--green-dark)' : 'var(--text-muted)', borderBottom: 'none' }}>
                   {t}
                 </td>

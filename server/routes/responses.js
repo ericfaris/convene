@@ -6,7 +6,7 @@ const Response = require('../models/Response');
 // POST /api/events/:participantToken/respond
 router.post('/:participantToken/respond', async (req, res) => {
   try {
-    const { familyName, availableDates, notes } = req.body;
+    const { attendeeName, availableDates, notes } = req.body;
     const { participantToken } = req.params;
 
     const event = await Event.findOne({ participantToken });
@@ -16,12 +16,12 @@ router.post('/:participantToken/respond', async (req, res) => {
       return res.status(403).json({ error: 'Event is not accepting responses' });
     }
 
-    if (!event.families.includes(familyName)) {
-      return res.status(400).json({ error: 'Family not found in this event' });
+    if (!event.attendees.includes(attendeeName)) {
+      return res.status(400).json({ error: 'Attendee not found in this event' });
     }
 
     await Response.findOneAndUpdate(
-      { eventId: event._id, familyName },
+      { eventId: event._id, attendeeName },
       { availableDates, notes, updatedAt: new Date() },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );

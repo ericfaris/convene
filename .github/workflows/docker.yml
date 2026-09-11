@@ -1,8 +1,14 @@
-name: Build and Push Docker Image
+name: Docker build check
+
+# convene is self-hosted on the local Docker lab (built with
+# `docker compose up -d --build` on the host and exposed via Cloudflare
+# Tunnel). There is no registry push or remote deploy — this workflow only
+# verifies the image still builds so breakage is caught before merge.
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -16,43 +22,34 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Get version
-        id: version
-        run: echo "version=$(node -p "require('./server/package.json').version")" >> $GITHUB_OUTPUT
-
-      - name: Build and push
+      - name: Build image (no push)
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/convene:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/convene:${{ steps.version.outputs.version }}
+          push: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Deploy to Railway
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          VERSION: ${{ steps.version.outputs.version }}
-          IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/convene
-          SERVICE_ID: d1f69594-3c76-497b-acdb-7465218763f9
-          ENV_ID: 85487614-bf51-4a8d-ac1b-0624ae7ff23b
+  # Runs on a self-hosted runner on the lab host itself — GitHub's own hosted
+  # runners can't reach this private host. Gated to push-to-main ONLY
+  # (never pull_request) so untrusted PR code can never execute here; this
+  # job only ever runs post-merge, already-trusted code, and only after the
+  # build-check job above confirms the image still builds (convene has no
+  # test suite — both client/server package.json `scripts.test` are
+  # literally "none", so the build check IS the gate here). Delegates the
+  # actual deploy to lab-sentinel's own guarded engine rather than
+  # reimplementing docker-compose logic here.
+  deploy:
+    name: Deploy to lab
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, lab]
+    steps:
+      - name: Trigger lab-sentinel deploy
         run: |
-          curl -sf -X POST https://backboard.railway.app/graphql/v2 \
-            -H "Authorization: Bearer $RAILWAY_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d "{\"query\": \"mutation { serviceInstanceUpdate(serviceId: \\\"$SERVICE_ID\\\", environmentId: \\\"$ENV_ID\\\", input: { source: { image: \\\"$IMAGE:$VERSION\\\" } }) }\"}"
-
-          curl -sf -X POST https://backboard.railway.app/graphql/v2 \
-            -H "Authorization: Bearer $RAILWAY_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d "{\"query\": \"mutation { serviceInstanceDeploy(serviceId: \\\"$SERVICE_ID\\\", environmentId: \\\"$ENV_ID\\\") }\"}"
-
-          echo "Deployed $IMAGE:$VERSION to Railway"
+          curl -sf -X POST http://127.0.0.1:7891/api/deploy \
+            -H 'Content-Type: application/json' \
+            -d '{"repo":"convene","containerName":"convene-app-1"}' \
+            -o deploy-result.json
+          cat deploy-result.json
+          jq -e '.deployStatus == "done"' deploy-result.json

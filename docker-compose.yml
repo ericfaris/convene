@@ -1,0 +1,27 @@
+# Project name fixes the container name to convene-app-1 regardless of the
+# directory the compose file lives in.
+name: convene
+
+services:
+  app:
+    build: .
+    image: ericfaris/convene:latest
+    restart: unless-stopped
+    # Run as the host user (uid:gid 1000) so nothing runs as root.
+    user: "1000:1000"
+    # Block privilege escalation (setuid binaries can't gain new privs).
+    security_opt:
+      - no-new-privileges:true
+    # Host-side binding stays on 127.0.0.1 — the Cloudflare Tunnel is the only
+    # public entry point. Container listens on 3000 (see Dockerfile / PORT).
+    ports:
+      - "127.0.0.1:8300:3000"
+    environment:
+      # MongoDB Atlas connection string — read from .env (never committed).
+      - MONGODB_URI=${MONGODB_URI:-}
+      # Server port inside the container (matches the Dockerfile EXPOSE).
+      - PORT=3000
+      # Public URL the app is reached at, via the tunnel.
+      - BASE_URL=${BASE_URL:-https://convene.mooseflip.com}
+      # Secret gating admin actions.
+      - ADMIN_SECRET=${ADMIN_SECRET:-}

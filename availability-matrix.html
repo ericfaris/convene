@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Piercefield Summer Bash — Availability</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f4f0;
+      color: #2c2c2c;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      color: #666;
+      margin-top: 0.35rem;
+      font-size: 0.95rem;
+    }
+
+    .wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      min-width: 700px;
+      width: 100%;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    thead tr {
+      background: #2c5f2e;
+      color: #fff;
+    }
+
+    thead th {
+      padding: 0.75rem 0.6rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 0.3px;
+    }
+
+    thead th.weekend-col {
+      text-align: left;
+      padding-left: 1rem;
+      min-width: 130px;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #eee;
+      transition: background 0.1s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f9f8f4; }
+
+    tbody tr.highlight {
+      background: #f0f7f0;
+    }
+
+    tbody tr.highlight:hover {
+      background: #e6f2e6;
+    }
+
+    td {
+      padding: 0.65rem 0.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    td.weekend {
+      text-align: left;
+      padding-left: 1rem;
+      font-weight: 500;
+      font-size: 0.88rem;
+      white-space: nowrap;
+    }
+
+    td.weekend .badge {
+      display: inline-block;
+      margin-left: 0.4rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #2c5f2e;
+      color: #fff;
+      border-radius: 4px;
+      padding: 1px 5px;
+      vertical-align: middle;
+    }
+
+    .yes {
+      color: #2c5f2e;
+      font-size: 1.1rem;
+    }
+
+    .no {
+      color: #ccc;
+      font-size: 1rem;
+    }
+
+    td.total {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #2c5f2e;
+      min-width: 50px;
+    }
+
+    tfoot tr {
+      background: #f9f8f4;
+      border-top: 2px solid #ddd;
+    }
+
+    tfoot td {
+      font-size: 0.78rem;
+      color: #888;
+      padding: 0.6rem 0.5rem;
+      text-align: center;
+    }
+
+    tfoot td.label {
+      text-align: left;
+      padding-left: 1rem;
+      color: #555;
+      font-weight: 600;
+    }
+
+    tfoot td.count {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #2c5f2e;
+    }
+
+    .legend {
+      margin-top: 1.25rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    .legend span { margin: 0 0.75rem; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🏕️ Piercefield Summer Bash</h1>
+    <p>Family availability · June – August 2026</p>
+  </header>
+
+  <div class="wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th class="weekend-col">Weekend</th>
+          <th>April<br>&amp; Eric</th>
+          <th>Roy<br>&amp; Katy</th>
+          <th>Jane</th>
+          <th>Betty<br>&amp; Rob</th>
+          <th>Luk<br>&amp; Lauren</th>
+          <th>Lindsey<br>&amp; Jamie</th>
+          <th>Alice<br>&amp; Danny</th>
+          <th>Tyler<br>&amp; Abbie</th>
+          <th>Derek<br>&amp; Whitney</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="weekend">Jun 4–7</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="total">1</td>
+        </tr>
+        <tr>
+          <td class="weekend">Jun 11–14</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="total">3</td>
+        </tr>
+        <tr>
+          <td class="weekend">Jun 18–21</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="total">2</td>
+        </tr>
+        <tr>
+          <td class="weekend">Jun 25–28</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="total">2</td>
+        </tr>
+        <tr>
+          <td class="weekend">Jul 2–5</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="total">2</td>
+        </tr>
+        <tr>
+          <td class="weekend">Jul 9–12</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="total">4</td>
+        </tr>
+        <tr class="highlight">
+          <td class="weekend">Jul 16–19 <span class="badge">best</span></td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="total">6</td>
+        </tr>
+        <tr class="highlight">
+          <td class="weekend">Jul 23–26</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="total">5</td>
+        </tr>
+        <tr class="highlight">
+          <td class="weekend">Jul 30–Aug 2</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="total">5</td>
+        </tr>
+        <tr>
+          <td class="weekend">Aug 6–9</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="total">3</td>
+        </tr>
+        <tr>
+          <td class="weekend">Aug 13–16</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="yes">✓</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="no">—</td>
+          <td class="total">2</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td class="label">Weekends available</td>
+          <td class="count">8</td>
+          <td class="count">2</td>
+          <td class="count">1</td>
+          <td class="count">9</td>
+          <td class="count">4</td>
+          <td class="count">6</td>
+          <td class="count">3</td>
+          <td class="count">4</td>
+          <td class="count">3</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <p class="legend">
+    <span>✓ = available all 4 days (Thu–Sun)</span>
+    <span>— = not available</span>
+    <span>Highlighted rows = top contenders</span>
+  </p>
+
+</body>
+</html>

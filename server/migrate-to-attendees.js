@@ -8,6 +8,17 @@ async function migrate() {
   const events = db.collection('events');
   const responses = db.collection('responses');
 
+  // Drop the old unique index FIRST — otherwise $rename causes dup key errors
+  // mid-operation as renamed docs show familyName=null alongside unrenamed ones
+  const indexes = await responses.indexes();
+  const oldIndex = indexes.find(i => i.key && i.key.familyName !== undefined);
+  if (oldIndex) {
+    await responses.dropIndex(oldIndex.name);
+    console.log(`Dropped old index: ${oldIndex.name}`);
+  } else {
+    console.log('Old familyName index not found (already dropped)');
+  }
+
   // Rename families → attendees on all event documents
   const eventsResult = await events.updateMany(
     { families: { $exists: true } },
@@ -21,16 +32,6 @@ async function migrate() {
     { $rename: { familyName: 'attendeeName' } }
   );
   console.log(`Responses migrated: ${responsesResult.modifiedCount}`);
-
-  // Drop the old unique index so Mongoose rebuilds it on the new field
-  const indexes = await responses.indexes();
-  const oldIndex = indexes.find(i => i.key && i.key.familyName !== undefined);
-  if (oldIndex) {
-    await responses.dropIndex(oldIndex.name);
-    console.log(`Dropped old index: ${oldIndex.name}`);
-  } else {
-    console.log('Old familyName index not found (already dropped)');
-  }
 
   await mongoose.disconnect();
   console.log('Migration complete.');

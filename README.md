@@ -22,8 +22,8 @@ A lightweight gathering availability scheduler. The organizer creates an event w
 | Frontend | React + Vite |
 | Backend | Node.js + Express |
 | Database | MongoDB (Mongoose) |
-| Hosting | Railway |
-| CI/CD | GitHub Actions → Docker Hub |
+| Hosting | Self-hosted Docker, exposed via Cloudflare Tunnel |
+| CI/CD | GitHub Actions (build check only; deploy is a local `docker compose` on the host) |
 
 ---
 
@@ -80,11 +80,21 @@ convene/
 
 ## Deployment
 
-Push to `main` — GitHub Actions builds a Docker image tagged with the version from `server/package.json`, pushes to Docker Hub, and automatically deploys to Railway.
+Convene is self-hosted on a local Docker lab and exposed publicly at
+[convene.mooseflip.com](https://convene.mooseflip.com) via a Cloudflare Tunnel.
+There is no registry push or remote deploy — GitHub Actions only verifies the
+image still builds (`docker build`, no push) on each `main` push / PR.
 
+Deploy from the host with a local build:
+
+```bash
+docker compose up -d --build
 ```
-git push origin main  # triggers build + deploy
-```
+
+Configuration comes from a local `.env` (gitignored — see `.env.example`),
+supplying `MONGODB_URI`, `PORT`, `BASE_URL`, and `ADMIN_SECRET`. The app's
+container port `3000` is bound to `127.0.0.1:8300` on the host; the Cloudflare
+Tunnel is the only public entry point (no raw port is exposed to the network).
 
 ---
 

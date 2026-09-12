@@ -37,7 +37,7 @@ jobs:
   # build-check job above confirms the image still builds (convene has no
   # test suite — both client/server package.json `scripts.test` are
   # literally "none", so the build check IS the gate here). Delegates the
-  # actual deploy to lab-sentinel's own guarded engine rather than
+  # actual deploy to sentinel's own guarded engine rather than
   # reimplementing docker-compose logic here.
   deploy:
     name: Deploy to lab
@@ -45,7 +45,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, lab]
     steps:
-      - name: Trigger lab-sentinel deploy
+      - name: Trigger sentinel deploy
         run: |
           curl -sf -X POST http://127.0.0.1:7891/api/deploy \
             -H 'Content-Type: application/json' \

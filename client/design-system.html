@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Convene — Design System</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="theme-color" content="#F97316" />
+    <!-- The app's real, shared stylesheet is imported by design-system-main.js
+         (same as main.jsx does for the app) — not linked/copied here — so it
+         goes through the same Vite pipeline and ships as the same hashed
+         asset in production. -->
+    <style>
+      /* Showcase-only chrome. Uses the same tokens as the app; nothing
+         here duplicates a component style — components below are the
+         real .btn/.card/.tag/etc. markup. */
+      body { padding: 0; }
+      .ds-container { max-width: 980px; margin: 0 auto; padding: var(--space-12) var(--space-5) 96px; }
+      .ds-header { margin-bottom: var(--space-10); }
+      .ds-header p { max-width: 60ch; }
+      .ds-section { margin: var(--space-12) 0; }
+      .ds-section > h2 { font-size: var(--text-display-sm); font-family: var(--font-display); font-style: italic; font-weight: 600; }
+      .ds-section > .ds-desc { color: var(--text-muted); margin: 0 0 var(--space-6); max-width: 65ch; }
+      .ds-grid { display: grid; gap: var(--space-4); }
+      .ds-swatch-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+      .ds-swatch { border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); background: var(--card); }
+      .ds-swatch-fill { height: 64px; }
+      .ds-swatch-label { padding: var(--space-2) var(--space-3); font-size: var(--text-caption); }
+      .ds-swatch-name { font-weight: 800; display: block; }
+      .ds-swatch-value { color: var(--text-muted); font-family: var(--font-mono); font-size: 11px; }
+      .ds-row { display: flex; align-items: baseline; gap: var(--space-5); flex-wrap: wrap; margin-bottom: var(--space-4); padding-bottom: var(--space-4); border-bottom: 1px solid var(--gray-light); }
+      .ds-row:last-child { border-bottom: none; }
+      .ds-row-meta { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+      .ds-scale-item { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-3); }
+      .ds-scale-box { background: var(--primary-light); border: 1px solid var(--primary); flex-shrink: 0; }
+      .ds-scale-radius { background: var(--primary-pale); border: 2px solid var(--primary); width: 64px; height: 64px; flex-shrink: 0; }
+      .ds-scale-label { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+      .ds-shadow-card { background: var(--card); border-radius: var(--radius); padding: var(--space-5); text-align: center; font-weight: 700; }
+      .ds-motion-demo { display: inline-flex; align-items: center; justify-content: center; width: 88px; height: 88px; background: var(--primary); color: #fff; border-radius: var(--radius); font-family: var(--font-mono); font-size: 11px; cursor: pointer; transition: transform var(--duration-base) var(--ease-press), background var(--duration-base) var(--ease-standard); user-select: none; }
+      .ds-motion-demo:hover { transform: scale(1.08) rotate(-2deg); background: var(--primary-dark); }
+      .ds-motion-demo.slow { transition-duration: var(--duration-page); }
+      .ds-component-block { margin-bottom: var(--space-8); }
+      .ds-component-block > .ds-label { font-size: var(--text-caption); font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin-bottom: var(--space-3); display: block; }
+      .ds-flex { display: flex; gap: var(--space-3); flex-wrap: wrap; align-items: center; }
+      .ds-heat-strip { display: flex; gap: 4px; }
+      .ds-heat-cell { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; }
+      .ds-texture-sample { height: 120px; border-radius: var(--radius); border: 1px solid var(--border); }
+      code.ds-var { background: var(--gray-light); padding: 1px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 12px; }
+      footer.ds-footer { text-align: center; color: var(--text-faint); font-size: var(--text-caption); margin-top: var(--space-12); }
+    </style>
+  </head>
+  <body>
+    <div class="ds-container">
+      <header class="ds-header">
+        <p class="eyebrow">Design system &middot; live from client/src/index.css</p>
+        <h1 class="display-lg" style="margin: var(--space-2) 0;">Convene</h1>
+        <p class="subtitle" style="margin-bottom: var(--space-2);">"Golden Hour Gathering" — every token and component on this page is
+        rendered from the app's real stylesheet, not redrawn. See
+        <code class="ds-var">DESIGN.md</code> at the repo root for the full rationale.</p>
+      </header>
+
+      <!-- ══ COLOR ══════════════════════════════════════════════════ -->
+      <section class="ds-section" id="color">
+        <h2>Color</h2>
+        <p class="ds-desc">Dominant warm terracotta on cream, with olive as the sole confirmation
+        accent and a restrained semantic set for warn/danger. Values are read live via
+        <code class="ds-var">getComputedStyle</code> — the labels below cannot drift from the CSS.</p>
+        <div class="ds-grid ds-swatch-grid" id="color-swatches"></div>
+      </section>
+
+      <!-- ══ TYPE ═══════════════════════════════════════════════════ -->
+      <section class="ds-section" id="type">
+        <h2>Type</h2>
+        <p class="ds-desc">Display: <strong>Fraunces</strong> (italic, optical sizing) for warmth and
+        editorial character. Body: <strong>Nunito</strong>, rounded and friendly, carried over from
+        the app's original identity. Full scale below, each row using the real class/element.</p>
+        <div id="type-scale"></div>
+      </section>
+
+      <!-- ══ SPACING & RADIUS ═══════════════════════════════════════ -->
+      <section class="ds-section" id="spacing">
+        <h2>Spacing &amp; radius</h2>
+        <p class="ds-desc">4px-based spacing scale; radius scale from tight controls up to the pill shape used for tags and progress bars.</p>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-8);">
+          <div>
+            <div class="ds-label" style="font-weight:800; text-transform:uppercase; font-size:.75rem; letter-spacing:.06em; color:var(--text-muted); margin-bottom: var(--space-3);">Space scale</div>
+            <div id="space-scale"></div>
+          </div>
+          <div>
+            <div class="ds-label" style="font-weight:800; text-transform:uppercase; font-size:.75rem; letter-spacing:.06em; color:var(--text-muted); margin-bottom: var(--space-3);">Radius scale</div>
+            <div id="radius-scale"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ SHADOW & MOTION ════════════════════════════════════════ -->
+      <section class="ds-section" id="shadow-motion">
+        <h2>Shadow &amp; motion</h2>
+        <p class="ds-desc">Shadows are warm-tinted (never pure black) to sit on the cream ground.
+        Motion uses a standard ease for fades/borders and a slight-overshoot "press" ease for anything
+        tactile — hover the tiles to feel each one; respects <code class="ds-var">prefers-reduced-motion</code>.</p>
+        <div class="ds-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: var(--space-8);" id="shadow-scale"></div>
+        <div class="ds-flex">
+          <div style="text-align:center;">
+            <div class="ds-motion-demo" title="duration-base + ease-press">base + press</div>
+          </div>
+          <div style="text-align:center;">
+            <div class="ds-motion-demo slow" title="duration-page + ease-press">page + press</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ COMPONENTS ═════════════════════════════════════════════ -->
+      <section class="ds-section" id="components">
+        <h2>Components</h2>
+        <p class="ds-desc">Real markup and classes from the app — <code class="ds-var">.btn</code>,
+        <code class="ds-var">.card</code>, <code class="ds-var">.tag</code>, <code class="ds-var">.banner</code>,
+        table styles, and form controls.</p>
+
+        <div class="ds-component-block">
+          <span class="ds-label">Buttons</span>
+          <div class="ds-flex">
+            <button class="btn btn-primary">Primary</button>
+            <button class="btn btn-primary" disabled>Primary (disabled)</button>
+            <button class="btn btn-secondary">Secondary</button>
+            <button class="btn btn-secondary" disabled>Secondary (disabled)</button>
+            <button class="btn btn-danger">Danger</button>
+            <button class="btn btn-primary btn-sm">Small</button>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label">Inputs</span>
+          <div class="ds-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px,1fr));">
+            <div class="field">
+              <label for="ds-in-1">Default</label>
+              <input id="ds-in-1" type="text" placeholder="Gathering name" />
+            </div>
+            <div class="field">
+              <label for="ds-in-2">Focused (click in)</label>
+              <input id="ds-in-2" type="text" placeholder="Click to focus" />
+            </div>
+            <div class="field">
+              <label for="ds-in-3">Error</label>
+              <input id="ds-in-3" class="input-error" type="text" value="not a real date" />
+              <div class="field-hint" style="color: var(--red);">Enter a valid date.</div>
+            </div>
+            <div class="field">
+              <label for="ds-in-4">Disabled</label>
+              <input id="ds-in-4" type="text" value="Locked" disabled />
+            </div>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label">Cards</span>
+          <div class="ds-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px,1fr));">
+            <div class="card" style="margin-bottom:0;">
+              <h3>Default card</h3>
+              <p style="margin:0; color: var(--text-muted); font-size: var(--text-body-sm);">Base surface, used throughout the app.</p>
+            </div>
+            <div class="card" style="margin-bottom:0; border: 2px solid var(--primary);">
+              <h3>Emphasis card</h3>
+              <p style="margin:0; color: var(--text-muted); font-size: var(--text-body-sm);">Used for the finalize/admin-only panel.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label">Banner &amp; alerts</span>
+          <div class="banner">This event closes for responses on Sept 30.</div>
+          <div class="success">Availability saved — thanks!</div>
+          <div class="error">Something went wrong. Try again.</div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label">Tags</span>
+          <div class="ds-flex">
+            <span class="tag tag-open">Open</span>
+            <span class="tag tag-closed">Closed</span>
+            <span class="tag tag-finalized">Finalized</span>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label">Progress bar</span>
+          <div class="progress-bar-wrap" style="max-width: 320px;">
+            <div class="progress-bar" style="width: 64%;"></div>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label">Attendee selector (selected / responded / default states)</span>
+          <div style="display:flex; flex-direction:column; gap:10px; max-width: 360px;">
+            <button type="button" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:2px solid var(--primary);border-radius:12px;background:var(--primary-pale);font-family:inherit;font-size:1.05rem;font-weight:700;text-align:left;color:var(--text);box-shadow:0 3px 12px rgba(249,115,22,.15);">
+              <span>Selected attendee</span>
+            </button>
+            <button type="button" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:2px solid var(--primary-light);border-radius:12px;background:#FFFBF7;font-family:inherit;font-size:1.05rem;font-weight:700;text-align:left;color:var(--text);">
+              <span>Already responded</span>
+              <span style="font-size:.8rem;font-weight:800;color:var(--green-dark);background:var(--green-light);padding:2px 10px;border-radius:999px;">&check; Done</span>
+            </button>
+            <button type="button" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:2px solid var(--border);border-radius:12px;background:#fff;font-family:inherit;font-size:1.05rem;font-weight:700;text-align:left;color:var(--text);">
+              <span>Not yet responded</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label">Table</span>
+          <table>
+            <thead><tr><th>Attendee</th><th>Available dates</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:700;">Alex</td><td style="font-family: var(--font-mono); font-size: .8rem; color: var(--text-muted);">Oct 3, Oct 4 +2 more</td><td><span class="tag tag-open" style="font-size:.65rem;">&check; Done</span></td></tr>
+              <tr><td style="font-weight:700;">Sam</td><td style="color: var(--text-faint);">&mdash;</td><td><span style="display:inline-block;font-size:.75rem;font-weight:700;color:var(--text-faint);background:var(--gray-light);padding:3px 10px;border-radius:999px;">Pending</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label">Data — availability heat scale (calendar / heatmap cells)</span>
+          <p class="field-hint" style="margin-top:-4px; margin-bottom: var(--space-3);">Bespoke sequential scale used by <code class="ds-var">HeatmapCalendar</code> and <code class="ds-var">CalendarGrid</code>; tokenized as <code class="ds-var">--heat-0…4</code> for reference (component itself still computes color server-side/inline per-cell).</p>
+          <div class="ds-heat-strip">
+            <div class="ds-heat-cell" style="background: var(--heat-0); color: var(--text-faint);">0</div>
+            <div class="ds-heat-cell" style="background: var(--heat-1); color: #78350F;">1</div>
+            <div class="ds-heat-cell" style="background: var(--heat-2); color: #78350F;">2</div>
+            <div class="ds-heat-cell" style="background: var(--heat-3);">3</div>
+            <div class="ds-heat-cell" style="background: var(--heat-4);">4</div>
+            <div class="ds-heat-cell" style="background: var(--green); border: 2px solid var(--green-dark);">&check;</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ BACKGROUND / TEXTURE ═══════════════════════════════════ -->
+      <section class="ds-section" id="texture">
+        <h2>Background &amp; texture</h2>
+        <p class="ds-desc">A near-invisible warm noise texture (SVG feTurbulence, inlined as a data URI
+        in <code class="ds-var">body</code>) keeps the cream ground from feeling flat, without adding any
+        image weight. Sampled here at higher opacity so it reads on screen.</p>
+        <div class="ds-texture-sample" style="background: var(--bg); background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E&quot;);"></div>
+      </section>
+
+      <footer class="ds-footer">Convene design system &middot; generated from <code class="ds-var">client/src/index.css</code> &middot; see DESIGN.md</footer>
+    </div>
+
+    <script type="module" src="/src/design-system-main.js"></script>
+  </body>
+</html>

@@ -1,35 +1,113 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+/* ══════════════════════════════════════════════════════════════════════
+   CONVENE DESIGN SYSTEM — "Golden Hour Gathering"
+   See /DESIGN.md at the repo root for the full rationale, token
+   reference, and component spec. This file is the single source of
+   truth for tokens — the showcase page at /design-system.html reads
+   these same values live.
+   ══════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Nunito:wght@400;500;600;700;800&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; }
 
 :root {
+  /* ── Color: surfaces ──────────────────────────────────────────── */
   --bg:            #FFFBF5;
   --card:          #FFFFFF;
+  --gray-light:    #F5F0EB;
+  --border:        #E8DDD4;
+
+  /* ── Color: brand (dominant terracotta, from Golden Hour palette) */
   --primary:       #F97316;
   --primary-dark:  #EA580C;
   --primary-light: #FED7AA;
   --primary-pale:  #FFF7ED;
+
+  /* ── Color: accent (olive — used for confirmation/"available") ── */
   --green:         #65A30D;
   --green-dark:    #4D7C0F;
   --green-light:   #ECFCCB;
   --green-pale:    #F7FEE7;
+
+  /* ── Color: semantic warn/danger ─────────────────────────────── */
   --yellow:        #FCD34D;
   --yellow-pale:   #FEFCE8;
   --red:           #EF4444;
   --red-pale:      #FEF2F2;
+  --red-border:    #FECACA;
+
+  /* ── Color: data (availability heat scale — HeatmapCalendar) ──── */
+  --heat-0: #F5F0EB;  /* no responses */
+  --heat-1: #FEF3C7;  /* <25% available */
+  --heat-2: #FED7AA;  /* <50% available */
+  --heat-3: #FB923C;  /* <75% available */
+  --heat-4: #EA580C;  /* everyone available */
+
+  /* ── Color: text ──────────────────────────────────────────────── */
   --text:          #1C1917;
   --text-muted:    #78716C;
-  --border:        #E8DDD4;
-  --gray-light:    #F5F0EB;
-  --radius:        14px;
-  --radius-sm:     8px;
-  --shadow:        0 2px 12px rgba(120, 70, 20, .08), 0 1px 3px rgba(120, 70, 20, .05);
-  --shadow-md:     0 6px 20px rgba(120, 70, 20, .10), 0 2px 6px rgba(120, 70, 20, .06);
+  --text-faint:    #A8A29E;
+
+  /* ── Type ─────────────────────────────────────────────────────── */
+  --font-display: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-body:    'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+
+  /* Type scale: size / line-height / weight, named by role */
+  --text-display-lg: 3rem;      /* 48px — hero wordmark, landing h1 */
+  --text-display-md: 2.25rem;   /* 36px — section-leading h1 */
+  --text-display-sm: 1.75rem;   /* 28px — card-leading h1 */
+  --text-h2:         1.25rem;   /* 20px */
+  --text-h3:         1rem;      /* 16px */
+  --text-body-lg:    1.05rem;   /* 16.8px — primary buttons, key labels */
+  --text-body:       1rem;      /* 16px */
+  --text-body-sm:    0.875rem;  /* 14px */
+  --text-caption:    0.75rem;   /* 12px — eyebrows, badges, table heads */
+
+  /* ── Space scale (4px base) ───────────────────────────────────── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-7:  28px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ── Radius scale ─────────────────────────────────────────────── */
+  --radius-sm:   8px;
+  --radius:      14px;
+  --radius-lg:   20px;
+  --radius-pill: 9999px;
+
+  /* ── Shadow scale ─────────────────────────────────────────────── */
+  --shadow-sm: 0 2px 12px rgba(120, 70, 20, .08), 0 1px 3px rgba(120, 70, 20, .05);
+  --shadow:    0 2px 12px rgba(120, 70, 20, .08), 0 1px 3px rgba(120, 70, 20, .05);
+  --shadow-md: 0 6px 20px rgba(120, 70, 20, .10), 0 2px 6px rgba(120, 70, 20, .06);
+  --shadow-lg: 0 16px 40px rgba(120, 70, 20, .16), 0 4px 12px rgba(120, 70, 20, .08);
+
+  /* ── Motion scale ─────────────────────────────────────────────── */
+  --ease-standard: cubic-bezier(.4, 0, .2, 1);   /* fades, color/border changes */
+  --ease-press:    cubic-bezier(.34, 1.56, .64, 1); /* buttons, selection states — slight overshoot */
+  --duration-micro: 120ms;  /* hover/focus color changes */
+  --duration-base:  200ms;  /* press, border, background transitions */
+  --duration-page:  400ms;  /* staggered reveals, page-level motion */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 body {
   margin: 0;
-  font-family: 'Nunito', system-ui, sans-serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
@@ -40,48 +118,85 @@ body {
 .container {
   max-width: 680px;
   margin: 0 auto;
-  padding: 28px 16px 48px;
+  padding: var(--space-7) var(--space-4) var(--space-12);
 }
 
 .card {
   background: var(--card);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 28px;
-  margin-bottom: 20px;
+  padding: var(--space-7);
+  margin-bottom: var(--space-5);
   border: 1px solid rgba(232, 221, 212, 0.6);
+  transition: box-shadow var(--duration-base) var(--ease-standard);
 }
 
-/* ── Typography ─────────────────────────────────────────────── */
+/* ── Focus ──────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.btn:focus-visible { outline-offset: 3px; }
+
+/* ── Typography ─────────────────────────────────────────────────── */
 h1 {
-  font-size: 2rem;
-  font-weight: 800;
-  margin: 0 0 4px;
-  letter-spacing: -.02em;
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  font-style: italic;
+  margin: 0 0 var(--space-1);
+  letter-spacing: -.01em;
   color: var(--text);
 }
 h2 {
-  font-size: 1.25rem;
+  font-size: var(--text-h2);
   font-weight: 700;
-  margin: 0 0 16px;
+  margin: 0 0 var(--space-4);
   color: var(--text);
 }
 h3 {
-  font-size: 1rem;
+  font-size: var(--text-h3);
   font-weight: 600;
-  margin: 0 0 12px;
+  margin: 0 0 var(--space-3);
+  color: var(--text-muted);
+}
+
+/* Display utility for the wordmark / landing moments — opt-in, larger step */
+.display-lg {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-style: italic;
+  font-weight: 600;
+  font-size: var(--text-display-lg);
+  letter-spacing: -.01em;
+  color: var(--primary-dark);
+}
+.display-md {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-style: italic;
+  font-weight: 600;
+  font-size: var(--text-display-md);
+  letter-spacing: -.01em;
+}
+.eyebrow {
+  font-size: var(--text-caption);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
   color: var(--text-muted);
 }
 
 label {
   display: block;
-  font-size: .875rem;
+  font-size: var(--text-body-sm);
   font-weight: 700;
-  margin-bottom: 6px;
+  margin-bottom: var(--space-2);
   color: var(--text);
 }
 
-/* ── Inputs ─────────────────────────────────────────────────── */
+/* ── Inputs ─────────────────────────────────────────────────────── */
 input[type="text"],
 input[type="date"],
 textarea {
@@ -89,13 +204,14 @@ textarea {
   padding: 11px 14px;
   border: 2px solid var(--border);
   border-radius: var(--radius-sm);
-  font-size: 1rem;
+  font-size: var(--text-body);
   font-family: inherit;
   font-weight: 500;
   color: var(--text);
   background: var(--bg);
   outline: none;
-  transition: border-color .15s, box-shadow .15s;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              box-shadow var(--duration-base) var(--ease-standard);
 }
 
 input:focus, textarea:focus {
@@ -104,9 +220,21 @@ input:focus, textarea:focus {
   background: #fff;
 }
 
+input.input-error, textarea.input-error {
+  border-color: var(--red);
+}
+input.input-error:focus, textarea.input-error:focus {
+  box-shadow: 0 0 0 3px var(--red-border);
+}
+
+input:disabled, textarea:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
 textarea { resize: vertical; min-height: 80px; }
 
-/* ── Buttons ─────────────────────────────────────────────────── */
+/* ── Buttons ────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -114,11 +242,13 @@ textarea { resize: vertical; min-height: 80px; }
   padding: 11px 20px;
   border: none;
   border-radius: var(--radius-sm);
-  font-size: 1rem;
+  font-size: var(--text-body);
   font-family: inherit;
   font-weight: 700;
   cursor: pointer;
-  transition: transform .1s, box-shadow .1s, background .15s;
+  transition: transform var(--duration-micro) var(--ease-press),
+              box-shadow var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
 }
 .btn:active:not(:disabled) { transform: scale(.97); }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
@@ -143,22 +273,27 @@ textarea { resize: vertical; min-height: 80px; }
 .btn-danger {
   background: var(--red-pale);
   color: var(--red);
-  border: 1px solid #fecaca;
+  border: 1px solid var(--red-border);
 }
 .btn-danger:hover:not(:disabled) { background: #fee2e2; }
-.btn-sm { padding: 6px 12px; font-size: .875rem; }
+.btn-sm { padding: 6px 12px; font-size: var(--text-body-sm); }
 
-/* ── Form helpers ────────────────────────────────────────────── */
-.field { margin-bottom: 18px; }
+/* ── Form helpers ───────────────────────────────────────────────── */
+.field { margin-bottom: var(--space-5); }
+.field-hint {
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+  margin-top: var(--space-1);
+}
 
-/* ── Alerts ─────────────────────────────────────────────────── */
+/* ── Alerts ─────────────────────────────────────────────────────── */
 .error {
   color: var(--red);
   background: var(--red-pale);
-  border: 1px solid #fecaca;
+  border: 1px solid var(--red-border);
   border-radius: var(--radius-sm);
-  padding: 12px 16px;
-  margin-bottom: 16px;
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
   font-weight: 600;
 }
 .success {
@@ -166,26 +301,26 @@ textarea { resize: vertical; min-height: 80px; }
   background: var(--green-pale);
   border: 1px solid var(--green-light);
   border-radius: var(--radius-sm);
-  padding: 12px 16px;
-  margin-bottom: 16px;
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
   font-weight: 600;
 }
 .banner {
   background: var(--primary-pale);
   border: 2px solid var(--primary-light);
   border-radius: var(--radius);
-  padding: 16px 20px;
-  margin-bottom: 20px;
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-5);
   font-weight: 600;
   color: var(--primary-dark);
 }
 
-/* ── Tags ───────────────────────────────────────────────────── */
+/* ── Tags ───────────────────────────────────────────────────────── */
 .tag {
   display: inline-block;
   padding: 3px 10px;
-  border-radius: 9999px;
-  font-size: .75rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-caption);
   font-weight: 800;
   letter-spacing: .04em;
   text-transform: uppercase;
@@ -194,43 +329,58 @@ textarea { resize: vertical; min-height: 80px; }
 .tag-closed    { background: var(--red-pale); color: var(--red); }
 .tag-finalized { background: var(--primary-light); color: var(--primary-dark); }
 
-/* ── Copy box ───────────────────────────────────────────────── */
-.copy-box { display: flex; gap: 8px; align-items: center; }
+/* ── Copy box ───────────────────────────────────────────────────── */
+.copy-box { display: flex; gap: var(--space-2); align-items: center; }
 .copy-box input { flex: 1; }
 
-/* ── Progress bar ───────────────────────────────────────────── */
+/* ── Progress bar ───────────────────────────────────────────────── */
 .progress-bar-wrap {
   background: var(--gray-light);
-  border-radius: 9999px;
+  border-radius: var(--radius-pill);
   height: 12px;
   overflow: hidden;
 }
 .progress-bar {
   height: 100%;
   background: linear-gradient(90deg, var(--primary), var(--yellow));
-  border-radius: 9999px;
-  transition: width .4s ease;
+  border-radius: var(--radius-pill);
+  transition: width var(--duration-page) var(--ease-standard);
 }
 
-/* ── Subtitle ───────────────────────────────────────────────── */
+/* ── Subtitle ───────────────────────────────────────────────────── */
 .subtitle {
   color: var(--text-muted);
-  font-size: 1rem;
+  font-size: var(--text-body);
   font-weight: 500;
-  margin: 0 0 24px;
+  margin: 0 0 var(--space-6);
 }
 
-/* ── Table ──────────────────────────────────────────────────── */
-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+/* ── Table ──────────────────────────────────────────────────────── */
+table { width: 100%; border-collapse: collapse; font-size: var(--text-body-sm); }
 th {
   text-align: left;
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   border-bottom: 2px solid var(--border);
   font-weight: 800;
   color: var(--text-muted);
-  font-size: .75rem;
+  font-size: var(--text-caption);
   text-transform: uppercase;
   letter-spacing: .06em;
 }
-td { padding: 10px 12px; border-bottom: 1px solid var(--gray-light); vertical-align: top; }
+td { padding: 10px var(--space-3); border-bottom: 1px solid var(--gray-light); vertical-align: top; }
 tr:last-child td { border-bottom: none; }
+
+/* ── Page reveal (staggered load, key moment) ────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .container > .card {
+    animation: convene-rise var(--duration-page) var(--ease-standard) both;
+  }
+  .container > .card:nth-child(1) { animation-delay: 0ms; }
+  .container > .card:nth-child(2) { animation-delay: 60ms; }
+  .container > .card:nth-child(3) { animation-delay: 120ms; }
+  .container > .card:nth-child(4) { animation-delay: 180ms; }
+}
+@keyframes convene-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

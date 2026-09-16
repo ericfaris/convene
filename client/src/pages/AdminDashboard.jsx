@@ -67,7 +67,7 @@ export default function AdminDashboard() {
     setTimeout(() => setCopied(false), 2000);
   }
 
-  if (loading) return <div className="container"><p style={{ color: '#78716C', fontWeight: 600 }}>Loading…</p></div>;
+  if (loading) return <div className="container"><p style={{ color: '#64748B', fontWeight: 600 }}>Loading…</p></div>;
   if (error) return <div className="container"><div className="error">{error}</div></div>;
   if (!data) return null;
 
@@ -84,14 +84,14 @@ export default function AdminDashboard() {
           <h1 style={{ margin: 0, fontSize: '1.6rem' }}>{event.name}</h1>
           <span className={`tag tag-${event.status}`}>{event.status}</span>
         </div>
-        {event.description && <p style={{ color: '#78716C', margin: '0 0 10px', fontWeight: 500 }}>{event.description}</p>}
-        <div style={{ fontSize: '.85rem', color: '#A8A29E', fontWeight: 600, marginBottom: 16 }}>
+        {event.description && <p style={{ color: '#64748B', margin: '0 0 10px', fontWeight: 500 }}>{event.description}</p>}
+        <div style={{ fontSize: '.85rem', color: '#94A3B8', fontWeight: 600, marginBottom: 16 }}>
           📅 {event.dateWindow.start} → {event.dateWindow.end}
         </div>
 
         <div style={{ marginBottom: 8, display: 'flex', justifyContent: 'space-between', fontSize: '.9rem', fontWeight: 600 }}>
-          <span style={{ color: '#78716C' }}>{respondedCount} of {totalAttendees} attendees responded</span>
-          <span style={{ color: '#F97316' }}>{Math.round(pct)}%</span>
+          <span style={{ color: '#64748B' }}>{respondedCount} of {totalAttendees} attendees responded</span>
+          <span style={{ color: '#FF6B6B' }}>{Math.round(pct)}%</span>
         </div>
         <div className="progress-bar-wrap" style={{ marginBottom: 16 }}>
           <div className="progress-bar" style={{ width: `${pct}%` }} />
@@ -121,7 +121,7 @@ export default function AdminDashboard() {
 
       {/* Finalize form */}
       {showFinalize && (
-        <div className="card" style={{ border: '2px solid #F97316' }}>
+        <div className="card" style={{ border: '2px solid #FF6B6B' }}>
           <h2>Set the Final Dates</h2>
           {finalizeError && <div className="error">{finalizeError}</div>}
           <form onSubmit={handleFinalize}>
@@ -153,17 +153,17 @@ export default function AdminDashboard() {
                 style={{
                   flex: '1 1 180px',
                   border: '2px solid',
-                  borderColor: i === 0 ? '#FED7AA' : '#E8DDD4',
+                  borderColor: i === 0 ? '#FFD1D1' : '#E2E8F0',
                   borderRadius: 12,
                   padding: '14px 16px',
-                  background: i === 0 ? '#FFF7ED' : '#FFFBF5',
+                  background: i === 0 ? '#FFF1F1' : '#FFFFFF',
                 }}
               >
-                <div style={{ fontWeight: 800, fontSize: '1rem', marginBottom: 4, color: i === 0 ? '#EA580C' : '#78716C' }}>
+                <div style={{ fontWeight: 800, fontSize: '1rem', marginBottom: 4, color: i === 0 ? '#FA5252' : '#64748B' }}>
                   {i === 0 ? '⭐ Best pick' : `#${i + 1}`}
                 </div>
                 <div style={{ fontSize: '.9rem', fontWeight: 600, marginBottom: 4 }}>{w.start} → {w.end}</div>
-                <div style={{ fontSize: '.8rem', color: '#A8A29E', fontWeight: 500, marginBottom: 8 }}>{w.attendeeCount} attendees available</div>
+                <div style={{ fontSize: '.8rem', color: '#94A3B8', fontWeight: 500, marginBottom: 8 }}>{w.attendeeCount} attendees available</div>
                 {event.status !== 'finalized' && (
                   <button
                     className="btn btn-secondary btn-sm"
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
               placeholder="Add attendee…"
               value={newAttendee}
               onChange={e => setNewAttendee(e.target.value)}
-              style={{ padding: '6px 10px', fontSize: '.9rem', borderRadius: 8, border: '1.5px solid #E8DDD4', fontFamily: 'inherit' }}
+              style={{ padding: '6px 10px', fontSize: '.9rem', borderRadius: 8, border: '1.5px solid #E2E8F0', fontFamily: 'inherit' }}
             />
             <button type="submit" className="btn btn-secondary btn-sm" disabled={addingAttendee || !newAttendee.trim()}>
               {addingAttendee ? '…' : '+ Add'}

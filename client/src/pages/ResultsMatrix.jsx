@@ -81,7 +81,7 @@ export default function ResultsMatrix() {
         {event.description && (
           <p style={{ color: 'var(--text-muted)', margin: '0 0 6px', fontWeight: 500 }}>{event.description}</p>
         )}
-        <div style={{ fontSize: '.85rem', color: '#A8A29E', fontWeight: 600, marginBottom: 16 }}>
+        <div style={{ fontSize: '.85rem', color: '#94A3B8', fontWeight: 600, marginBottom: 16 }}>
           📅 {event.dateWindow.start} → {event.dateWindow.end}
         </div>
         <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/e/${token}`)}>
@@ -122,7 +122,7 @@ export default function ResultsMatrix() {
               const total = blockTotals[bi];
               const isTop = total === maxTotal && total > 0;
               return (
-                <tr key={bi} style={{ background: isTop ? 'var(--green-pale)' : undefined }}>
+                <tr key={bi} style={{ background: isTop ? 'var(--accent-pale)' : undefined }}>
                   <td style={{ paddingLeft: 24, fontWeight: 600, whiteSpace: 'nowrap', borderBottom: '1px solid var(--gray-light)' }}>
                     {blockLabel(dates)}
                     {isTop && (
@@ -138,7 +138,7 @@ export default function ResultsMatrix() {
                     return (
                       <td key={f} style={{ textAlign: 'center', borderBottom: '1px solid var(--gray-light)', verticalAlign: 'middle' }}>
                         {hasAll
-                          ? <span style={{ color: 'var(--green)', fontSize: '1.1rem', fontWeight: 800 }}>✓</span>
+                          ? <span style={{ color: 'var(--accent)', fontSize: '1.1rem', fontWeight: 800 }}>✓</span>
                           : hasSome
                           ? <span style={{ color: 'var(--yellow)', fontWeight: 700 }} title="Partial availability">~</span>
                           : <span style={{ color: 'var(--border)' }}>—</span>
@@ -146,7 +146,7 @@ export default function ResultsMatrix() {
                       </td>
                     );
                   })}
-                  <td style={{ textAlign: 'center', fontWeight: 800, borderBottom: '1px solid var(--gray-light)', verticalAlign: 'middle', color: total > 0 ? 'var(--green-dark)' : 'var(--text-muted)' }}>
+                  <td style={{ textAlign: 'center', fontWeight: 800, borderBottom: '1px solid var(--gray-light)', verticalAlign: 'middle', color: total > 0 ? 'var(--accent-dark)' : 'var(--text-muted)' }}>
                     {total}
                   </td>
                 </tr>
@@ -159,7 +159,7 @@ export default function ResultsMatrix() {
                 {weekendOnly ? 'Weekends' : 'Dates'} available
               </td>
               {attendeeTotals.map((t, i) => (
-                <td key={i} style={{ textAlign: 'center', fontWeight: 800, color: t > 0 ? 'var(--green-dark)' : 'var(--text-muted)', borderBottom: 'none' }}>
+                <td key={i} style={{ textAlign: 'center', fontWeight: 800, color: t > 0 ? 'var(--accent-dark)' : 'var(--text-muted)', borderBottom: 'none' }}>
                   {t}
                 </td>
               ))}

@@ -23,9 +23,9 @@ function el(tag, props = {}, children = []) {
 const COLOR_TOKENS = [
   ['--bg', 'Background'], ['--card', 'Card surface'], ['--gray-light', 'Gray surface'],
   ['--border', 'Border'],
-  ['--primary', 'Primary'], ['--primary-dark', 'Primary dark'], ['--primary-light', 'Primary light'], ['--primary-pale', 'Primary pale'],
-  ['--green', 'Green (accent)'], ['--green-dark', 'Green dark'], ['--green-light', 'Green light'], ['--green-pale', 'Green pale'],
-  ['--yellow', 'Yellow (warn)'], ['--yellow-pale', 'Yellow pale'],
+  ['--primary', 'Primary (coral)'], ['--primary-dark', 'Primary dark'], ['--primary-light', 'Primary light'], ['--primary-pale', 'Primary pale'],
+  ['--accent', 'Accent (sky)'], ['--accent-dark', 'Accent dark'], ['--accent-light', 'Accent light'], ['--accent-pale', 'Accent pale'],
+  ['--yellow', 'Yellow (butter/warn)'], ['--yellow-pale', 'Yellow pale'],
   ['--red', 'Red (danger)'], ['--red-pale', 'Red pale'], ['--red-border', 'Red border'],
   ['--text', 'Text'], ['--text-muted', 'Text muted'], ['--text-faint', 'Text faint'],
   ['--heat-0', 'Heat 0'], ['--heat-1', 'Heat 1'], ['--heat-2', 'Heat 2'], ['--heat-3', 'Heat 3'], ['--heat-4', 'Heat 4'],
@@ -34,7 +34,7 @@ const COLOR_TOKENS = [
 const colorGrid = document.getElementById('color-swatches');
 COLOR_TOKENS.forEach(([token, label]) => {
   const value = val(token);
-  const textColor = ['--text', '--primary-dark', '--green-dark', '--red', '--heat-4'].includes(token) ? '#fff' : 'inherit';
+  const textColor = ['--text', '--primary-dark', '--accent-dark', '--red'].includes(token) ? '#fff' : 'inherit';
   colorGrid.appendChild(
     el('div', { class: 'ds-swatch' }, [
       el('div', { class: 'ds-swatch-fill', style: { background: `var(${token})` } }),
@@ -48,15 +48,15 @@ COLOR_TOKENS.forEach(([token, label]) => {
 
 // ── Type scale ───────────────────────────────────────────────────────
 const TYPE_STEPS = [
-  ['--text-display-lg', 'Display LG', 'var(--font-display)', '600', 'italic', 'Hero wordmark, landing moments (.display-lg)'],
-  ['--text-display-md', 'Display MD', 'var(--font-display)', '600', 'italic', 'Section-leading display (.display-md)'],
-  ['--text-display-sm', 'Display SM / h1', 'var(--font-display)', '600', 'italic', 'Default h1 — card & page titles'],
+  ['--text-display-lg', 'Display LG', 'var(--font-display)', '700', 'normal', 'Hero wordmark, landing moments (.display-lg)'],
+  ['--text-display-md', 'Display MD', 'var(--font-display)', '700', 'normal', 'Section-leading display (.display-md)'],
+  ['--text-display-sm', 'Display SM / h1', 'var(--font-display)', '700', 'normal', 'Default h1 — card & page titles'],
   ['--text-h2', 'H2', 'var(--font-body)', '700', 'normal', 'Section headings within a card'],
   ['--text-h3', 'H3', 'var(--font-body)', '600', 'normal', 'Sub-labels, muted headings'],
   ['--text-body-lg', 'Body LG', 'var(--font-body)', '700', 'normal', 'Primary button / key label text'],
   ['--text-body', 'Body', 'var(--font-body)', '500', 'normal', 'Default paragraph / input text'],
   ['--text-body-sm', 'Body SM', 'var(--font-body)', '600', 'normal', 'Secondary text, table cells'],
-  ['--text-caption', 'Caption', 'var(--font-body)', '800', 'normal', 'Eyebrows, badges, table headers (uppercase)'],
+  ['--text-caption', 'Caption', 'var(--font-body)', '700', 'normal', 'Eyebrows, badges, table headers (uppercase)'],
 ];
 const typeWrap = document.getElementById('type-scale');
 TYPE_STEPS.forEach(([token, label, font, weight, style, desc]) => {
@@ -114,3 +114,25 @@ SHADOW_TOKENS.forEach((token) => {
     })
   );
 });
+
+// ── Confetti dots (decorative sample) ─────────────────────────────────
+const confetti = document.getElementById('ds-confetti');
+if (confetti) {
+  const dotColors = [val('--primary'), val('--yellow'), val('--accent')];
+  for (let i = 0; i < 18; i++) {
+    const size = 6 + Math.round(Math.random() * 10);
+    confetti.appendChild(
+      el('span', {
+        style: {
+          position: 'absolute',
+          left: `${Math.random() * 96}%`,
+          top: `${Math.random() * 80 + 8}%`,
+          width: `${size}px`,
+          height: `${size}px`,
+          borderRadius: '50%',
+          background: dotColors[i % dotColors.length],
+        },
+      })
+    );
+  }
+}

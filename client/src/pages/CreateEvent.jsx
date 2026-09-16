@@ -92,7 +92,7 @@ export default function CreateEvent() {
           <h1 style={{ marginBottom: 4 }}>You're all set!</h1>
           <p className="subtitle">Share the link below with your attendees. Keep your admin link somewhere safe — you'll need it to manage the event.</p>
 
-          <div className="card" style={{ background: '#FFF7ED', border: '2px solid #FED7AA', marginBottom: 0 }}>
+          <div className="card" style={{ background: '#FFFBEA', border: '2px solid #FFD93D', marginBottom: 0 }}>
             <h3 style={{ color: '#92400e' }}>⚠️ Save your admin link</h3>
             <p style={{ margin: '0 0 12px', fontSize: '.9rem', color: '#92400e', fontWeight: 500 }}>
               This is the only time it'll be shown. Don't lose it!
@@ -189,9 +189,9 @@ export default function CreateEvent() {
                       padding: '7px 14px',
                       borderRadius: 999,
                       border: '2px solid',
-                      borderColor: active ? '#F97316' : '#E8DDD4',
-                      background: active ? '#FFF7ED' : '#fff',
-                      color: active ? '#EA580C' : '#A8A29E',
+                      borderColor: active ? '#FF6B6B' : '#E2E8F0',
+                      background: active ? '#FFF1F1' : '#fff',
+                      color: active ? '#FA5252' : '#94A3B8',
                       fontWeight: active ? 700 : 500,
                       fontSize: '.85rem',
                       cursor: 'pointer',
@@ -205,7 +205,7 @@ export default function CreateEvent() {
               })}
             </div>
             {form.allowedDays.length < 7 && (
-              <div style={{ fontSize: '.8rem', color: '#78716C', marginTop: 6, fontWeight: 500 }}>
+              <div style={{ fontSize: '.8rem', color: '#64748B', marginTop: 6, fontWeight: 500 }}>
                 Only {form.allowedDays.map(d => DAY_NAMES[d]).join(', ')} will be shown to participants.
               </div>
             )}

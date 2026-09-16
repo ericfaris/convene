@@ -70,7 +70,7 @@ function GroupedButtons({ dateWindow, allowedDays, selected, onToggleGroup, disa
               <div style={{
                 fontWeight: 800,
                 fontSize: '.8rem',
-                color: '#78716C',
+                color: '#64748B',
                 margin: '16px 0 8px',
                 textTransform: 'uppercase',
                 letterSpacing: '.08em',
@@ -85,10 +85,10 @@ function GroupedButtons({ dateWindow, allowedDays, selected, onToggleGroup, disa
                 width: '100%',
                 padding: '14px 18px',
                 border: '2px solid',
-                borderColor: allSelected ? '#65A30D' : someSelected ? '#FED7AA' : '#E8DDD4',
+                borderColor: allSelected ? '#0288D1' : someSelected ? '#FFD1D1' : '#E2E8F0',
                 borderRadius: 12,
-                background: allSelected ? '#65A30D' : someSelected ? '#FFF7ED' : disabled ? '#F5F0EB' : '#fff',
-                color: allSelected ? '#fff' : someSelected ? '#EA580C' : disabled ? '#A8A29E' : '#1C1917',
+                background: allSelected ? '#0288D1' : someSelected ? '#FFF1F1' : disabled ? '#F1F5F9' : '#fff',
+                color: allSelected ? '#fff' : someSelected ? '#FA5252' : disabled ? '#94A3B8' : '#16213E',
                 fontFamily: 'inherit',
                 fontSize: '1rem',
                 fontWeight: 700,
@@ -98,7 +98,7 @@ function GroupedButtons({ dateWindow, allowedDays, selected, onToggleGroup, disa
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                boxShadow: allSelected ? '0 2px 8px rgba(101,163,13,.2)' : 'none',
+                boxShadow: allSelected ? '0 2px 8px rgba(2,136,209,.2)' : 'none',
               }}
             >
               <span>{groupLabel(dates)}</span>
@@ -158,7 +158,7 @@ function FullGrid({ dateWindow, selected, onToggle, disabled }) {
             textAlign: 'center',
             fontSize: '.7rem',
             fontWeight: 800,
-            color: '#A8A29E',
+            color: '#94A3B8',
             paddingBottom: 6,
             letterSpacing: '.04em',
             textTransform: 'uppercase',
@@ -173,7 +173,7 @@ function FullGrid({ dateWindow, selected, onToggle, disabled }) {
             <div style={{
               fontWeight: 800,
               fontSize: '.8rem',
-              color: '#78716C',
+              color: '#64748B',
               margin: '14px 0 8px',
               textTransform: 'uppercase',
               letterSpacing: '.06em',
@@ -191,10 +191,10 @@ function FullGrid({ dateWindow, selected, onToggle, disabled }) {
                   style={{
                     minHeight: 48, minWidth: 0,
                     border: '2px solid',
-                    borderColor: selected.has(date) ? '#65A30D' : '#E8DDD4',
+                    borderColor: selected.has(date) ? '#0288D1' : '#E2E8F0',
                     borderRadius: 10,
-                    background: selected.has(date) ? '#65A30D' : disabled ? '#F5F0EB' : '#fff',
-                    color: selected.has(date) ? '#fff' : disabled ? '#A8A29E' : '#1C1917',
+                    background: selected.has(date) ? '#0288D1' : disabled ? '#F1F5F9' : '#fff',
+                    color: selected.has(date) ? '#fff' : disabled ? '#94A3B8' : '#16213E',
                     fontFamily: 'inherit',
                     fontWeight: 700,
                     fontSize: '.9rem',
@@ -203,7 +203,7 @@ function FullGrid({ dateWindow, selected, onToggle, disabled }) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     transition: 'all .12s',
-                    boxShadow: selected.has(date) ? '0 2px 6px rgba(101,163,13,.25)' : 'none',
+                    boxShadow: selected.has(date) ? '0 2px 6px rgba(2,136,209,.25)' : 'none',
                   }}
                 >
                   {parseInt(date.slice(8), 10)}

@@ -3,18 +3,16 @@ import { useMemo } from 'react';
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 function heatColor(count, max) {
-  if (!count) return '#F5F0EB';
+  if (!count) return '#F1F5F9';
   const t = max > 0 ? count / max : 0;
-  if (t < 0.25) return '#FEF3C7';
-  if (t < 0.5)  return '#FED7AA';
-  if (t < 0.75) return '#FB923C';
-  return '#EA580C';
+  if (t < 0.25) return '#FFEDB3';
+  if (t < 0.5)  return '#FFD93D';
+  if (t < 0.75) return '#FF8F6B';
+  return '#FF6B6B';
 }
 
-function textColor(count, max) {
-  if (!count) return '#A8A29E';
-  const t = max > 0 ? count / max : 0;
-  return t >= 0.5 ? '#fff' : '#78350F';
+function textColor(count) {
+  return count ? '#16213E' : '#94A3B8';
 }
 
 function buildFinalizedSet(finalizedDates) {
@@ -88,11 +86,11 @@ export default function HeatmapCalendar({ dateWindow, heatmap, finalizedDates, a
     <div>
       {/* Legend */}
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
-        <span style={{ fontSize: '.8rem', color: '#78716C', fontWeight: 600 }}>Attendees available:</span>
+        <span style={{ fontSize: '.8rem', color: '#64748B', fontWeight: 600 }}>Attendees available:</span>
         {[0.25, 0.5, 0.75, 1].map(t => {
           const count = Math.round(t * maxCount);
           return (
-            <span key={t} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '.75rem', fontWeight: 600, color: '#78716C' }}>
+            <span key={t} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '.75rem', fontWeight: 600, color: '#64748B' }}>
               <span style={{
                 width: 16,
                 height: 16,
@@ -106,14 +104,14 @@ export default function HeatmapCalendar({ dateWindow, heatmap, finalizedDates, a
           );
         })}
         {finalizedDates?.start && (
-          <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '.75rem', fontWeight: 600, color: '#78716C' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '.75rem', fontWeight: 600, color: '#64748B' }}>
             <span style={{
               width: 16,
               height: 16,
               borderRadius: 4,
-              background: '#65A30D',
+              background: '#0288D1',
               display: 'inline-block',
-              border: '2px solid #4D7C0F',
+              border: '2px solid #01579B',
             }} />
             Finalized
           </span>
@@ -132,7 +130,7 @@ export default function HeatmapCalendar({ dateWindow, heatmap, finalizedDates, a
             textAlign: 'center',
             fontSize: '.7rem',
             fontWeight: 800,
-            color: '#A8A29E',
+            color: '#94A3B8',
             paddingBottom: 6,
             letterSpacing: '.04em',
             textTransform: 'uppercase',
@@ -149,7 +147,7 @@ export default function HeatmapCalendar({ dateWindow, heatmap, finalizedDates, a
             <div style={{
               fontWeight: 800,
               fontSize: '.8rem',
-              color: '#78716C',
+              color: '#64748B',
               margin: '14px 0 8px',
               textTransform: 'uppercase',
               letterSpacing: '.06em',
@@ -171,7 +169,7 @@ export default function HeatmapCalendar({ dateWindow, heatmap, finalizedDates, a
                   style={{
                     minHeight: 48,
                     borderRadius: 10,
-                    background: finalizedSet.has(date) ? '#65A30D' : heatColor(heatmap[date] || 0, maxCount),
+                    background: finalizedSet.has(date) ? '#0288D1' : heatColor(heatmap[date] || 0, maxCount),
                     color: finalizedSet.has(date) ? '#fff' : textColor(heatmap[date] || 0, maxCount),
                     display: 'flex',
                     flexDirection: 'column',
@@ -179,9 +177,9 @@ export default function HeatmapCalendar({ dateWindow, heatmap, finalizedDates, a
                     justifyContent: 'center',
                     fontSize: '.8rem',
                     border: finalizedSet.has(date)
-                      ? '2px solid #4D7C0F'
+                      ? '2px solid #01579B'
                       : '1px solid rgba(0,0,0,.04)',
-                    boxShadow: finalizedSet.has(date) ? '0 2px 8px rgba(101,163,13,.25)' : 'none',
+                    boxShadow: finalizedSet.has(date) ? '0 2px 8px rgba(2,136,209,.25)' : 'none',
                     transition: 'all .1s',
                   }}
                 >

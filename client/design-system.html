@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Convene — Design System</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <meta name="theme-color" content="#F97316" />
+    <meta name="theme-color" content="#FF6B6B" />
     <!-- The app's real, shared stylesheet is imported by design-system-main.js
          (same as main.jsx does for the app) — not linked/copied here — so it
          goes through the same Vite pipeline and ships as the same hashed
@@ -19,7 +19,7 @@
       .ds-header { margin-bottom: var(--space-10); }
       .ds-header p { max-width: 60ch; }
       .ds-section { margin: var(--space-12) 0; }
-      .ds-section > h2 { font-size: var(--text-display-sm); font-family: var(--font-display); font-style: italic; font-weight: 600; }
+      .ds-section > h2 { font-size: var(--text-display-sm); font-family: var(--font-display); font-weight: 700; }
       .ds-section > .ds-desc { color: var(--text-muted); margin: 0 0 var(--space-6); max-width: 65ch; }
       .ds-grid { display: grid; gap: var(--space-4); }
       .ds-swatch-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
@@ -52,28 +52,29 @@
   <body>
     <div class="ds-container">
       <header class="ds-header">
-        <p class="eyebrow">Design system &middot; live from client/src/index.css</p>
+        <p class="eyebrow">Sunroom Social</p>
         <h1 class="display-lg" style="margin: var(--space-2) 0;">Convene</h1>
-        <p class="subtitle" style="margin-bottom: var(--space-2);">"Golden Hour Gathering" — every token and component on this page is
-        rendered from the app's real stylesheet, not redrawn. See
+        <p class="subtitle" style="margin-bottom: var(--space-2);">A design direction for family gathering scheduling — every token and
+        component on this page is rendered from the app's real stylesheet, not redrawn. See
         <code class="ds-var">DESIGN.md</code> at the repo root for the full rationale.</p>
       </header>
 
       <!-- ══ COLOR ══════════════════════════════════════════════════ -->
       <section class="ds-section" id="color">
         <h2>Color</h2>
-        <p class="ds-desc">Dominant warm terracotta on cream, with olive as the sole confirmation
-        accent and a restrained semantic set for warn/danger. Values are read live via
-        <code class="ds-var">getComputedStyle</code> — the labels below cannot drift from the CSS.</p>
+        <p class="ds-desc">Dominant coral on white, with sky blue as the sole confirmation
+        accent, butter for warmth and warn states, and a restrained semantic set for danger.
+        Values are read live via <code class="ds-var">getComputedStyle</code> — the labels
+        below cannot drift from the CSS.</p>
         <div class="ds-grid ds-swatch-grid" id="color-swatches"></div>
       </section>
 
       <!-- ══ TYPE ═══════════════════════════════════════════════════ -->
       <section class="ds-section" id="type">
         <h2>Type</h2>
-        <p class="ds-desc">Display: <strong>Fraunces</strong> (italic, optical sizing) for warmth and
-        editorial character. Body: <strong>Nunito</strong>, rounded and friendly, carried over from
-        the app's original identity. Full scale below, each row using the real class/element.</p>
+        <p class="ds-desc">One face throughout — <strong>Fredoka</strong>, a bold, rounded geometric
+        sans — carrying the whole hierarchy across Regular, Medium and Bold weights, from the
+        wordmark down to table cells. Full scale below, each row using the real class/element.</p>
         <div id="type-scale"></div>
       </section>
 
@@ -96,7 +97,7 @@
       <!-- ══ SHADOW & MOTION ════════════════════════════════════════ -->
       <section class="ds-section" id="shadow-motion">
         <h2>Shadow &amp; motion</h2>
-        <p class="ds-desc">Shadows are warm-tinted (never pure black) to sit on the cream ground.
+        <p class="ds-desc">Shadows are coral-tinted (never pure black) to sit on the white ground.
         Motion uses a standard ease for fades/borders and a slight-overshoot "press" ease for anything
         tactile — hover the tiles to feel each one; respects <code class="ds-var">prefers-reduced-motion</code>.</p>
         <div class="ds-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: var(--space-8);" id="shadow-scale"></div>
@@ -192,12 +193,12 @@
         <div class="ds-component-block">
           <span class="ds-label">Attendee selector (selected / responded / default states)</span>
           <div style="display:flex; flex-direction:column; gap:10px; max-width: 360px;">
-            <button type="button" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:2px solid var(--primary);border-radius:12px;background:var(--primary-pale);font-family:inherit;font-size:1.05rem;font-weight:700;text-align:left;color:var(--text);box-shadow:0 3px 12px rgba(249,115,22,.15);">
+            <button type="button" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:2px solid var(--primary);border-radius:12px;background:var(--primary-pale);font-family:inherit;font-size:1.05rem;font-weight:700;text-align:left;color:var(--text);box-shadow:0 3px 12px rgba(255,107,107,.18);">
               <span>Selected attendee</span>
             </button>
-            <button type="button" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:2px solid var(--primary-light);border-radius:12px;background:#FFFBF7;font-family:inherit;font-size:1.05rem;font-weight:700;text-align:left;color:var(--text);">
+            <button type="button" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:2px solid var(--primary-light);border-radius:12px;background:#FFF8F8;font-family:inherit;font-size:1.05rem;font-weight:700;text-align:left;color:var(--text);">
               <span>Already responded</span>
-              <span style="font-size:.8rem;font-weight:800;color:var(--green-dark);background:var(--green-light);padding:2px 10px;border-radius:999px;">&check; Done</span>
+              <span style="font-size:.8rem;font-weight:800;color:var(--accent-dark);background:var(--accent-light);padding:2px 10px;border-radius:999px;">&check; Done</span>
             </button>
             <button type="button" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:2px solid var(--border);border-radius:12px;background:#fff;font-family:inherit;font-size:1.05rem;font-weight:700;text-align:left;color:var(--text);">
               <span>Not yet responded</span>
@@ -221,22 +222,22 @@
           <p class="field-hint" style="margin-top:-4px; margin-bottom: var(--space-3);">Bespoke sequential scale used by <code class="ds-var">HeatmapCalendar</code> and <code class="ds-var">CalendarGrid</code>; tokenized as <code class="ds-var">--heat-0…4</code> for reference (component itself still computes color server-side/inline per-cell).</p>
           <div class="ds-heat-strip">
             <div class="ds-heat-cell" style="background: var(--heat-0); color: var(--text-faint);">0</div>
-            <div class="ds-heat-cell" style="background: var(--heat-1); color: #78350F;">1</div>
-            <div class="ds-heat-cell" style="background: var(--heat-2); color: #78350F;">2</div>
-            <div class="ds-heat-cell" style="background: var(--heat-3);">3</div>
-            <div class="ds-heat-cell" style="background: var(--heat-4);">4</div>
-            <div class="ds-heat-cell" style="background: var(--green); border: 2px solid var(--green-dark);">&check;</div>
+            <div class="ds-heat-cell" style="background: var(--heat-1); color: var(--text);">1</div>
+            <div class="ds-heat-cell" style="background: var(--heat-2); color: var(--text);">2</div>
+            <div class="ds-heat-cell" style="background: var(--heat-3); color: var(--text);">3</div>
+            <div class="ds-heat-cell" style="background: var(--heat-4); color: var(--text);">4</div>
+            <div class="ds-heat-cell" style="background: var(--accent); border: 2px solid var(--accent-dark);">&check;</div>
           </div>
         </div>
       </section>
 
-      <!-- ══ BACKGROUND / TEXTURE ═══════════════════════════════════ -->
+      <!-- ══ BACKGROUND / DECORATION ════════════════════════════════ -->
       <section class="ds-section" id="texture">
-        <h2>Background &amp; texture</h2>
-        <p class="ds-desc">A near-invisible warm noise texture (SVG feTurbulence, inlined as a data URI
-        in <code class="ds-var">body</code>) keeps the cream ground from feeling flat, without adding any
-        image weight. Sampled here at higher opacity so it reads on screen.</p>
-        <div class="ds-texture-sample" style="background: var(--bg); background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E&quot;);"></div>
+        <h2>Background &amp; decoration</h2>
+        <p class="ds-desc">The ground is flat white — no texture — so the coral/butter/sky palette stays
+        the thing that reads. Confetti dots in the three brand colors are the one decorative motif,
+        used sparingly around hero/marketing moments (never inside the app UI itself, which stays clean).</p>
+        <div class="ds-texture-sample" id="ds-confetti" style="background: var(--bg); position: relative; overflow: hidden;"></div>
       </section>
 
       <footer class="ds-footer">Convene design system &middot; generated from <code class="ds-var">client/src/index.css</code> &middot; see DESIGN.md</footer>

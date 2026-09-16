@@ -91,7 +91,7 @@ export default function ParticipantView() {
     }
   }
 
-  if (loading) return <div className="container"><p style={{ color: '#78716C', fontWeight: 600 }}>Loading…</p></div>;
+  if (loading) return <div className="container"><p style={{ color: '#64748B', fontWeight: 600 }}>Loading…</p></div>;
   if (error) return <div className="container"><div className="error">{error}</div></div>;
   if (!event) return null;
 
@@ -104,8 +104,8 @@ export default function ParticipantView() {
         <h1 style={{ margin: 0, fontSize: '1.6rem' }}>{event.name}</h1>
         <span className={`tag tag-${event.status}`}>{event.status}</span>
       </div>
-      {event.description && <p style={{ color: '#78716C', margin: '0 0 6px', fontWeight: 500 }}>{event.description}</p>}
-      <div style={{ fontSize: '.85rem', color: '#A8A29E', fontWeight: 600 }}>
+      {event.description && <p style={{ color: '#64748B', margin: '0 0 6px', fontWeight: 500 }}>{event.description}</p>}
+      <div style={{ fontSize: '.85rem', color: '#94A3B8', fontWeight: 600 }}>
         📅 {event.dateWindow.start} → {event.dateWindow.end}
       </div>
     </div>
@@ -126,10 +126,10 @@ export default function ParticipantView() {
     return (
       <div className="container">
         {header}
-        <div className="card" style={{ background: '#FEF9EE', border: '2px solid #FCD34D', textAlign: 'center', padding: '32px 24px' }}>
+        <div className="card" style={{ background: '#FFFBEA', border: '2px solid #FFD93D', textAlign: 'center', padding: '32px 24px' }}>
           <div style={{ fontSize: '2.5rem', marginBottom: 8 }}>⏳</div>
           <strong style={{ fontSize: '1.1rem' }}>Submissions are closed.</strong>
-          <p style={{ color: '#78716C', margin: '8px 0 0', fontWeight: 500 }}>Waiting on the organizer to finalize dates.</p>
+          <p style={{ color: '#64748B', margin: '8px 0 0', fontWeight: 500 }}>Waiting on the organizer to finalize dates.</p>
         </div>
       </div>
     );
@@ -150,7 +150,7 @@ export default function ParticipantView() {
               📊 See Results
             </button>
           </div>
-          <p style={{ color: '#78716C', fontWeight: 500, margin: '12px 0 16px', fontSize: '.95rem' }}>
+          <p style={{ color: '#64748B', fontWeight: 500, margin: '12px 0 16px', fontSize: '.95rem' }}>
             Tap your name to pick your available dates.
           </p>
           <AttendeeList
@@ -181,7 +181,7 @@ export default function ParticipantView() {
             style={{
               background: 'none',
               border: 'none',
-              color: '#F97316',
+              color: '#FF6B6B',
               cursor: 'pointer',
               padding: 0,
               fontSize: '.9rem',
@@ -200,9 +200,9 @@ export default function ParticipantView() {
               ? `Update your picks, ${selectedAttendee}! ✏️`
               : `Hi, ${selectedAttendee}! 👋 Pick your dates.`}
           </h2>
-          <p style={{ color: '#78716C', fontSize: '.95rem', fontWeight: 500, margin: '0 0 18px' }}>
+          <p style={{ color: '#64748B', fontSize: '.95rem', fontWeight: 500, margin: '0 0 18px' }}>
             Select all the dates that work for you.{' '}
-            <strong style={{ color: selectionCount > 0 ? '#65A30D' : '#A8A29E' }}>
+            <strong style={{ color: selectionCount > 0 ? '#0288D1' : '#94A3B8' }}>
               {selectionCount} {selectionLabel} selected.
             </strong>
           </p>
@@ -246,7 +246,7 @@ export default function ParticipantView() {
       <div className="card" style={{ textAlign: 'center', padding: '48px 28px' }}>
         <div style={{ fontSize: '4rem', marginBottom: 12, lineHeight: 1 }}>🎉</div>
         <h2 style={{ marginTop: 0, fontSize: '1.6rem' }}>Thanks, {selectedAttendee}!</h2>
-        <p style={{ color: '#78716C', fontWeight: 500, margin: '0', maxWidth: 320, marginInline: 'auto', lineHeight: 1.7 }}>
+        <p style={{ color: '#64748B', fontWeight: 500, margin: '0', maxWidth: 320, marginInline: 'auto', lineHeight: 1.7 }}>
           Your availability has been saved. We'll let everyone know once dates are finalized.
         </p>
       </div>

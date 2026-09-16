@@ -253,8 +253,7 @@ working app UI itself, which stays clean and functional.
 
 | File | Role |
 |---|---|
-| `client/public/favicon.ico`, `icon-16/32/48/180/192/512.png` | Existing favicon/app-icon set, unchanged by this pass. |
-| `client/public/logo.png`, `logo.webp` | Existing wordmark/logo asset, unchanged. |
+| `client/public/favicon.ico`, `icon-16/32/48/180/192/512.png`, `logo.png`, `logo.webp` | New icon mark: a solid coral (`#FF6B6B`) square with a bold white heart and butter/sky/light-coral confetti dots — replaces the old illustrated people/calendar mark to match the Sunroom Social palette. Hand-built as SVG and rasterized per size (no photographic/AI-generated art), so it stays crisp and legible down to 16px. |
 | `client/src/index.css` | Token source of truth + all component styles (this pass: swapped the color palette, swapped the type system to a single `Fredoka` face, bumped the radius scale, retinted shadows coral, dropped the noise-texture background, renamed the `--green-*` tokens to `--accent-*` now that they're sky blue). |
 | `client/design-system.html` | Showcase page — copy and inline demo colors updated for the new palette/type/decoration. |
 | `client/src/design-system-main.js` | Showcase page's JS — token list and type-scale metadata updated; added a small confetti-dot decorative sample. |
@@ -286,6 +285,9 @@ colors).
 
 ## Changelog
 
+- **2026-09-16** — Replaced the app icon/favicon set and `logo.png`/`logo.webp`
+  with a new coral heart + confetti-dot mark (see §8), retiring the old
+  illustrated people/calendar icon.
 - **2026-09-16** — Pivoted the design system from "Golden Hour Gathering"
   (terracotta/cream, `Fraunces` serif display + `Nunito` body) to
   **"Sunroom Social"** (coral/butter/sky, single bold `Fredoka` geometric

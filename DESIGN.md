@@ -272,7 +272,7 @@ charcoal accents"*.
 | File | Role |
 |---|---|
 | `client/public/favicon.ico`, `icon-16/32/48/180/192/512.png` | Existing favicon/app-icon set — already present and on-brand (illustrated family/people mark on a soft green rounded-square background); verified during this pass, not regenerated. |
-| `client/public/logo.png`, `logo.webp` | Existing wordmark/logo asset, unchanged. |
+| `client/public/logo.svg`, `logo-lockup.svg`, `favicon.svg` | Open Table mark (calendar-cell C + green confirmed-date dot), horizontal lockup, small-size favicon cut. |
 | `client/src/index.css` | Token source of truth + all component styles (this pass: reorganized into a documented scale, added `--space-*`, `--radius-lg`, `--shadow-lg`, `--heat-0…4`, motion tokens, `.input-error`, focus-visible rules, reduced-motion handling, page-reveal animation, `.display-lg/md`, `.eyebrow`). |
 | `client/design-system.html` | New — static showcase page (Vite multi-entry), see below. |
 | `client/src/design-system-main.js` | New — showcase page's JS: imports the real `index.css` and renders live token values via `getComputedStyle`. |

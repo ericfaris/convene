@@ -127,7 +127,7 @@ export default function CreateEvent() {
   return (
     <div className="container">
       <div className="card">
-        <img src="/logo.png" alt="Convene" style={{ width: 72, height: 72, borderRadius: 16, marginBottom: 10, display: 'block' }} />
+        <img src="/logo.svg" alt="Convene" style={{ width: 72, height: 72, marginBottom: 10, display: 'block' }} />
         <h1>Convene</h1>
         <p className="subtitle">Find the best dates for your gathering.</p>
 

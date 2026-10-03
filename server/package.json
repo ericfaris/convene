@@ -7,7 +7,7 @@
     "dev": "node --watch index.js"
   },
   "dependencies": {
-    "dotenv": "^17.4.1",
+    "dotenv": "^18.0.0",
     "express": "^5.0.0",
     "mongoose": "^8.1.0"
   }

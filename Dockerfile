@@ -1,5 +1,5 @@
 # Stage 1: Build React client
-FROM node:20-alpine AS client-build
+FROM node:26-alpine AS client-build
 WORKDIR /app/client
 COPY client/package*.json ./
 RUN npm ci
@@ -7,7 +7,7 @@ COPY client/ ./
 RUN npm run build
 
 # Stage 2: Production server
-FROM node:20-alpine
+FROM node:26-alpine
 RUN apk update && apk upgrade --no-cache
 WORKDIR /app
 COPY server/package*.json ./

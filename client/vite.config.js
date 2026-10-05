@@ -12,11 +12,11 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
+        main: resolve(import.meta.dirname, 'index.html'),
         // Static design-system showcase — a second Vite entry so it loads
         // the app's real index.css (same hashed asset, single source of
         // truth) instead of a hand-duplicated copy of the tokens.
-        designSystem: resolve(__dirname, 'design-system.html'),
+        designSystem: resolve(import.meta.dirname, 'design-system.html'),
       },
     },
   },

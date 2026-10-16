@@ -8,23 +8,7 @@ import Moment from '../components/storybook/Moment.jsx';
 import PageFoot from '../components/storybook/PageFoot.jsx';
 import { ART } from '../components/storybook/art.js';
 import { formatRange } from '../lib/dates.js';
-
-function countGroups(selectedDates) {
-  const sorted = [...selectedDates].sort();
-  if (!sorted.length) return 0;
-  let groups = 1;
-  for (let i = 1; i < sorted.length; i++) {
-    const d1 = new Date(sorted[i - 1] + 'T00:00:00');
-    const d2 = new Date(sorted[i] + 'T00:00:00');
-    if ((d2 - d1) / 86400000 !== 1) groups++;
-  }
-  return groups;
-}
-
-// True when the organizer restricted to only weekend-adjacent days (Fri/Sat/Sun)
-function isWeekendOnly(allowedDays) {
-  return allowedDays.length > 0 && allowedDays.every(d => [0, 5, 6].includes(d));
-}
+import { choiceNoun, countChosen } from '../lib/schedule.js';
 
 export default function ParticipantView() {
   const { token } = useParams();
@@ -200,9 +184,9 @@ export default function ParticipantView() {
   // Screen: dates
   if (screen === 'dates') {
     const isUpdating = (event.respondedAttendees || []).includes(selectedAttendee);
-    const weekendOnly = isWeekendOnly(event.allowedDays || []);
-    const selectionCount = weekendOnly ? countGroups(selectedDates) : selectedDates.size;
-    const selectionLabel = weekendOnly ? `weekend${selectionCount !== 1 ? 's' : ''}` : `date${selectionCount !== 1 ? 's' : ''}`;
+    const noun = choiceNoun(event.allowedDays);
+    const selectionCount = countChosen(event.dateWindow, event.allowedDays, selectedDates);
+    const selectionLabel = `${noun}${selectionCount !== 1 ? 's' : ''}`;
     return (
       <div className="container">
         {header}
@@ -218,7 +202,7 @@ export default function ParticipantView() {
             {isUpdating ? `Update your picks, ${selectedAttendee}.` : `Hi, ${selectedAttendee}! When are you free?`}
           </h2>
           <p className="section-sub">
-            Tap every date that works for you.{' '}
+            {noun === 'date' ? 'Tap every date that works for you.' : `Tap every ${noun} that works for you. One tap covers all its days.`}{' '}
             <strong className={selectionCount > 0 ? 'count-good' : 'count-none'}>
               {selectionCount} {selectionLabel} selected.
             </strong>
@@ -260,9 +244,8 @@ export default function ParticipantView() {
 
   // Screen: confirm
   const savedCount = (() => {
-    const weekendOnly = isWeekendOnly(event.allowedDays || []);
-    const n = weekendOnly ? countGroups(selectedDates) : selectedDates.size;
-    return `${n} ${weekendOnly ? 'weekend' : 'date'}${n !== 1 ? 's' : ''} saved`;
+    const n = countChosen(event.dateWindow, event.allowedDays, selectedDates);
+    return `${n} ${choiceNoun(event.allowedDays)}${n !== 1 ? 's' : ''} saved`;
   })();
   return (
     <div className="container">

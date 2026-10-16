@@ -1,37 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getEvent } from '../api/client.js';
+import { guestOptions, describeDays } from '../lib/schedule.js';
 import EventHeader from '../components/storybook/EventHeader.jsx';
 import Moment from '../components/storybook/Moment.jsx';
 import PageFoot from '../components/storybook/PageFoot.jsx';
 import { ART } from '../components/storybook/art.js';
 
-function isWeekendOnly(allowedDays) {
-  return allowedDays.length > 0 && allowedDays.every(d => [0, 5, 6].includes(d));
-}
-
-function getWeekendBlocks(dateWindow, allowedDays) {
-  const blocks = [];
-  const end = new Date(dateWindow.end + 'T00:00:00');
-  const cur = new Date(dateWindow.start + 'T00:00:00');
-  const allowed = new Set(allowedDays.length ? allowedDays : [0, 1, 2, 3, 4, 5, 6]);
-  let block = [];
-  while (cur <= end) {
-    if (allowed.has(cur.getDay())) {
-      block.push(cur.toISOString().split('T')[0]);
-    } else if (block.length) {
-      blocks.push(block);
-      block = [];
-    }
-    cur.setDate(cur.getDate() + 1);
-  }
-  if (block.length) blocks.push(block);
-  return blocks;
-}
-
 function blockLabel(dates) {
-  const fmt = d => new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  return `${fmt(dates[0])} – ${fmt(dates[dates.length - 1])}`;
+  const fmt = d => new Date(d + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  return dates.length === 1 ? fmt(dates[0]) : `${fmt(dates[0])} – ${fmt(dates[dates.length - 1])}`;
 }
 
 export default function ResultsMatrix() {
@@ -68,8 +46,8 @@ export default function ResultsMatrix() {
   if (!event) return null;
 
   const allowedDays = event.allowedDays || [];
-  const weekendOnly = isWeekendOnly(allowedDays);
-  const blocks = getWeekendBlocks(event.dateWindow, allowedDays);
+  const { mode, blocks } = guestOptions(event.dateWindow, allowedDays);
+  const choiceLabel = mode === 'blocks' ? describeDays(allowedDays) : 'Date';
   const attendees = event.attendees;
   const responses = event.attendeeResponses || {};
 
@@ -134,11 +112,11 @@ export default function ResultsMatrix() {
       {/* Matrix */}
       {anyReplies && (
       <div className="card" style={{ padding: 0, overflowX: 'auto' }}>
-        <h2 className="section-title" style={{ padding: '24px 24px 8px' }}>Who’s free {weekendOnly ? 'which weekend' : 'when'}</h2>
+        <h2 className="section-title" style={{ padding: '24px 24px 8px' }}>Who’s free when</h2>
         <table style={{ tableLayout: 'auto', fontSize: '.85rem' }}>
           <thead>
             <tr>
-              <th style={{ paddingLeft: 24, minWidth: 130 }}>{weekendOnly ? 'Weekend' : 'Dates'}</th>
+              <th style={{ paddingLeft: 24, minWidth: 130 }}>{choiceLabel}</th>
               {attendees.map(f => (
                 <th key={f} style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{f}</th>
               ))}
@@ -184,7 +162,7 @@ export default function ResultsMatrix() {
           <tfoot>
             <tr style={{ background: 'var(--gray-light)', borderTop: '2px solid var(--border)' }}>
               <td style={{ paddingLeft: 24, fontWeight: 700, color: 'var(--text-muted)', fontSize: '.78rem', borderBottom: 'none' }}>
-                {weekendOnly ? 'Weekends' : 'Dates'} available
+                Choices they can make
               </td>
               {attendeeTotals.map((t, i) => (
                 <td key={i} style={{ textAlign: 'center', fontWeight: 800, color: t > 0 ? 'var(--green-dark)' : 'var(--text-muted)', borderBottom: 'none' }}>
@@ -196,7 +174,7 @@ export default function ResultsMatrix() {
           </tfoot>
         </table>
         <p style={{ padding: '12px 24px', margin: 0, fontSize: '.78rem', color: 'var(--text-muted)', borderTop: '1px solid var(--gray-light)' }}>
-          ✓ = all days available &nbsp;·&nbsp; ~ = partial &nbsp;·&nbsp; — = not available
+          ✓ = free every day &nbsp;·&nbsp; ~ = partial &nbsp;·&nbsp; — = not available
         </p>
       </div>
       )}

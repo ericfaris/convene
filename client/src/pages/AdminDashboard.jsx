@@ -7,6 +7,7 @@ import EventHeader from '../components/storybook/EventHeader.jsx';
 import Moment from '../components/storybook/Moment.jsx';
 import { ART } from '../components/storybook/art.js';
 import { formatRange } from '../lib/dates.js';
+import { guestOptions } from '../lib/schedule.js';
 
 export default function AdminDashboard() {
   const { token } = useParams();
@@ -99,6 +100,7 @@ export default function AdminDashboard() {
   const totalAttendees = event.attendees.length;
   const pct = totalAttendees > 0 ? (respondedCount / totalAttendees) * 100 : 0;
   const isFinalized = event.status === 'finalized' && event.finalizedDates?.start;
+  const blockMode = guestOptions(event.dateWindow, event.allowedDays).mode === 'blocks';
   const finalRange = formatRange(event.finalizedDates?.start, event.finalizedDates?.end);
 
   return (
@@ -187,13 +189,15 @@ export default function AdminDashboard() {
       {suggestedWindows.length > 0 && (
         <div className="card">
           <h2 className="section-title">Top suggested dates</h2>
-          <p className="section-sub">Ranked by how many people can make every day.</p>
+          <p className="section-sub">{blockMode
+            ? 'The blocks guests picked from, ranked by how many people are free on every day of the block.'
+            : 'Single days, ranked by how many people are free.'}</p>
           <div className="option-grid">
             {suggestedWindows.map((w, i) => (
               <div key={i} className={`option-card${i === 0 ? ' is-best' : ''}`}>
                 <span className="option-label">{i === 0 ? '★ Best pick' : `#${i + 1}`}</span>
                 <span className="option-dates">{formatRange(w.start, w.end)}</span>
-                <span className="option-meta">{w.attendeeCount} of {totalAttendees} available</span>
+                <span className="option-meta">{w.attendeeCount} of {totalAttendees} free{w.start !== w.end || blockMode ? ' every day' : ''}</span>
                 {!isFinalized && (
                   <button
                     className={`btn btn-sm ${i === 0 ? 'btn-primary' : 'btn-secondary'}`}

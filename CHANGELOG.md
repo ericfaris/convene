@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- **"When could it happen?"** section on the create form. Window start and end are labeled as the inclusive first and last days guests can pick. Day-of-week presets (Every day, Weekends Fri–Sun, Sat & Sun, Weeknights Mon–Thu) come with a hint that says exactly which days are hidden and whether guests tap single days or whole blocks.
+- **Live "What guests will see" preview**: a plain-language summary, the first few choices, and warnings when a block is cut short by the window's edge, the window starts in the past, or the window is very long. It blocks submitting a window that ends before it starts or contains none of the chosen days.
+- **"How dates work" guide**: a four-step modal covering the window, days of the week, single days vs. blocks, and how the best date is ranked. It ends with "With your settings…".
+
+### Fixed
+- Organizer suggestions now rank the choices guests actually saw, by **people free on every day** of them. Before, they always proposed Fri–Sun/Sat–Mon windows regardless of the chosen days, and counted person-days, which could read as "6 of 5 available".
+- Results for an every-day event list one row per date instead of one row for the whole window.
+- Guests east of UTC (e.g. Europe) saw every calendar date shifted back by one day.
+- The server rejects a window that ends before it starts or contains none of the chosen days.
+- Date inputs no longer clip their text on narrow phones.
+
 ## 1.0.0 — 2026-10-16
 
 The first official release. Convene finds the date everyone can make: suggest a window, share one link, and lock in the best date. No sign-ups, no app.

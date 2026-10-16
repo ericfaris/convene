@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { toISO } from '../lib/dates.js';
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -23,7 +24,7 @@ function buildFinalizedSet(finalizedDates) {
   const cur = new Date(finalizedDates.start + 'T00:00:00');
   const end = new Date(finalizedDates.end + 'T00:00:00');
   while (cur <= end) {
-    s.add(cur.toISOString().split('T')[0]);
+    s.add(toISO(cur));
     cur.setDate(cur.getDate() + 1);
   }
   return s;
@@ -50,7 +51,7 @@ function buildWeekRows(dateWindow, allowedDays) {
     for (const dow of cols) {
       const d = new Date(cursor);
       d.setDate(cursor.getDate() + dow);
-      const dateStr = d.toISOString().split('T')[0];
+      const dateStr = toISO(d);
       const inRange = dateStr >= dateWindow.start && dateStr <= dateWindow.end;
 
       if (inRange) {

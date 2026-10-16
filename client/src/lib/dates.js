@@ -28,3 +28,9 @@ export function formatRange(start, end) {
   const mdy = { ...md, year: 'numeric' };
   return `${a.toLocaleDateString('en-US', mdy)} – ${b.toLocaleDateString('en-US', mdy)}`;
 }
+
+/** Local-calendar ISO day for a Date built from local parts (never toISOString, which shifts east of UTC). */
+export function toISO(date) {
+  const p = n => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${p(date.getMonth() + 1)}-${p(date.getDate())}`;
+}

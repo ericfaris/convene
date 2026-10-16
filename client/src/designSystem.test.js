@@ -52,6 +52,7 @@ const COMPONENTS = [
   'masthead', 'moment', 'moment-art', 'moment-title', 'section-title', 'chapter-sm',
   'attendee-btn', 'toggle-pill', 'option-card', 'card-emphasis', 'card-warn',
   'banner-warn', 'link-btn', 'btn-block', 'page-foot',
+  'fieldset', 'field-help', 'help-btn', 'preview', 'choice-chip', 'guide', 'mini-cal', 'mini-day', 'mini-block',
 ];
 
 describe('storybook components', () => {

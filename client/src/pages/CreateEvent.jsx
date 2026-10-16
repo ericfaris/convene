@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { createEvent } from '../api/client.js';
 import Moment from '../components/storybook/Moment.jsx';
 import { ART } from '../components/storybook/art.js';
+import DateWindowFields from '../components/DateWindowFields.jsx';
+import { previewWindow } from '../lib/schedule.js';
 
 export default function CreateEvent() {
-  const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6];
-  const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   const [form, setForm] = useState({
     name: '',
@@ -24,10 +24,6 @@ export default function CreateEvent() {
     setForm(f => ({ ...f, [key]: value }));
   }
 
-  function setDateWindow(key, value) {
-    setForm(f => ({ ...f, dateWindow: { ...f.dateWindow, [key]: value } }));
-  }
-
   function updateAttendee(i, val) {
     const attendees = [...form.attendees];
     attendees[i] = val;
@@ -42,20 +38,11 @@ export default function CreateEvent() {
     setField('attendees', form.attendees.filter((_, idx) => idx !== i));
   }
 
-  function toggleDay(dow) {
-    setForm(f => {
-      const has = f.allowedDays.includes(dow);
-      if (has && f.allowedDays.length === 1) return f;
-      return {
-        ...f,
-        allowedDays: has ? f.allowedDays.filter(d => d !== dow) : [...f.allowedDays, dow].sort((a, b) => a - b)
-      };
-    });
-  }
-
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    const check = previewWindow(form.dateWindow, form.allowedDays);
+    if (check.status === 'error') { setError(`${check.headline} ${check.detail}`); return; }
     setLoading(true);
     try {
       const attendees = form.attendees.map(f => f.trim()).filter(Boolean);
@@ -157,53 +144,12 @@ export default function CreateEvent() {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 12 }}>
-            <div className="field">
-              <label htmlFor="ev-start">Window Start *</label>
-              <input
-                type="date"
-                required
-                id="ev-start"
-                value={form.dateWindow.start}
-                onChange={e => setDateWindow('start', e.target.value)}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="ev-end">Window End *</label>
-              <input
-                type="date"
-                required
-                id="ev-end"
-                value={form.dateWindow.end}
-                onChange={e => setDateWindow('end', e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="field">
-            <label id="ev-days">Days of week to show</label>
-            <div role="group" aria-labelledby="ev-days" style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
-              {ALL_DAYS.map(dow => {
-                const active = form.allowedDays.includes(dow);
-                return (
-                  <button
-                    key={dow}
-                    type="button"
-                    className="toggle-pill"
-                    aria-pressed={active}
-                    onClick={() => toggleDay(dow)}
-                  >
-                    {DAY_NAMES[dow]}
-                  </button>
-                );
-              })}
-            </div>
-            {form.allowedDays.length < 7 && (
-              <div className="field-hint">
-                Only {form.allowedDays.map(d => DAY_NAMES[d]).join(', ')} will be shown to participants.
-              </div>
-            )}
-          </div>
+          <DateWindowFields
+            dateWindow={form.dateWindow}
+            allowedDays={form.allowedDays}
+            onWindowChange={w => setField('dateWindow', w)}
+            onDaysChange={days => setField('allowedDays', days)}
+          />
 
           <div className="field">
             <label>Attendees</label>

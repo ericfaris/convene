@@ -1,39 +1,10 @@
-import { formatDay } from '../lib/dates.js';
+import { formatDay, toISO } from '../lib/dates.js';
+import { guestOptions } from '../lib/schedule.js';
 import { useMemo } from 'react';
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 // --- Grouped button mode (when allowedDays is a subset) ---
-
-function generateFilteredDates(start, end, allowedDays) {
-  const allowed = new Set(allowedDays);
-  const dates = [];
-  const cur = new Date(start + 'T00:00:00');
-  const endDate = new Date(end + 'T00:00:00');
-  while (cur <= endDate) {
-    if (allowed.has(cur.getDay())) dates.push(cur.toISOString().split('T')[0]);
-    cur.setDate(cur.getDate() + 1);
-  }
-  return dates;
-}
-
-function groupConsecutive(dates) {
-  if (!dates.length) return [];
-  const groups = [];
-  let cur = [dates[0]];
-  for (let i = 1; i < dates.length; i++) {
-    const d1 = new Date(dates[i - 1] + 'T00:00:00');
-    const d2 = new Date(dates[i] + 'T00:00:00');
-    if ((d2 - d1) / 86400000 === 1) {
-      cur.push(dates[i]);
-    } else {
-      groups.push(cur);
-      cur = [dates[i]];
-    }
-  }
-  groups.push(cur);
-  return groups;
-}
 
 function formatDate(dateStr, opts) {
   return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', opts);
@@ -46,10 +17,10 @@ function groupLabel(dates) {
 }
 
 function GroupedButtons({ dateWindow, allowedDays, selected, onToggleGroup, disabled }) {
-  const groups = useMemo(() => {
-    const filtered = generateFilteredDates(dateWindow.start, dateWindow.end, allowedDays);
-    return groupConsecutive(filtered);
-  }, [dateWindow.start, dateWindow.end, allowedDays.join(',')]);
+  const groups = useMemo(
+    () => guestOptions(dateWindow, allowedDays).blocks,
+    [dateWindow.start, dateWindow.end, allowedDays.join(',')]
+  );
 
   let lastMonth = null;
 
@@ -133,7 +104,7 @@ function buildWeekRows(dateWindow) {
     for (const dow of cols) {
       const d = new Date(cursor);
       d.setDate(cursor.getDate() + dow);
-      const dateStr = d.toISOString().split('T')[0];
+      const dateStr = toISO(d);
       const inRange = dateStr >= dateWindow.start && dateStr <= dateWindow.end;
       if (inRange) {
         const month = dateStr.slice(0, 7);
@@ -226,7 +197,7 @@ function FullGrid({ dateWindow, selected, onToggle, disabled }) {
 // --- Main export ---
 
 export default function CalendarGrid({ dateWindow, selected, onToggle, onToggleGroup, disabled = false, allowedDays = [] }) {
-  const useGrouped = allowedDays.length > 0 && allowedDays.length < 7;
+  const useGrouped = guestOptions(dateWindow, allowedDays).mode === 'blocks';
 
   if (useGrouped) {
     return (

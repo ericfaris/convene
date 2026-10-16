@@ -250,6 +250,9 @@ input:disabled, textarea:disabled {
 }
 
 textarea { resize: vertical; min-height: 80px; }
+@media (max-width: 520px) {
+  input[type="date"] { padding-inline: 8px; font-size: .95rem; }
+}
 
 /* ── Buttons ────────────────────────────────────────────────────── */
 .btn {
@@ -294,6 +297,11 @@ textarea { resize: vertical; min-height: 80px; }
 }
 .btn-danger:hover:not(:disabled) { background: #fee2e2; }
 .btn-sm { padding: 6px 12px; font-size: var(--text-body-sm); }
+.btn-secondary[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: var(--primary-pale);
+  color: var(--primary-dark);
+}
 
 /* ── Form helpers ───────────────────────────────────────────────── */
 .field { margin-bottom: var(--space-5); }
@@ -754,6 +762,181 @@ input.input-sm { width: auto; padding: 6px 10px; font-size: .9rem; }
 }
 
 .loading-note { color: var(--text-muted); font-weight: 600; text-align: center; padding: var(--space-12) 0; }
+
+/* Fieldset grouping a related set of form fields under a display heading */
+.fieldset { border: 0; padding: 0; margin: 0 0 var(--space-6); min-width: 0; }
+.fieldset > legend { padding: 0; margin-bottom: var(--space-1); }
+.field-help { font-size: var(--text-body-sm); color: var(--text-muted); font-weight: 500; margin: 0 0 var(--space-2); }
+.help-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--primary-pale);
+  border: 2px solid var(--primary-light);
+  border-radius: var(--radius-pill);
+  color: var(--primary-dark);
+  font: inherit;
+  font-size: var(--text-body-sm);
+  font-weight: 800;
+  padding: 6px 14px 6px 8px;
+  cursor: pointer;
+  transition: transform var(--duration-micro) var(--ease-press), box-shadow var(--duration-base) var(--ease-standard);
+}
+.help-btn:hover { box-shadow: var(--shadow-stamp); transform: translate(-1px, -1px); }
+.help-btn-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 22px; height: 22px;
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+  color: #fff;
+  font-size: .8rem;
+}
+
+/* Live preview of a setting's effect ("What guests will see") */
+.preview {
+  border: 2px dashed var(--primary-light);
+  border-radius: var(--radius);
+  background: var(--bg);
+  padding: var(--space-4) var(--space-5);
+  margin-top: var(--space-4);
+}
+.preview .eyebrow { color: var(--primary-dark); margin: 0 0 var(--space-2); }
+.preview-headline { font-weight: 800; margin: 0 0 var(--space-1); }
+.preview-detail { color: var(--text-muted); font-weight: 500; font-size: var(--text-body-sm); margin: 0; }
+.preview-choices { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+.preview-warnings { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: grid; gap: var(--space-1); }
+.preview-warnings li { font-size: var(--text-body-sm); font-weight: 600; color: #92400E; }
+.preview-warnings li::before { content: '! '; font-weight: 800; color: var(--yellow); }
+.preview.is-error { border-color: var(--red-border); background: var(--red-pale); }
+.preview.is-error .preview-headline { color: var(--red); }
+.preview.is-empty .preview-headline { color: var(--text-muted); font-weight: 600; }
+
+/* A single guest choice, as guests will see it */
+.choice-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  font-size: var(--text-body-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.choice-chip.is-partial { border-style: dashed; color: var(--text-muted); }
+.choice-chip.is-more { border-color: transparent; background: none; color: var(--text-muted); }
+
+/* Guide: a step-by-step modal explainer (<dialog>) */
+.guide {
+  width: min(560px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  border: 0;
+  border-radius: var(--radius-lg);
+  padding: 0;
+  background: var(--card);
+  color: var(--text);
+  box-shadow: var(--shadow-print);
+  overflow: auto;
+}
+.guide::backdrop { background: rgba(28, 25, 23, .55); }
+.guide-inner { padding: var(--space-7); }
+.guide-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); }
+.guide-close {
+  flex: none;
+  width: 36px; height: 36px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.guide-close:hover { border-color: var(--primary); }
+.guide-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.7rem;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  margin: 0 0 var(--space-3);
+  text-wrap: balance;
+}
+.guide-body { color: var(--text-muted); font-weight: 500; line-height: 1.65; margin: 0 0 var(--space-3); }
+.guide-body strong { color: var(--text); }
+.guide-figure {
+  margin: var(--space-5) 0;
+  padding: var(--space-5);
+  border-radius: var(--radius);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  position: relative;
+}
+.guide-figure .sticker-pinned { right: -8px; bottom: -14px; }
+.guide-compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); }
+.guide-compare h4 { margin: 0 0 var(--space-2); font-size: var(--text-body-sm); font-weight: 800; }
+.guide-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  flex-wrap: wrap;
+}
+.guide-dots { display: flex; gap: 6px; }
+.guide-dot {
+  width: 26px; height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+  cursor: pointer;
+}
+.guide-dot[aria-current="step"] { background: var(--primary); }
+.guide-yours {
+  margin-top: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--green-pale);
+  color: var(--green-dark);
+  font-weight: 700;
+  font-size: var(--text-body-sm);
+}
+
+/* Mini calendar used in diagrams */
+.mini-cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.mini-cal-head { font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); text-align: center; }
+.mini-cal-head.is-on { color: var(--primary-dark); }
+.mini-day {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--text-faint);
+  background: transparent;
+}
+.mini-day.is-in   { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+.mini-day.is-on   { background: var(--primary-pale); color: var(--primary-dark); border: 1.5px solid var(--primary-light); }
+.mini-day.is-pick { background: var(--green); color: #fff; border: 0; }
+.mini-day.is-edge { box-shadow: 0 0 0 2px var(--ink); }
+.mini-blocks { display: grid; gap: 6px; }
+.mini-block {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  background: var(--card);
+  font-size: var(--text-body-sm);
+  font-weight: 700;
+}
+.mini-block.is-pick { background: var(--green); border-color: var(--green); color: #fff; }
+.mini-block.is-partial { border-style: dashed; color: var(--text-muted); }
 
 /* "Planned with Convene" footer on guest-facing pages */
 .page-foot {

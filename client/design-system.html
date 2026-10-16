@@ -407,6 +407,62 @@
         </div>
 
         <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.fieldset</code> + <code class="ds-var">.field-help</code> + <code class="ds-var">.help-btn</code> — grouped form section with an explainer trigger</span>
+          <fieldset class="fieldset" style="margin:0;">
+            <legend><span class="section-title">When could it happen?</span></legend>
+            <p class="field-help">Set the range of dates guests can choose from, then which days of the week count.</p>
+            <button type="button" class="help-btn"><span class="help-btn-mark" aria-hidden="true">?</span> How dates work</button>
+          </fieldset>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.preview</code> (ok / <code class="ds-var">.is-error</code>) + <code class="ds-var">.choice-chip</code> (<code class="ds-var">.is-partial</code>, <code class="ds-var">.is-more</code>) — live “what guests will see”</span>
+          <div class="preview is-ok">
+            <p class="eyebrow">What guests will see</p>
+            <p class="preview-headline">Guests will see 3 Fri–Sun blocks between Sat, Jul 4, 2026 and Sun, Jul 19, 2026.</p>
+            <p class="preview-detail">Each block is one tap: tapping it marks every day in it.</p>
+            <div class="preview-choices"><span class="choice-chip is-partial">Sat Jul 4 – Sun Jul 5</span><span class="choice-chip">Fri Jul 10 – Sun Jul 12</span><span class="choice-chip">Fri Jul 17 – Sun Jul 19</span><span class="choice-chip is-more">+2 more</span></div>
+            <ul class="preview-warnings"><li>The first block is only Sat–Sun (Jul 4) because the window starts on a Saturday.</li></ul>
+          </div>
+          <div class="preview is-error">
+            <p class="eyebrow">What guests will see</p>
+            <p class="preview-headline">No Fri–Sun falls inside this window.</p>
+            <p class="preview-detail">Widen the window or turn on more days of the week.</p>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.guide</code> — step-by-step explainer modal (<code class="ds-var">&lt;DatesGuide&gt;</code>, a native <code class="ds-var">&lt;dialog&gt;</code>), shown inline here; diagrams use <code class="ds-var">.mini-cal</code> / <code class="ds-var">.mini-day</code> / <code class="ds-var">.mini-block</code></span>
+          <div class="guide" style="position: static; display: block; margin: 0;">
+            <div class="guide-inner">
+              <div class="guide-head">
+                <p class="chapter chapter-sm"><span class="chapter-num">03</span><span class="eyebrow">What guests tap</span></p>
+                <button type="button" class="guide-close" aria-label="Close">✕</button>
+              </div>
+              <h3 class="guide-title">Every day on means single days. Some days on means blocks.</h3>
+              <p class="guide-body">With <strong>only some days on</strong>, back-to-back days bundle into one tap.</p>
+              <div class="guide-figure guide-compare">
+                <div><h4>All 7 days on</h4>
+                  <div class="mini-cal">
+                    <span class="mini-cal-head">Sun</span><span class="mini-cal-head">Mon</span><span class="mini-cal-head">Tue</span><span class="mini-cal-head">Wed</span><span class="mini-cal-head">Thu</span><span class="mini-cal-head is-on">Fri</span><span class="mini-cal-head is-on">Sat</span>
+                    <span class="mini-day">5</span><span class="mini-day is-in">6</span><span class="mini-day is-in">7</span><span class="mini-day is-in is-edge">8</span><span class="mini-day is-in">9</span><span class="mini-day is-pick">10</span><span class="mini-day is-pick">11</span>
+                    <span class="mini-day is-on">12</span><span class="mini-day is-in">13</span><span class="mini-day is-in">14</span><span class="mini-day is-in">15</span><span class="mini-day is-in">16</span><span class="mini-day is-on">17</span><span class="mini-day is-on">18</span>
+                  </div>
+                </div>
+                <div><h4>Fri–Sun on</h4>
+                  <div class="mini-blocks"><span class="mini-block is-partial"><span>Sat Jul 4 – Sun Jul 5</span></span><span class="mini-block is-pick"><span>Fri Jul 10 – Sun Jul 12</span><span>✓</span></span><span class="mini-block"><span>Fri Jul 17 – Sun Jul 19</span></span></div>
+                </div>
+              </div>
+              <p class="guide-yours">✓ With your settings: Guests will see 5 Fri–Sun blocks.</p>
+              <div class="guide-foot">
+                <div class="guide-dots"><button type="button" class="guide-dot" aria-label="Step 1"></button><button type="button" class="guide-dot" aria-label="Step 2"></button><button type="button" class="guide-dot" aria-current="step" aria-label="Step 3"></button><button type="button" class="guide-dot" aria-label="Step 4"></button></div>
+                <div style="display:flex; gap:8px;"><button type="button" class="btn btn-secondary">Back</button><button type="button" class="btn btn-primary">Next</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
           <span class="ds-label"><code class="ds-var">.btn-block</code> / <code class="ds-var">.link-btn</code> / <code class="ds-var">.page-foot</code></span>
           <button class="btn btn-primary btn-block" type="button" style="max-width: 420px;">Send my availability</button>
           <p style="margin: 16px 0 0;"><button class="link-btn" type="button">← Not Jane?</button></p>

@@ -18,7 +18,8 @@ describe('CreateEvent', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Suggest a window.' })).toBeTruthy();
     expect(document.querySelector('.chapter-num').textContent).toBe('01');
     expect(screen.getByLabelText('Event Name *')).toBeTruthy();
-    expect(screen.getByLabelText('Window Start *')).toBeTruthy();
+    expect(screen.getByLabelText('Window start *')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'When could it happen?' })).toBeTruthy();
   });
 
   it('has no "Load Defaults" shortcut (removed: it leaked a hard-coded guest list)', () => {
@@ -29,14 +30,25 @@ describe('CreateEvent', () => {
 
   it('day pills expose pressed state and refuse to deselect the last day', () => {
     renderCreate();
-    const pills = screen.getAllByRole('button', { pressed: true });
-    expect(pills).toHaveLength(7);
+    const group = screen.getByRole('group', { name: 'Days of the week guests can pick' });
+    const pills = [...group.querySelectorAll('.toggle-pill')];
+    expect(pills.filter(p => p.getAttribute('aria-pressed') === 'true')).toHaveLength(7);
     pills.slice(0, 6).forEach(p => fireEvent.click(p));
-    const sat = screen.getByRole('button', { name: 'Sat' });
+    const sat = screen.getByRole('button', { name: 'Saturday' });
     expect(sat.getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(sat);
     expect(sat.getAttribute('aria-pressed')).toBe('true');
-    expect(screen.getByText(/Only Sat will be shown/)).toBeTruthy();
+    expect(screen.getByText(/Only Sat appear/)).toBeTruthy();
+  });
+
+  it('refuses to submit a window that ends before it starts, without calling the API', () => {
+    renderCreate();
+    fireEvent.change(screen.getByLabelText('Event Name *'), { target: { value: 'Reunion' } });
+    fireEvent.change(screen.getByLabelText('Window start *'), { target: { value: '2026-07-31' } });
+    fireEvent.change(screen.getByLabelText('Window end *'), { target: { value: '2026-07-01' } });
+    fireEvent.submit(screen.getByRole('button', { name: 'Create my gathering' }).closest('form'));
+    expect(api.createEvent).not.toHaveBeenCalled();
+    expect(screen.getAllByText(/The window ends before it starts/).length).toBeGreaterThan(0);
   });
 
   it('shows the all-set moment with both links after creating', async () => {
@@ -45,8 +57,8 @@ describe('CreateEvent', () => {
     });
     renderCreate();
     fireEvent.change(screen.getByLabelText('Event Name *'), { target: { value: 'Reunion' } });
-    fireEvent.change(screen.getByLabelText('Window Start *'), { target: { value: '2026-07-01' } });
-    fireEvent.change(screen.getByLabelText('Window End *'), { target: { value: '2026-07-31' } });
+    fireEvent.change(screen.getByLabelText('Window start *'), { target: { value: '2026-07-01' } });
+    fireEvent.change(screen.getByLabelText('Window end *'), { target: { value: '2026-07-31' } });
     fireEvent.click(screen.getByRole('button', { name: 'Create my gathering' }));
     expect(await screen.findByRole('heading', { level: 1, name: 'You’re all set!' })).toBeTruthy();
     expect(screen.getByAltText(ART.allSet.alt)).toBeTruthy();

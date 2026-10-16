@@ -377,6 +377,11 @@ new screen should need little or no page-specific styling.
 | Choice card | `.option-grid` / `.option-card` (`.is-best`) | Ranked options; the best one gets the stamp shadow |
 | Card variants | `.card-emphasis`, `.card-warn`, `.banner-warn` | Active form (finalize), one-time warnings (admin link), "still waiting on…" |
 | Misc | `.btn-block`, `.link-btn`, `.progress-head`, `.loading-note`, `.sr-only`, `.input-sm` | Full-width CTA, "← Back"-style text buttons, progress label row, loading text |
+| Form section | `.fieldset` + `legend > .section-title` + `.field-help` | Group related fields under a display heading with one line of plain-language help |
+| Explainer trigger | `.help-btn` (with `.help-btn-mark` "?") | Opens a `.guide`; place it right under the section help, never hidden in a tooltip |
+| Live preview | `.preview` (`.is-empty`, `.is-error`) + `.choice-chip` (`.is-partial`, `.is-more`) | "What guests will see": the consequence of a setting in plain words, the first few real choices, and warnings. `aria-live="polite"` |
+| Guide modal | `.guide` (native `<dialog>`) / `<DatesGuide>` | Step-by-step explainer: `.chapter-sm` step numeral, `.guide-title`, `.guide-body`, a `.guide-figure` diagram (with a text alternative), `.guide-yours` ("With your settings…"), dot stepper + Back/Next/Got it. Esc, ✕ and backdrop click all close it |
+| Diagram minis | `.mini-cal` / `.mini-day` (`.is-in`, `.is-on`, `.is-pick`, `.is-edge`) / `.mini-block` (`.is-pick`, `.is-partial`) | Tiny calendar and block lists for guides. Generate them from `lib/schedule.js` so they can't drift from real behavior |
 | Footer | `.page-foot` / `<PageFoot>` | "Planned with Convene · Plan your own" on guest-facing pages |
 
 **Moment art** (`components/storybook/art.js`, files in `public/story/`):
@@ -395,6 +400,21 @@ exclamation mark ("Waiting on the organizer.", "It's happening. See you
 there!"). The body says what happens next. Buttons name the action ("Change
 my dates", "Copy guest link"). No emoji in headings or buttons. A ✓ glyph is
 fine inside stickers and tags.
+
+### Explaining a setting
+
+Any setting whose effect isn't obvious gets all three of these:
+1. **Explicit labels and hints**: say what the field *does*, not just what
+   it is ("Window start: first day guests can pick (included)").
+2. **A live `.preview`**: the consequence in a full sentence, the first few
+   real choices, and warnings for surprising edges.
+3. **A `.help-btn` → `.guide`**: a short walkthrough with diagrams, ending
+   on "With your settings…".
+
+The date window and days of the week (`DateWindowFields` + `DatesGuide`) are
+the reference implementation. Their logic lives in `client/src/lib/schedule.js`
+(server twin: `server/lib/schedule.js`), shared by the preview, guide, guest
+calendar, results and organizer suggestions.
 
 ### Illustration recipe (Ideogram)
 
@@ -504,3 +524,11 @@ not autoplaying. All slides share one grid cell, so the height never jumps.
   Calendar day/weekend buttons gained `aria-pressed` and full-date labels.
   Removed "Load Defaults" (it shipped a hard-coded personal guest list).
   Fixed the 2-column date inputs overflowing at phone width.
+- **2026-10-16 (night)** — Made the date window and days of the week
+  explicit. New "When could it happen?" section (`DateWindowFields`) with
+  inclusive start/end hints, day presets, a plain-language days hint, a live
+  "What guests will see" preview with edge warnings, and a four-step "How
+  dates work" guide modal (`DatesGuide`). New components: `.fieldset`,
+  `.field-help`, `.help-btn`, `.preview`, `.choice-chip`, `.guide`,
+  `.mini-cal`/`.mini-day`, `.mini-block`, and the pressed state for
+  `.btn-secondary`. Added the "Explaining a setting" pattern.

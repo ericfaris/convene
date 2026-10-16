@@ -41,7 +41,7 @@ describe('ResultsMatrix', () => {
     renderResults();
     const sticker = (await screen.findByText('Best so far')).closest('.sticker');
     expect(sticker.className).toMatch(/sticker-green/);
-    expect(sticker.textContent).toContain('Jul 17 – Jul 19');
+    expect(sticker.textContent).toContain('Fri, Jul 17 – Sun, Jul 19');
     expect(sticker.textContent).toContain('2 of 3 free');
     expect(screen.getByText('Still waiting on: Betty')).toBeTruthy();
     expect(document.querySelector('table')).toBeTruthy();

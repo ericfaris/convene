@@ -4,6 +4,7 @@ const router = express.Router();
 const Event = require('../models/Event');
 const Response = require('../models/Response');
 const adminAuth = require('../middleware/adminAuth');
+const { suggestWindows, guestBlocks, datesInWindow } = require('../lib/schedule');
 
 function buildHeatmap(responses) {
   const heatmap = {};
@@ -15,60 +16,16 @@ function buildHeatmap(responses) {
   return heatmap;
 }
 
-function getSuggestedWindows(dateWindow, heatmap) {
-  const windows = [];
-  const endDate = new Date(dateWindow.end + 'T00:00:00');
-  const current = new Date(dateWindow.start + 'T00:00:00');
-
-  while (current <= endDate) {
-    const day = current.getDay(); // 0=Sun, 5=Fri, 6=Sat
-
-    // Fri–Sun window
-    if (day === 5) {
-      const d1 = toDateStr(current);
-      const d2Date = addDays(current, 1);
-      const d3Date = addDays(current, 2);
-      if (d3Date <= endDate) {
-        const d2 = toDateStr(d2Date);
-        const d3 = toDateStr(d3Date);
-        const score = (heatmap[d1] || 0) + (heatmap[d2] || 0) + (heatmap[d3] || 0);
-        windows.push({ start: d1, end: d3, attendeeCount: score });
-      }
-    }
-
-    // Sat–Mon window
-    if (day === 6) {
-      const d1 = toDateStr(current);
-      const d2Date = addDays(current, 1);
-      const d3Date = addDays(current, 2);
-      if (d3Date <= endDate) {
-        const d2 = toDateStr(d2Date);
-        const d3 = toDateStr(d3Date);
-        const score = (heatmap[d1] || 0) + (heatmap[d2] || 0) + (heatmap[d3] || 0);
-        windows.push({ start: d1, end: d3, attendeeCount: score });
-      }
-    }
-
-    current.setDate(current.getDate() + 1);
-  }
-
-  return windows.sort((a, b) => b.attendeeCount - a.attendeeCount).slice(0, 3);
-}
-
-function toDateStr(date) {
-  return date.toISOString().split('T')[0];
-}
-
-function addDays(date, n) {
-  const d = new Date(date);
-  d.setDate(d.getDate() + n);
-  return d;
-}
-
 // POST /api/events — create event
 router.post('/', async (req, res) => {
   try {
     const { name, description, dateWindow, attendees, allowedDays = [] } = req.body;
+    if (!datesInWindow(dateWindow?.start, dateWindow?.end).length) {
+      return res.status(400).json({ error: 'The date window needs a start date on or before its end date.' });
+    }
+    if (!guestBlocks(dateWindow, allowedDays).length) {
+      return res.status(400).json({ error: 'None of the chosen days of the week fall inside the date window.' });
+    }
     const adminToken = crypto.randomBytes(24).toString('hex');
     const participantToken = crypto.randomBytes(16).toString('hex');
 
@@ -162,7 +119,7 @@ router.get('/:adminToken/admin', adminAuth, async (req, res) => {
     const event = req.event;
     const responses = await Response.find({ eventId: event._id });
     const heatmap = buildHeatmap(responses);
-    const suggestedWindows = getSuggestedWindows(event.dateWindow, heatmap);
+    const suggestedWindows = suggestWindows(event.dateWindow, event.allowedDays, responses);
 
     res.json({
       event,

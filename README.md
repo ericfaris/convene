@@ -9,7 +9,7 @@ A lightweight gathering availability scheduler. The organizer creates an event w
 ## How it works
 
 0. **Landing page** at `/` tells the story in a six-chapter slideshow and links to the create form
-1. **Organizer** creates an event at `/new` — sets a date window, families list, and allowed days of the week
+1. **Organizer** creates an event at `/new`: a date window (the inclusive first and last days guests can pick), the days of the week guests can pick, and who's invited. With all 7 days on, guests tap single days on a calendar. With only some days on, back-to-back days bundle into one-tap blocks (e.g. each Fri–Sun). A live preview and a "How dates work" guide explain this on the form
 2. **Participant link** is shared with families — each family clicks their name, picks available dates, and submits
 3. **Admin link** (kept private) lets the organizer view all responses, see a heatmap of availability, and finalize dates
 4. Families can return to the participant link at any time to update their availability
@@ -107,7 +107,8 @@ Tunnel is the only public entry point (no raw port is exposed to the network).
 Client unit tests (Vitest + Testing Library, jsdom):
 
 ```bash
-cd client && npm test
+cd client && npm test   # client: pages, components, scheduling, design-system contract
+cd server && npm test   # server: scheduling / suggested dates (node:test)
 ```
 
 They cover the landing slideshow, every page's states (participant, admin, results, create, with the API mocked), the storybook components, date formatting, routing, and a design-system contract test.

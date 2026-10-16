@@ -7,3 +7,8 @@
 - **Autoplay vs. CSS progress bar**: JS `setTimeout` drives the advance (testable with fake timers); the CSS fill is visual only and gets re-keyed on resume so the two never drift.
 - **Deploy gotcha**: push to `main` auto-deploys via the self-hosted runner. The client now has `npm test`, but CI only runs `docker build`, so run the tests locally before pushing.
 - **Shell gotcha**: `pkill -f "<pattern>"` inside a compound Bash command matches its own shell and kills it (exit 144); stop a background server by PID instead.
+
+## 2026-10-16 — Storybook look applied to all in-app pages
+- **Screenshot every state without touching prod data**: Playwright `page.route('**/api/**', …)` against `vite preview` with fixture JSON renders each page state (finalized, closed, empty, not-found) safely. The live app on :8300 shares the production DB, so never create test events there.
+- **`grid-template-columns: 1fr 1fr` overflows on phones** when the cells hold `input[type=date]` (1fr's minimum is min-content). Use `minmax(0, 1fr)`; base inputs now carry `min-width: 0`.
+- **Contract tests pay off immediately**: banning hand-rolled riso effects in page CSS caught a fork on the first run, and banning hex literals in routed pages forced the leftover inline colors onto tokens.

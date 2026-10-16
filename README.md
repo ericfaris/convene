@@ -8,7 +8,8 @@ A lightweight gathering availability scheduler. The organizer creates an event w
 
 ## How it works
 
-1. **Organizer** creates an event at `/` — sets a date window, families list, and allowed days of the week
+0. **Landing page** at `/` tells the story in a six-chapter slideshow and links to the create form
+1. **Organizer** creates an event at `/new` — sets a date window, families list, and allowed days of the week
 2. **Participant link** is shared with families — each family clicks their name, picks available dates, and submits
 3. **Admin link** (kept private) lets the organizer view all responses, see a heatmap of availability, and finalize dates
 4. Families can return to the participant link at any time to update their availability
@@ -33,7 +34,8 @@ A lightweight gathering availability scheduler. The organizer creates an event w
 convene/
 ├── client/          # React frontend (Vite)
 │   └── src/
-│       ├── pages/   # CreateEvent, ParticipantView, AdminDashboard
+│       ├── pages/   # Landing, CreateEvent, ParticipantView, AdminDashboard
+│       ├── landing/ # Landing story slides + styles
 │       └── components/  # CalendarGrid, HeatmapCalendar, FamilyList
 ├── server/          # Express API
 │   ├── models/      # Event, Response (Mongoose)
@@ -100,8 +102,10 @@ Tunnel is the only public entry point (no raw port is exposed to the network).
 
 ## Testing
 
-A Playwright test suite lives at `/tmp/test_convene.py`. It creates a real event, runs multiple family submissions, verifies badges and pre-population, and cleans up after itself.
+Client unit tests (Vitest + Testing Library, jsdom):
 
 ```bash
-python3 /tmp/test_convene.py
+cd client && npm test
 ```
+
+They cover the landing slideshow (navigation, autoplay/pause, reduced motion, CTAs) and top-level routing.

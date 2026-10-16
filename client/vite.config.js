@@ -9,6 +9,10 @@ export default defineConfig({
       '/api': 'http://localhost:3000'
     }
   },
+  test: {
+    environment: 'jsdom',
+    include: ['src/**/*.test.{js,jsx}'],
+  },
   build: {
     rollupOptions: {
       input: {

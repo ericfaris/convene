@@ -1,12 +1,17 @@
 # Convene — Design System
 
-**"Golden Hour Gathering"**
+**"Golden Hour Gathering · Storybook"**
 
 Live showcase: `client/design-system.html` → served at `/design-system.html`
 once built (e.g. https://convene.mooseflip.com/design-system.html), or open
 locally after `npm run build && npm run preview` in `client/`. It renders
 every token and component below directly from `client/src/index.css` —
 nothing on that page is a hand-copied value.
+
+> **House style:** everything new follows the **Storybook layer (§10)**:
+> riso-print illustration cards, real-UI stickers, stamps, outlined chapter
+> numerals, inked emphasis, halftone. Read §10's checklist before building
+> any new screen.
 
 ---
 
@@ -52,8 +57,9 @@ the wrong register for an app whose whole point is "family reunion," not
 
 ### Key moments this system was designed around
 
-1. **Landing on the create-event form** — first impression, the wordmark
-   sets the tone (`h1`/`.display-lg` italic serif).
+1. **Landing page story** (`/`) — first impression: a six-chapter riso
+   storybook slideshow that explains the app before asking for anything
+   (see §10). The create-event form moved to `/new`.
 2. **Picking a weekend as an attendee** — the tactile selector state
    (`AttendeeList` buttons: default → responded → selected).
 3. **Submitting availability** — success confirmation banner/state.
@@ -235,6 +241,8 @@ before this pass, so no JSX changed.
 
 ## 6. Backgrounds & texture
 
+*Riso halftone, paper grain and generated story illustrations are covered in §10.*
+
 A single generated texture: an inline SVG `feTurbulence` noise filter,
 embedded as a data URI directly in the `body` background-image rule (no
 external file). Kept at 2.5% opacity in the app (barely perceptible — just
@@ -278,8 +286,14 @@ charcoal accents"*.
 | `client/src/design-system-main.js` | New — showcase page's JS: imports the real `index.css` and renders live token values via `getComputedStyle`. |
 | `client/vite.config.js` | Updated — added `design-system.html` as a second Rollup build input (multi-page app) so the showcase ships as a real static file at `/design-system.html` sharing the app's actual compiled CSS asset. |
 
-No new fonts/images/audio were generated as production assets — the mood
-board images live only in the session scratchpad, not the repo.
+| `client/public/story/01-chaos.webp` … `06-gather.webp` | Landing story illustrations (Ideogram 4.5, 1024×768 WebP, 27–135 KB each) — see §10. |
+| `client/src/landing/landing.css` | Landing layout only (`.lp-*`); all riso styling comes from the §10 primitives. |
+| `client/src/designSystem.test.js` | Contract test: primitives defined once in `index.css`, shown in the showcase, never forked in page CSS. |
+| `client/src/landing/storySlides.js` | Story copy, art paths, alt text and UI-sticker data for the slideshow. |
+| `client/src/pages/Landing.jsx` | Landing page + carousel. |
+
+The 2026-09-13 mood-board images live only in that session's scratchpad,
+not the repo.
 
 ---
 
@@ -302,6 +316,117 @@ visibility).
 
 ---
 
+## 10. Storybook layer (system-wide)
+
+**Status: house style.** As of 2026-10-16 the riso "storybook" look that
+debuted on the landing page is part of the core system, not a one-off. Any
+new page, feature, empty state, or marketing surface follows it. The base
+tokens and components above (§2–§5) still govern ordinary UI such as forms,
+tables and buttons. The storybook layer sits on top of them.
+
+### Direction
+
+*Golden Hour Gathering, printed.* The app reads like a hand-printed
+invitation or a picture book about the gathering: cream paper, terracotta
+and olive inks slightly out of register, halftone dots, grain, and small
+pieces of real UI stuck on like stickers. It should feel warm, human, and
+low-stakes. Avoid anything that looks like enterprise scheduling software.
+
+### Tokens (`index.css` `:root`)
+
+| Token | Value | Use |
+|---|---|---|
+| `--ink` | `var(--text)` | Sticker outlines and hard sticker shadows |
+| `--riso-a` | `var(--primary-light)` | First misregistered ink pass (print shadow, numeral shadow, stamp) |
+| `--riso-b` | `rgba(101,163,13,.35)` | Olive second pass (print shadow, opposite corner) |
+| `--halftone` / `--halftone-size` | orange 1.2px dots / `14px` | Dot field behind hero and closing sections |
+| `--grain` | SVG fractal noise, 9% | Paper grain over printed art |
+| `--shadow-print` | `9px 10px 0 riso-a, -5px -4px 0 riso-b, shadow-lg` | `.print` |
+| `--shadow-sticker` | `4px 4px 0 var(--ink)` | `.sticker` |
+| `--shadow-stamp` | `3px 3px 0 var(--riso-a)` | `.stamp` |
+| `--tilt` / `--tilt-alt` / `--tilt-sticker` | `-1.2deg` / `1deg` / `2deg` | Print cards alternate; stickers lean the other way |
+| `--duration-print` / `--duration-stick` | `700ms` / `520ms` | Entrance motion, both on `--ease-press` |
+
+### Primitives (`index.css`)
+
+| Class | What it is | Use it for | Don't |
+|---|---|---|---|
+| `.print` (+ `.print-alt`) | Rounded card, tilted, riso offset shadows, grain overlay | Illustrations; at most one hero "artifact" per screen | Wrap forms, tables, or text-heavy cards in it |
+| `.sticker` (+ `-bubble`, `-green`, `-pinned`) | White chip, 2px ink border, hard ink shadow, +2° tilt | Real UI fragments (a date, a link, a status) shown *as content*; `-pinned` sticks it to the corner of a `position: relative` parent; `-green` = finalized/confirmed | Make it a real interactive control; tilted buttons hurt usability |
+| `.stamp` (+ `-green`) | 44px rounded icon square with riso shadow | Feature/promise cards, empty-state icons | Use emoji as the stamp glyph (use a simple text glyph or SVG) |
+| `.chapter` + `.chapter-num` | Outlined italic Fraunces numeral + eyebrow | Real sequences: story chapters, onboarding steps, "step 2 of 3" | Number things that aren't ordered |
+| `.ink-underline` | Primary-colored word with a tilted olive ink stroke | The single most important word of a display headline | Use more than once per screen |
+| `.halftone` | Masked dot field behind a section | Hero and closing CTA sections | Put it behind dense reading text |
+| `.anim-print` / `.anim-stick` | Drop-in and slap-on entrances, reduced-motion gated | First paint of a print or sticker; carousels re-trigger them per slide | Loop them or attach them to routine UI |
+
+### Illustration recipe (Ideogram)
+
+All story art is generated, never stock. Use `ideogram_4_5`, size
+`2304x1728` (4:3), `num_images: 2`, and pick the variant that best matches
+character and palette. It's delivered as 1024×768 WebP: save it to
+`client/public/story/` (or a sibling folder) as-is. End every prompt with
+this suffix, verbatim:
+
+> *Riso print look in a limited palette: terracotta orange, olive green and
+> warm charcoal ink on cream paper; visible grain, halftone dots, slight
+> color misregistration, flat simple shapes, friendly rounded characters
+> with minimal faces. Generous cream negative space. No words, no letters,
+> no text.*
+
+Recurring cast: **Maya**, the organizer, is *"a woman with a short dark bob
+haircut and an orange sweater"*. Guests are drawn as a mix of ages
+(grandmother in a cardigan, couples, a dad with a toddler, a teen) in
+olive/terracotta clothes. Always include "no text" or the model letters
+calendars and signs. Write alt text for every image describing the scene,
+not the style.
+
+### Checklist for new UI
+
+1. Build the structure from §5 components (`.card`, `.btn`, inputs, tags).
+2. Where a screen has a *moment* (empty state, success, a reveal, a
+   marketing block), add **one** storybook element: a `.print` illustration,
+   a `.sticker` of the key fact, or a `.stamp`.
+3. Headlines that carry emotion use Fraunces italic (`h1`, `.display-*`).
+   They can include one `.ink-underline`.
+4. Never hand-roll hard offset shadows, tilts, outlined numerals or grain in
+   page CSS. Use the tokens and classes above. `src/designSystem.test.js`
+   fails the build if a page stylesheet does.
+5. New primitives go into `index.css`, this section, and the Storybook
+   section of `design-system.html` together. The contract test checks that
+   every primitive appears in the showcase.
+
+### Landing page (`/`) — reference implementation
+
+`client/src/pages/Landing.jsx` and `client/src/landing/` (copy in
+`storySlides.js`, layout-only CSS in `landing.css`). One organizer, Maya,
+takes a family reunion from group-chat chaos to a finalized date:
+
+| # | Chapter | Headline | Art | Sticker |
+|---|---|---|---|---|
+| 1 | The problem | Forty-seven messages. Still no date. | `01-chaos` | `.sticker-bubble` |
+| 2 | Suggest | Maya suggests a window. That's it. | `02-suggest` | event name field |
+| 3 | Share | One link. Drop it anywhere. | `03-share` | link + Copy |
+| 4 | Pick | Everyone taps their name, then their days. | `04-pick` | ✓ day pills |
+| 5 | Decide | The best date lights up. | `05-decide` | mini heat strip (`--heat-*`) |
+| 6 | Finalize | Lock it in. See you there. | `06-gather` | `.sticker-green` |
+
+"No sign-ups / no account / no app" is repeated in the hero, chapters 2–3,
+the promise cards and the final CTA. It's the core pitch.
+
+**Carousel behavior:** autoplays every 7s (`AUTOPLAY_MS`), holds on hover
+and focus, has a pause/play button, and doesn't autoplay for
+reduced-motion users. ←/→ keys, swipe, and progress segments that double as
+chapter tabs. It uses `aria-roledescription` carousel/slide, inactive slides
+are `aria-hidden` + `inert`, and a polite live region is active only when
+not autoplaying. All slides share one grid cell, so the height never jumps.
+
+**Tests:** `Landing.test.jsx` (behavior + primitives used),
+`storySlides.test.js` (story data, art files exist), `App.test.jsx`
+(routing), `designSystem.test.js` (system contract). Run `npm test` in
+`client/`.
+
+---
+
 ## Changelog
 
 - **2026-09-13** — Initial `DESIGN.md`. Formalized the app's existing warm
@@ -311,3 +436,17 @@ visibility).
   state, and the `client/design-system.html` live showcase page. No JSX
   changed — every existing page/component picked up the uplift purely
   through the shared `index.css` classes they already used.
+- **2026-10-16** — Added the landing storybook (§10): `/` is now a
+  six-chapter riso-print slideshow telling the suggest → share → pick →
+  decide → finalize story; the create form moved to `/new` (its logo links
+  back home). Six Ideogram illustrations in `client/public/story/`, new
+  `landing.css`, showcase gained a "Storybook" section, and the client got
+  its first test suite (Vitest).
+- **2026-10-16 (later)** — Promoted the storybook look to **house style**.
+  Riso tokens (`--ink`, `--riso-a/b`, `--halftone`, `--grain`,
+  `--shadow-print/sticker/stamp`, `--tilt*`, `--duration-print/stick`) and
+  primitives (`.print`, `.sticker*`, `.stamp*`, `.chapter`/`.chapter-num`,
+  `.ink-underline`, `.halftone`, `.anim-print`/`.anim-stick`) moved from
+  `landing.css` into `index.css`. §10 rewritten as system-wide rules with a
+  checklist and the Ideogram recipe. The showcase's "Storybook primitives"
+  section demos every one. `designSystem.test.js` enforces it.

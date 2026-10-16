@@ -47,6 +47,21 @@
       .ds-texture-sample { height: 120px; border-radius: var(--radius); border: 1px solid var(--border); }
       code.ds-var { background: var(--gray-light); padding: 1px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 12px; }
       footer.ds-footer { text-align: center; color: var(--text-faint); font-size: var(--text-caption); margin-top: var(--space-12); }
+
+      .ds-riso-tokens { display: flex; flex-wrap: wrap; gap: 18px; }
+      .ds-riso-tokens > div { display: flex; align-items: center; gap: 8px; }
+      .ds-riso-sw { width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--border); display: inline-block; }
+      .ds-pinned-demo { position: relative; max-width: 420px; margin-top: 28px; padding: 0 16px 16px 0; }
+      .ds-halftone-demo { padding: 56px 24px; text-align: center; }
+      .ds-anim-demo { display: flex; align-items: center; gap: 28px; padding: 12px; }
+      .ds-anim-demo:hover .anim-print, .ds-anim-demo:focus .anim-print { animation-name: none; }
+      .ds-anim-demo:hover .anim-stick, .ds-anim-demo:focus .anim-stick { animation-name: none; }
+      .ds-story-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 28px 24px; }
+      .ds-story-fig { margin: 0; }
+      .ds-story-fig .print { margin-bottom: 14px; }
+      .ds-story-fig img { display: block; width: 100%; height: auto; }
+      .ds-chip-row { display: flex; flex-wrap: wrap; gap: 20px; }
+      
     </style>
   </head>
   <body>
@@ -226,6 +241,81 @@
             <div class="ds-heat-cell" style="background: var(--heat-3);">3</div>
             <div class="ds-heat-cell" style="background: var(--heat-4);">4</div>
             <div class="ds-heat-cell" style="background: var(--green); border: 2px solid var(--green-dark);">&check;</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ STORYBOOK PRIMITIVES ═════════════════════════════════ -->
+      <section class="ds-section" id="storybook">
+        <h2>Storybook primitives</h2>
+        <p class="ds-desc">The riso-print layer of the system: hand-printed illustration cards, real UI
+        stuck on as stickers, outlined chapter numerals, inked emphasis and halftone fields. Defined in
+        <code class="ds-var">client/src/index.css</code> and available to every page. Rules for when to use
+        each are in DESIGN.md §10.</p>
+
+        <div class="ds-component-block">
+          <span class="ds-label">Riso tokens</span>
+          <div class="ds-riso-tokens">
+            <div><span class="ds-riso-sw" style="background: var(--riso-a)"></span><code class="ds-var">--riso-a</code></div>
+            <div><span class="ds-riso-sw" style="background: var(--riso-b)"></span><code class="ds-var">--riso-b</code></div>
+            <div><span class="ds-riso-sw" style="background: var(--ink)"></span><code class="ds-var">--ink</code></div>
+            <div><span class="ds-riso-sw" style="background-color: var(--bg); background-image: var(--halftone); background-size: var(--halftone-size) var(--halftone-size);"></span><code class="ds-var">--halftone</code></div>
+            <div><span class="ds-riso-sw" style="background-color: var(--bg); background-image: var(--grain); background-size: 160px;"></span><code class="ds-var">--grain</code></div>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.print</code> / <code class="ds-var">.print-alt</code> — printed card (tilt, riso offset shadows, grain). Story art, landing chapters 1–6.</span>
+          <div class="ds-story-grid">
+            <figure class="ds-story-fig"><div class="print"><img src="/story/01-chaos.webp" alt="The problem" width="1024" height="768" loading="lazy" /></div><figcaption class="ds-label">01 · The problem — <code class="ds-var">public/story/01-chaos.webp</code></figcaption></figure>
+            <figure class="ds-story-fig"><div class="print print-alt"><img src="/story/02-suggest.webp" alt="Suggest" width="1024" height="768" loading="lazy" /></div><figcaption class="ds-label">02 · Suggest — <code class="ds-var">public/story/02-suggest.webp</code></figcaption></figure>
+            <figure class="ds-story-fig"><div class="print"><img src="/story/03-share.webp" alt="Share" width="1024" height="768" loading="lazy" /></div><figcaption class="ds-label">03 · Share — <code class="ds-var">public/story/03-share.webp</code></figcaption></figure>
+            <figure class="ds-story-fig"><div class="print print-alt"><img src="/story/04-pick.webp" alt="Pick" width="1024" height="768" loading="lazy" /></div><figcaption class="ds-label">04 · Pick — <code class="ds-var">public/story/04-pick.webp</code></figcaption></figure>
+            <figure class="ds-story-fig"><div class="print"><img src="/story/05-decide.webp" alt="Decide" width="1024" height="768" loading="lazy" /></div><figcaption class="ds-label">05 · Decide — <code class="ds-var">public/story/05-decide.webp</code></figcaption></figure>
+            <figure class="ds-story-fig"><div class="print print-alt"><img src="/story/06-gather.webp" alt="Finalize" width="1024" height="768" loading="lazy" /></div><figcaption class="ds-label">06 · Finalize — <code class="ds-var">public/story/06-gather.webp</code></figcaption></figure>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.sticker</code> + <code class="ds-var">.sticker-bubble</code> / <code class="ds-var">.sticker-green</code> — real UI stuck onto a print (<code class="ds-var">.sticker-pinned</code> pins it bottom-right)</span>
+          <div class="ds-chip-row">
+            <div class="sticker sticker-bubble">wait which weekend?? 🤷</div>
+            <div class="sticker">Summer Reunion · 9 invited</div>
+            <div class="sticker"><span class="tag tag-open">Open</span> 6 of 9 responded</div>
+            <div class="sticker sticker-green"><span class="tag tag-finalized">Finalized</span><strong>Sat, Jul 12</strong></div>
+          </div>
+          <div class="ds-pinned-demo">
+            <div class="print"><img src="/story/05-decide.webp" alt="Pinned sticker example" width="1024" height="768" loading="lazy" /></div>
+            <div class="sticker sticker-pinned"><span class="tag tag-finalized">Best date</span><strong>Sat, Jul 12</strong></div>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.stamp</code> / <code class="ds-var">.stamp-green</code> — small icon mark for feature cards and empty states</span>
+          <div style="display:flex; gap: 16px;"><span class="stamp" aria-hidden="true">✕</span><span class="stamp" aria-hidden="true">↗</span><span class="stamp stamp-green" aria-hidden="true">●</span></div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.chapter</code> + <code class="ds-var">.chapter-num</code> — step marker, only for real sequences</span>
+          <p class="chapter"><span class="chapter-num">05</span><span class="eyebrow">Decide</span></p>
+          <h3 class="display-md" style="margin:0; color: var(--text);">The best date lights up.</h3>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.ink-underline</code> — one inked word per headline, max</span>
+          <h3 class="display-md" style="margin:0; color: var(--text);">Find the date <em class="ink-underline">everyone</em> can make.</h3>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.halftone</code> — dot field behind a closing / emphasis section</span>
+          <div class="halftone ds-halftone-demo"><span class="display-md">Your people are waiting.</span></div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.anim-print</code> / <code class="ds-var">.anim-stick</code> — entrance motion (hover, then move away to replay)</span>
+          <div class="ds-anim-demo" tabindex="0">
+            <div class="print anim-print" style="width: 180px;"><img src="/story/02-suggest.webp" alt="" width="1024" height="768" loading="lazy" /></div>
+            <div class="sticker anim-stick">Stuck on ✓</div>
           </div>
         </div>
       </section>

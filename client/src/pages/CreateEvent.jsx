@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { createEvent } from '../api/client.js';
 
 const DEFAULT_ATTENDEES = [
@@ -127,7 +128,9 @@ export default function CreateEvent() {
   return (
     <div className="container">
       <div className="card">
-        <img src="/logo.svg" alt="Convene" style={{ width: 72, height: 72, marginBottom: 10, display: 'block' }} />
+        <Link to="/" aria-label="Convene home" style={{ display: 'inline-block' }}>
+          <img src="/logo.svg" alt="Convene" style={{ width: 72, height: 72, marginBottom: 10, display: 'block' }} />
+        </Link>
         <h1>Convene</h1>
         <p className="subtitle">Find the best dates for your gathering.</p>
 

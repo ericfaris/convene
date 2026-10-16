@@ -29,6 +29,7 @@ const COLOR_TOKENS = [
   ['--red', 'Red (danger)'], ['--red-pale', 'Red pale'], ['--red-border', 'Red border'],
   ['--text', 'Text'], ['--text-muted', 'Text muted'], ['--text-faint', 'Text faint'],
   ['--heat-0', 'Heat 0'], ['--heat-1', 'Heat 1'], ['--heat-2', 'Heat 2'], ['--heat-3', 'Heat 3'], ['--heat-4', 'Heat 4'],
+  ['--riso-a', 'Riso ink A'], ['--riso-b', 'Riso ink B (olive)'], ['--ink', 'Sticker ink'],
 ];
 
 const colorGrid = document.getElementById('color-swatches');

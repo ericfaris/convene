@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════════
-   CONVENE DESIGN SYSTEM — "Golden Hour Gathering"
+   CONVENE DESIGN SYSTEM — "Golden Hour Gathering · Storybook"
    See /DESIGN.md at the repo root for the full rationale, token
    reference, and component spec. This file is the single source of
    truth for tokens — the showcase page at /design-system.html reads
@@ -94,6 +94,22 @@
   --duration-micro: 120ms;  /* hover/focus color changes */
   --duration-base:  200ms;  /* press, border, background transitions */
   --duration-page:  400ms;  /* staggered reveals, page-level motion */
+  --duration-print: 700ms;  /* storybook: printed card drops in */
+  --duration-stick: 520ms;  /* storybook: sticker slaps on */
+
+  /* ── Storybook (riso print) — see DESIGN.md §10 ───────────────── */
+  --ink:          var(--text);               /* sticker outlines + hard shadows */
+  --riso-a:       var(--primary-light);      /* first misregistered ink pass */
+  --riso-b:       rgba(101, 163, 13, .35);   /* olive second pass */
+  --halftone:     radial-gradient(rgba(234, 88, 12, .14) 1.2px, transparent 1.6px);
+  --halftone-size: 14px;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.09'/%3E%3C/svg%3E");
+  --shadow-print:   9px 10px 0 var(--riso-a), -5px -4px 0 var(--riso-b), var(--shadow-lg);
+  --shadow-sticker: 4px 4px 0 var(--ink);
+  --shadow-stamp:   3px 3px 0 var(--riso-a);
+  --tilt:         -1.2deg;  /* printed cards (odd) */
+  --tilt-alt:      1deg;    /* printed cards (even / alternating) */
+  --tilt-sticker:  2deg;    /* stickers lean the other way */
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -369,6 +385,134 @@ th {
 }
 td { padding: 10px var(--space-3); border-bottom: 1px solid var(--gray-light); vertical-align: top; }
 tr:last-child td { border-bottom: none; }
+
+/* ══ STORYBOOK PRIMITIVES (riso print) — DESIGN.md §10 ═══════════════
+   The shared visual language for illustrated / marketing / "moment"
+   surfaces. Use these instead of re-inventing offsets, tilts or grain. */
+
+/* Printed card: an illustration (or hero block) on slightly crooked paper */
+.print {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg);
+  transform: rotate(var(--tilt));
+  box-shadow: var(--shadow-print);
+}
+.print-alt { transform: rotate(var(--tilt-alt)); }
+.print > img { display: block; width: 100%; height: auto; }
+.print::after {               /* paper grain so art reads printed, not pasted */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* Sticker: a small piece of real UI stuck onto a print or surface */
+.sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px 14px;
+  background: var(--card);
+  color: var(--text);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sticker);
+  font-size: var(--text-body-sm);
+  font-weight: 700;
+  transform: rotate(var(--tilt-sticker));
+}
+.sticker-bubble { border-radius: 18px 18px 4px 18px; background: var(--primary-pale); }
+.sticker-green  { background: var(--green-pale); border-color: var(--green-dark); box-shadow: 4px 4px 0 var(--green-dark); }
+.sticker-green strong { color: var(--green-dark); }
+/* pin to the bottom-right of a position:relative parent (e.g. a figure around .print) */
+.sticker-pinned {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  max-width: calc(100% - var(--space-8));
+}
+
+/* Stamp: small square icon mark (feature/promise cards, empty states) */
+.stamp {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--primary-pale);
+  color: var(--primary-dark);
+  font-weight: 800;
+  font-size: 1.1rem;
+  box-shadow: var(--shadow-stamp);
+}
+.stamp-green { background: var(--green-pale); color: var(--green); box-shadow: 3px 3px 0 var(--green-light); }
+
+/* Chapter / step marker: outlined serif numeral + eyebrow. Only for real sequences. */
+.chapter {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-3);
+}
+.chapter .eyebrow { color: var(--primary-dark); }
+.chapter-num {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 3.4rem;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--primary);
+  text-shadow: 3px 3px 0 var(--riso-a);
+}
+
+/* Inked emphasis: one word per headline, max */
+.ink-underline {
+  color: var(--primary);
+  position: relative;
+  white-space: nowrap;
+}
+.ink-underline::after {
+  content: '';
+  position: absolute;
+  left: 2%; right: 2%; bottom: -.04em;
+  height: .14em;
+  background: var(--green);
+  border-radius: var(--radius-pill);
+  transform: rotate(-1.2deg);
+  opacity: .8;
+}
+
+/* Halftone dot field behind a section; fades out at the edges */
+.halftone { position: relative; isolation: isolate; }
+.halftone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--halftone);
+  background-size: var(--halftone-size) var(--halftone-size);
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 20%, transparent 70%);
+          mask-image: radial-gradient(ellipse at center, #000 20%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Entrance motion for the above — opt-in classes, reduced-motion safe */
+@media (prefers-reduced-motion: no-preference) {
+  .anim-print { animation: convene-print-in var(--duration-print) var(--ease-press) both; }
+  .anim-stick { animation: convene-stick var(--duration-stick) var(--ease-press) 380ms both; }
+}
+@keyframes convene-print-in {
+  from { opacity: 0; transform: rotate(-4deg) translateY(14px) scale(.97); }
+}
+@keyframes convene-stick {
+  from { opacity: 0; transform: rotate(-8deg) scale(.6); }
+  to   { opacity: 1; transform: rotate(var(--tilt-sticker)) scale(1); }
+}
 
 /* ── Page reveal (staggered load, key moment) ────────────────────── */
 @media (prefers-reduced-motion: no-preference) {

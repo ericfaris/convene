@@ -279,8 +279,8 @@ charcoal accents"*.
 
 | File | Role |
 |---|---|
-| `client/public/favicon.ico`, `icon-16/32/48/180/192/512.png` | Existing favicon/app-icon set — already present and on-brand (illustrated family/people mark on a soft green rounded-square background); verified during this pass, not regenerated. |
-| `client/public/logo.svg`, `logo-lockup.svg`, `favicon.svg` | Open Table mark (calendar-cell C + green confirmed-date dot), horizontal lockup, small-size favicon cut. |
+| `client/public/favicon.ico`, `apple-touch-icon.png`, `icon-192/512.png`, `icon-maskable-512.png`, `manifest.webmanifest` | App icon on the house standard shared with every mooseflip app (2026-10-16): a calendar page with a green "this date works" check on a bold orange tile. Rendered from `scripts/icons/icon.svg` by `python3 scripts/icons/build.py`; `client/src/icons.test.js` guards the wiring. |
+| `client/public/logo.svg`, `logo-lockup.svg` | Open Table mark (calendar-cell C + green confirmed-date dot) and horizontal lockup, used in the UI. |
 | `client/src/index.css` | Token source of truth + all component styles (this pass: reorganized into a documented scale, added `--space-*`, `--radius-lg`, `--shadow-lg`, `--heat-0…4`, motion tokens, `.input-error`, focus-visible rules, reduced-motion handling, page-reveal animation, `.display-lg/md`, `.eyebrow`). |
 | `client/design-system.html` | New — static showcase page (Vite multi-entry), see below. |
 | `client/src/design-system-main.js` | New — showcase page's JS: imports the real `index.css` and renders live token values via `getComputedStyle`. |

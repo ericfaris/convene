@@ -12,3 +12,8 @@
 - **Screenshot every state without touching prod data**: Playwright `page.route('**/api/**', …)` against `vite preview` with fixture JSON renders each page state (finalized, closed, empty, not-found) safely. The live app on :8300 shares the production DB, so never create test events there.
 - **`grid-template-columns: 1fr 1fr` overflows on phones** when the cells hold `input[type=date]` (1fr's minimum is min-content). Use `minmax(0, 1fr)`; base inputs now carry `min-width: 0`.
 - **Contract tests pay off immediately**: banning hand-rolled riso effects in page CSS caught a fork on the first run, and banning hex literals in routed pages forced the leftover inline colors onto tokens.
+
+## 2026-10-16 — Explaining the date window / days of week
+- **Never derive a calendar date with `toISOString()` from a local Date**: east of UTC, local midnight is the previous day in UTC, so every date shifts back one. Use UTC math on `YYYY-MM-DD` strings (`lib/schedule.js`) or `toISO()` from local parts (`lib/dates.js`). Tests flip `process.env.TZ` to Pacific/Kiritimati vs Pacific/Pago_Pago to prove it.
+- **Client and server can't share a module** (the Docker build copies `client/` and `server/` separately), so `server/lib/schedule.js` is a CommonJS twin of `client/src/lib/schedule.js`, held in step by `schedule.parity.test.js`, which runs both on the same inputs.
+- **Writing the explainer exposed the bugs**: describing exactly what the settings do (the preview and guide) revealed that suggestions ignored the chosen days and counted person-days. When a feature is hard to explain, check that it behaves the way you'd explain it.

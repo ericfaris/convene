@@ -6,6 +6,7 @@ Group date-finding app: React + Vite client (`client/`), Express + MongoDB API (
 - **`DESIGN.md` is the source of truth.** Read it before touching UI. **§10 Storybook layer is house style**: riso-print look, with `.print`, `.sticker`, `.stamp`, `.chapter`, `.ink-underline`, `.halftone`. Use its checklist for every new screen or state.
 - Tokens and primitives live only in `client/src/index.css`. Page CSS composes them and never hand-rolls offset shadows, tilts, grain or outlined numerals. `client/src/designSystem.test.js` enforces this.
 - New primitives go into `index.css`, DESIGN.md §10 and the "Storybook primitives" section of `client/design-system.html` in the same change.
+- Build pages from `client/src/components/storybook/` (`EventHeader`, `Moment`, `PageFoot`) and the component classes in DESIGN.md §10. Every empty or terminal state is a `<Moment>` with art.
 - New illustrations: generate them with Ideogram using DESIGN.md §10's recipe (exact prompt suffix, recurring character "Maya"), save as WebP under `client/public/story/`, and always write alt text.
 
 ## Working

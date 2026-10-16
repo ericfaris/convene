@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getEvent, submitResponse } from '../api/client.js';
 import CalendarGrid from '../components/CalendarGrid.jsx';
 import AttendeeList from '../components/AttendeeList.jsx';
+import EventHeader from '../components/storybook/EventHeader.jsx';
+import Moment from '../components/storybook/Moment.jsx';
+import PageFoot from '../components/storybook/PageFoot.jsx';
+import { ART } from '../components/storybook/art.js';
+import { formatRange } from '../lib/dates.js';
 
 function countGroups(selectedDates) {
   const sorted = [...selectedDates].sort();
@@ -91,33 +96,60 @@ export default function ParticipantView() {
     }
   }
 
-  if (loading) return <div className="container"><p style={{ color: '#78716C', fontWeight: 600 }}>Loading…</p></div>;
-  if (error) return <div className="container"><div className="error">{error}</div></div>;
+  if (loading) return <div className="container"><p className="loading-note">Loading your invitation…</p></div>;
+  if (error && !event) {
+    const notFound = /not found/i.test(error);
+    return (
+      <div className="container">
+        <Moment
+          art={ART.lost}
+          headingLevel={1}
+          eyebrow={notFound ? 'Link not found' : 'Something went wrong'}
+          title={notFound ? 'We couldn’t find that gathering.' : 'That didn’t load.'}
+          actions={notFound
+            ? <Link to="/" className="btn btn-secondary">What is Convene?</Link>
+            : <button type="button" className="btn btn-primary" onClick={() => window.location.reload()}>Try again</button>}
+        >
+          {notFound
+            ? 'The link may be mistyped, or the organizer removed the event. Ask them to send it again.'
+            : error}
+        </Moment>
+        <PageFoot />
+      </div>
+    );
+  }
   if (!event) return null;
 
   const isFinalized = event.status === 'finalized';
   const isClosed = event.status === 'closed' || isFinalized;
+  const finalRange = formatRange(event.finalizedDates?.start, event.finalizedDates?.end);
 
   const header = (
-    <div className="card" style={{ marginBottom: 20 }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
-        <h1 style={{ margin: 0, fontSize: '1.6rem' }}>{event.name}</h1>
-        <span className={`tag tag-${event.status}`}>{event.status}</span>
-      </div>
-      {event.description && <p style={{ color: '#78716C', margin: '0 0 6px', fontWeight: 500 }}>{event.description}</p>}
-      <div style={{ fontSize: '.85rem', color: '#A8A29E', fontWeight: 600 }}>
-        📅 {event.dateWindow.start} → {event.dateWindow.end}
-      </div>
-    </div>
+    <EventHeader
+      event={event}
+      eyebrow="You’re invited"
+      actions={
+        <button type="button" className="btn btn-secondary btn-sm" onClick={() => navigate(`/e/${token}/results`)}>
+          See results
+        </button>
+      }
+    />
   );
 
   if (isFinalized && event.finalizedDates?.start) {
     return (
       <div className="container">
         {header}
-        <div className="banner">
-          🎉 Dates finalized: <strong>{event.finalizedDates.start} → {event.finalizedDates.end}</strong>
-        </div>
+        <Moment
+          art={ART.finalized}
+          sticker={<><span className="tag tag-finalized">Finalized</span><strong>{finalRange}</strong></>}
+          stickerTone="green"
+          eyebrow="The date is set"
+          title="It’s happening. See you there!"
+        >
+          {`${event.name} is on ${finalRange}. Put it on your calendar.`}
+        </Moment>
+        <PageFoot />
       </div>
     );
   }
@@ -126,11 +158,15 @@ export default function ParticipantView() {
     return (
       <div className="container">
         {header}
-        <div className="card" style={{ background: '#FEF9EE', border: '2px solid #FCD34D', textAlign: 'center', padding: '32px 24px' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: 8 }}>⏳</div>
-          <strong style={{ fontSize: '1.1rem' }}>Submissions are closed.</strong>
-          <p style={{ color: '#78716C', margin: '8px 0 0', fontWeight: 500 }}>Waiting on the organizer to finalize dates.</p>
-        </div>
+        <Moment
+          art={ART.waiting}
+          sticker="Responses closed"
+          eyebrow="Almost there"
+          title="Waiting on the organizer."
+        >
+          Everyone’s picks are in. The final date will show up on this page once it’s locked in.
+        </Moment>
+        <PageFoot />
       </div>
     );
   }
@@ -141,18 +177,13 @@ export default function ParticipantView() {
       <div className="container">
         {header}
         <div className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-            <h2 style={{ marginTop: 0, marginBottom: 0 }}>Who are you? 👋</h2>
-            <button
-              className="btn btn-secondary btn-sm"
-              onClick={() => navigate(`/e/${token}/results`)}
-            >
-              📊 See Results
-            </button>
-          </div>
-          <p style={{ color: '#78716C', fontWeight: 500, margin: '12px 0 16px', fontSize: '.95rem' }}>
-            Tap your name to pick your available dates.
+          <p className="chapter chapter-sm">
+            <span className="chapter-num">01</span>
+            <span className="eyebrow">Find your name</span>
           </p>
+          <h2 className="section-title">Who are you?</h2>
+          <p className="section-sub">Tap your name to pick the dates that work. No sign-up needed.</p>
+          {error && <div className="error">{error}</div>}
           <AttendeeList
             attendees={event.attendees}
             respondedAttendees={event.respondedAttendees}
@@ -161,6 +192,7 @@ export default function ParticipantView() {
             disabled={false}
           />
         </div>
+        <PageFoot />
       </div>
     );
   }
@@ -175,37 +207,23 @@ export default function ParticipantView() {
       <div className="container">
         {header}
         <div className="card">
-          <button
-            type="button"
-            onClick={() => setScreen('list')}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#F97316',
-              cursor: 'pointer',
-              padding: 0,
-              fontSize: '.9rem',
-              fontWeight: 700,
-              marginBottom: 14,
-              fontFamily: 'inherit',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
-            }}
-          >
-            ← Back
+          <button type="button" className="link-btn" onClick={() => setScreen('list')} style={{ marginBottom: 14 }}>
+            ← Not {selectedAttendee}?
           </button>
-          <h2 style={{ marginTop: 0 }}>
-            {isUpdating
-              ? `Update your picks, ${selectedAttendee}! ✏️`
-              : `Hi, ${selectedAttendee}! 👋 Pick your dates.`}
+          <p className="chapter chapter-sm">
+            <span className="chapter-num">02</span>
+            <span className="eyebrow">Pick your days</span>
+          </p>
+          <h2 className="section-title">
+            {isUpdating ? `Update your picks, ${selectedAttendee}.` : `Hi, ${selectedAttendee}! When are you free?`}
           </h2>
-          <p style={{ color: '#78716C', fontSize: '.95rem', fontWeight: 500, margin: '0 0 18px' }}>
-            Select all the dates that work for you.{' '}
-            <strong style={{ color: selectionCount > 0 ? '#65A30D' : '#A8A29E' }}>
+          <p className="section-sub">
+            Tap every date that works for you.{' '}
+            <strong className={selectionCount > 0 ? 'count-good' : 'count-none'}>
               {selectionCount} {selectionLabel} selected.
             </strong>
           </p>
+          {error && <div className="error">{error}</div>}
           <CalendarGrid
             dateWindow={event.dateWindow}
             selected={selectedDates}
@@ -218,38 +236,51 @@ export default function ParticipantView() {
 
         <div className="card">
           <div className="field">
-            <label>Any notes? (optional)</label>
+            <label htmlFor="notes">Any notes? (optional)</label>
             <textarea
-              placeholder="e.g. We can't do the last weekend in July…"
+              id="notes"
+              placeholder="e.g. We can’t do the last weekend in July…"
               value={notes}
               onChange={e => setNotes(e.target.value)}
             />
           </div>
           <button
             type="button"
-            className="btn btn-primary"
+            className="btn btn-primary btn-block"
             disabled={submitting || selectedDates.size === 0}
             onClick={handleSubmit}
-            style={{ width: '100%', justifyContent: 'center', padding: '14px', fontSize: '1.05rem' }}
           >
-            {submitting ? 'Saving…' : isUpdating ? 'Update My Availability ✓' : 'Submit My Availability 🎉'}
+            {submitting ? 'Saving…' : isUpdating ? 'Update my availability' : 'Send my availability'}
           </button>
         </div>
+        <PageFoot />
       </div>
     );
   }
 
   // Screen: confirm
+  const savedCount = (() => {
+    const weekendOnly = isWeekendOnly(event.allowedDays || []);
+    const n = weekendOnly ? countGroups(selectedDates) : selectedDates.size;
+    return `${n} ${weekendOnly ? 'weekend' : 'date'}${n !== 1 ? 's' : ''} saved`;
+  })();
   return (
     <div className="container">
       {header}
-      <div className="card" style={{ textAlign: 'center', padding: '48px 28px' }}>
-        <div style={{ fontSize: '4rem', marginBottom: 12, lineHeight: 1 }}>🎉</div>
-        <h2 style={{ marginTop: 0, fontSize: '1.6rem' }}>Thanks, {selectedAttendee}!</h2>
-        <p style={{ color: '#78716C', fontWeight: 500, margin: '0', maxWidth: 320, marginInline: 'auto', lineHeight: 1.7 }}>
-          Your availability has been saved. We'll let everyone know once dates are finalized.
-        </p>
-      </div>
+      <Moment
+        art={ART.thanks}
+        sticker={<><span aria-hidden="true">✓</span> {savedCount}</>}
+        stickerTone="green"
+        eyebrow="03 · All done"
+        title={`Thanks, ${selectedAttendee}!`}
+        actions={<>
+          <button type="button" className="btn btn-secondary" onClick={() => setScreen('dates')}>Change my dates</button>
+          <button type="button" className="btn btn-primary" onClick={() => navigate(`/e/${token}/results`)}>See who else is free</button>
+        </>}
+      >
+        Your availability is saved. Come back to this link anytime to change it. The final date will show up here once it’s set.
+      </Moment>
+      <PageFoot />
     </div>
   );
 }

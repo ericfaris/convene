@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getAdminDashboard, finalizeEvent, addAttendee } from '../api/client.js';
 import HeatmapCalendar from '../components/HeatmapCalendar.jsx';
 import ResponseTable from '../components/ResponseTable.jsx';
+import EventHeader from '../components/storybook/EventHeader.jsx';
+import Moment from '../components/storybook/Moment.jsx';
+import { ART } from '../components/storybook/art.js';
+import { formatRange } from '../lib/dates.js';
 
 export default function AdminDashboard() {
   const { token } = useParams();
@@ -62,81 +66,118 @@ export default function AdminDashboard() {
   function copyParticipantLink() {
     const base = window.location.origin;
     const url = `${base}/e/${data.event.participantToken}`;
-    navigator.clipboard.writeText(url);
+    navigator.clipboard?.writeText(url).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
 
-  if (loading) return <div className="container"><p style={{ color: '#78716C', fontWeight: 600 }}>Loading…</p></div>;
-  if (error) return <div className="container"><div className="error">{error}</div></div>;
+  if (loading) return <div className="container"><p className="loading-note">Loading your dashboard…</p></div>;
+  if (error) {
+    const notFound = /not found|invalid/i.test(error);
+    return (
+      <div className="container">
+        <Moment
+          art={ART.lost}
+          headingLevel={1}
+          eyebrow={notFound ? 'Admin link not recognized' : 'Something went wrong'}
+          title={notFound ? 'We couldn’t find that dashboard.' : 'That didn’t load.'}
+          actions={notFound
+            ? <Link to="/new" className="btn btn-primary">Start a new gathering</Link>
+            : <button type="button" className="btn btn-primary" onClick={() => window.location.reload()}>Try again</button>}
+        >
+          {notFound
+            ? 'Double-check the admin link you saved when you created the event. It’s the only way back in.'
+            : error}
+        </Moment>
+      </div>
+    );
+  }
   if (!data) return null;
 
   const { event, responses, heatmap, suggestedWindows } = data;
   const respondedCount = responses.length;
   const totalAttendees = event.attendees.length;
   const pct = totalAttendees > 0 ? (respondedCount / totalAttendees) * 100 : 0;
+  const isFinalized = event.status === 'finalized' && event.finalizedDates?.start;
+  const finalRange = formatRange(event.finalizedDates?.start, event.finalizedDates?.end);
 
   return (
     <div className="container">
-      {/* Header */}
-      <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
-          <h1 style={{ margin: 0, fontSize: '1.6rem' }}>{event.name}</h1>
-          <span className={`tag tag-${event.status}`}>{event.status}</span>
-        </div>
-        {event.description && <p style={{ color: '#78716C', margin: '0 0 10px', fontWeight: 500 }}>{event.description}</p>}
-        <div style={{ fontSize: '.85rem', color: '#A8A29E', fontWeight: 600, marginBottom: 16 }}>
-          📅 {event.dateWindow.start} → {event.dateWindow.end}
-        </div>
+      <EventHeader
+        event={event}
+        eyebrow="Organizer view · keep this link private"
+      />
 
-        <div style={{ marginBottom: 8, display: 'flex', justifyContent: 'space-between', fontSize: '.9rem', fontWeight: 600 }}>
-          <span style={{ color: '#78716C' }}>{respondedCount} of {totalAttendees} attendees responded</span>
-          <span style={{ color: '#F97316' }}>{Math.round(pct)}%</span>
+      <div className="card">
+        <div className="progress-head">
+          <span>{respondedCount} of {totalAttendees} people responded</span>
+          <strong>{Math.round(pct)}%</strong>
         </div>
         <div className="progress-bar-wrap" style={{ marginBottom: 16 }}>
           <div className="progress-bar" style={{ width: `${pct}%` }} />
         </div>
-
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button className="btn btn-secondary btn-sm" onClick={copyParticipantLink}>
-            {copied ? '✓ Copied!' : '🔗 Copy Participant Link'}
+            {copied ? '✓ Copied' : 'Copy guest link'}
           </button>
           <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/e/${event.participantToken}/results`)}>
-            📊 See Results
+            See results
           </button>
-          {event.status !== 'finalized' && (
+          {!isFinalized && (
             <button className="btn btn-primary btn-sm" onClick={() => setShowFinalize(f => !f)}>
-              {showFinalize ? 'Cancel' : '✓ Finalize Dates'}
+              {showFinalize ? 'Cancel' : 'Finalize dates'}
             </button>
           )}
         </div>
       </div>
 
-      {/* Finalized banner */}
-      {event.status === 'finalized' && event.finalizedDates?.start && (
-        <div className="banner">
-          🎉 Finalized: <strong>{event.finalizedDates.start} → {event.finalizedDates.end}</strong>
-        </div>
+      {isFinalized && (
+        <Moment
+          art={ART.finalized}
+          sticker={<><span className="tag tag-finalized">Finalized</span><strong>{finalRange}</strong></>}
+          stickerTone="green"
+          eyebrow="Locked in"
+          title="It’s on the calendar."
+        >
+          {`Everyone with the guest link now sees ${finalRange} as the final date.`}
+        </Moment>
+      )}
+
+      {!isFinalized && respondedCount === 0 && (
+        <Moment
+          art={ART.noReplies}
+          sticker="0 replies so far"
+          eyebrow="Waiting on replies"
+          title="Send the guest link to get things going."
+          actions={
+            <button type="button" className="btn btn-primary" onClick={copyParticipantLink}>
+              {copied ? '✓ Copied' : 'Copy guest link'}
+            </button>
+          }
+        >
+          Paste it in the group chat. Guests tap their name and pick their dates. No sign-up needed. The best dates show up here as replies come in.
+        </Moment>
       )}
 
       {/* Finalize form */}
       {showFinalize && (
-        <div className="card" style={{ border: '2px solid #F97316' }}>
-          <h2>Set the Final Dates</h2>
+        <div className="card card-emphasis">
+          <h2 className="section-title">Lock in the final dates</h2>
+          <p className="section-sub">Everyone with the guest link will see these.</p>
           {finalizeError && <div className="error">{finalizeError}</div>}
           <form onSubmit={handleFinalize}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 12, marginBottom: 12 }}>
               <div className="field">
-                <label>Start Date</label>
-                <input type="date" required value={finalDates.start} onChange={e => setFinalDates(d => ({ ...d, start: e.target.value }))} />
+                <label htmlFor="final-start">Start date</label>
+                <input id="final-start" type="date" required value={finalDates.start} onChange={e => setFinalDates(d => ({ ...d, start: e.target.value }))} />
               </div>
               <div className="field">
-                <label>End Date</label>
-                <input type="date" required value={finalDates.end} onChange={e => setFinalDates(d => ({ ...d, end: e.target.value }))} />
+                <label htmlFor="final-end">End date</label>
+                <input id="final-end" type="date" required value={finalDates.end} onChange={e => setFinalDates(d => ({ ...d, end: e.target.value }))} />
               </div>
             </div>
             <button type="submit" className="btn btn-primary" disabled={finalizing}>
-              {finalizing ? 'Saving…' : '🎉 Confirm Dates'}
+              {finalizing ? 'Saving…' : 'Confirm dates'}
             </button>
           </form>
         </div>
@@ -145,31 +186,20 @@ export default function AdminDashboard() {
       {/* Suggested windows */}
       {suggestedWindows.length > 0 && (
         <div className="card">
-          <h2>Top Suggested Weekends</h2>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <h2 className="section-title">Top suggested dates</h2>
+          <p className="section-sub">Ranked by how many people can make every day.</p>
+          <div className="option-grid">
             {suggestedWindows.map((w, i) => (
-              <div
-                key={i}
-                style={{
-                  flex: '1 1 180px',
-                  border: '2px solid',
-                  borderColor: i === 0 ? '#FED7AA' : '#E8DDD4',
-                  borderRadius: 12,
-                  padding: '14px 16px',
-                  background: i === 0 ? '#FFF7ED' : '#FFFBF5',
-                }}
-              >
-                <div style={{ fontWeight: 800, fontSize: '1rem', marginBottom: 4, color: i === 0 ? '#EA580C' : '#78716C' }}>
-                  {i === 0 ? '⭐ Best pick' : `#${i + 1}`}
-                </div>
-                <div style={{ fontSize: '.9rem', fontWeight: 600, marginBottom: 4 }}>{w.start} → {w.end}</div>
-                <div style={{ fontSize: '.8rem', color: '#A8A29E', fontWeight: 500, marginBottom: 8 }}>{w.attendeeCount} attendees available</div>
-                {event.status !== 'finalized' && (
+              <div key={i} className={`option-card${i === 0 ? ' is-best' : ''}`}>
+                <span className="option-label">{i === 0 ? '★ Best pick' : `#${i + 1}`}</span>
+                <span className="option-dates">{formatRange(w.start, w.end)}</span>
+                <span className="option-meta">{w.attendeeCount} of {totalAttendees} available</span>
+                {!isFinalized && (
                   <button
-                    className="btn btn-secondary btn-sm"
+                    className={`btn btn-sm ${i === 0 ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => { setFinalDates({ start: w.start, end: w.end }); setShowFinalize(true); }}
                   >
-                    Use this
+                    Use these dates
                   </button>
                 )}
               </div>
@@ -178,28 +208,31 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Heatmap */}
-      <div className="card">
-        <h2>Availability Heatmap</h2>
+      {/* Heatmap (nothing to show until someone replies) */}
+      {respondedCount > 0 && <div className="card">
+        <h2 className="section-title">Who’s free when</h2>
+        <p className="section-sub">Darker days work for more people.</p>
         <HeatmapCalendar
           dateWindow={event.dateWindow}
           heatmap={heatmap}
           finalizedDates={event.finalizedDates}
           allowedDays={event.allowedDays || []}
         />
-      </div>
+      </div>}
 
       {/* Response table */}
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
-          <h2 style={{ margin: 0 }}>Responses</h2>
+          <h2 className="section-title" style={{ margin: 0 }}>Responses</h2>
           <form onSubmit={handleAddAttendee} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <label htmlFor="new-attendee" className="sr-only">Add someone</label>
             <input
+              id="new-attendee"
               type="text"
-              placeholder="Add attendee…"
+              className="input-sm"
+              placeholder="Add someone…"
               value={newAttendee}
               onChange={e => setNewAttendee(e.target.value)}
-              style={{ padding: '6px 10px', fontSize: '.9rem', borderRadius: 8, border: '1.5px solid #E8DDD4', fontFamily: 'inherit' }}
             />
             <button type="submit" className="btn btn-secondary btn-sm" disabled={addingAttendee || !newAttendee.trim()}>
               {addingAttendee ? '…' : '+ Add'}

@@ -217,6 +217,7 @@ input[type="text"],
 input[type="date"],
 textarea {
   width: 100%;
+  min-width: 0;
   padding: 11px 14px;
   border: 2px solid var(--border);
   border-radius: var(--radius-sm);
@@ -470,6 +471,10 @@ tr:last-child td { border-bottom: none; }
   text-shadow: 3px 3px 0 var(--riso-a);
 }
 
+/* Compact chapter marker for in-card steps */
+.chapter-sm { margin-bottom: var(--space-1); }
+.chapter-sm .chapter-num { font-size: 2.2rem; -webkit-text-stroke-width: 1.2px; text-shadow: 2px 2px 0 var(--riso-a); }
+
 /* Inked emphasis: one word per headline, max */
 .ink-underline {
   color: var(--primary);
@@ -513,6 +518,257 @@ tr:last-child td { border-bottom: none; }
   from { opacity: 0; transform: rotate(-8deg) scale(.6); }
   to   { opacity: 1; transform: rotate(var(--tilt-sticker)) scale(1); }
 }
+
+/* ══ STORYBOOK COMPONENTS — composed from the primitives above ══════
+   Used by every in-app page (participant, admin, results, create). */
+
+/* Event masthead: the invitation header at the top of event pages */
+.masthead { position: relative; overflow: hidden; }
+.masthead::before {            /* faint halftone corner, like a printed card */
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 55%; height: 100%;
+  background-image: var(--halftone);
+  background-size: var(--halftone-size) var(--halftone-size);
+  -webkit-mask-image: radial-gradient(ellipse at top right, #000, transparent 70%);
+          mask-image: radial-gradient(ellipse at top right, #000, transparent 70%);
+  pointer-events: none;
+}
+.masthead > * { position: relative; }
+.masthead-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-2);
+}
+.masthead-top .eyebrow { color: var(--primary-dark); }
+.masthead-title {
+  font-size: clamp(1.9rem, 5.5vw, var(--text-display-md));
+  line-height: 1.08;
+  letter-spacing: -.02em;
+  margin: 0 0 var(--space-2);
+  text-wrap: balance;
+}
+.masthead-desc { color: var(--text-muted); font-weight: 500; margin: 0 0 var(--space-4); }
+.masthead-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-3);
+  margin-top: var(--space-4);
+}
+.masthead-meta .sticker { transform: rotate(-1.5deg); }
+.masthead-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-left: auto; }
+
+/* Moment: an illustrated state (thanks, waiting, finalized, empty, error) */
+.moment { text-align: center; padding: var(--space-8) var(--space-6) var(--space-10); }
+.moment-art {
+  position: relative;
+  margin: 0 auto var(--space-8);
+  max-width: 400px;
+  padding: 0 var(--space-4) var(--space-4) 0;
+}
+.moment-art .print > img { aspect-ratio: 4 / 3; object-fit: cover; }
+.moment .eyebrow { color: var(--primary-dark); margin: 0 0 var(--space-2); }
+.moment-title {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  color: var(--text);
+  margin: 0 0 var(--space-3);
+  text-wrap: balance;
+}
+.moment-body {
+  color: var(--text-muted);
+  font-weight: 500;
+  max-width: 400px;
+  margin: 0 auto;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+.moment-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+}
+
+/* Section heading inside a card, in the display face */
+.section-title {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  letter-spacing: -.01em;
+  color: var(--text);
+  margin: 0 0 var(--space-2);
+}
+.section-sub { color: var(--text-muted); font-weight: 500; margin: 0 0 var(--space-5); font-size: .95rem; }
+
+/* Attendee picker: the participant's primary control */
+.attendee-list { display: flex; flex-direction: column; gap: 10px; }
+.attendee-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-body-lg);
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard),
+              transform var(--duration-micro) var(--ease-press),
+              box-shadow var(--duration-base) var(--ease-standard);
+}
+.attendee-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-stamp);
+  transform: translate(-1px, -1px);
+}
+.attendee-btn:active:not(:disabled) { transform: scale(.98); }
+.attendee-btn.is-done { border-color: var(--primary-light); background: var(--primary-pale); }
+.attendee-btn.is-selected {
+  border-color: var(--primary);
+  background: var(--primary-pale);
+  box-shadow: var(--shadow-stamp);
+}
+.attendee-btn:disabled { cursor: default; }
+
+/* Toggle pill (e.g. days of week) */
+.toggle-pill {
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--border);
+  background: var(--card);
+  color: var(--text-faint);
+  font: inherit;
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration-micro) var(--ease-standard);
+}
+.toggle-pill[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: var(--primary-pale);
+  color: var(--primary-dark);
+  font-weight: 800;
+}
+
+/* Text link styled as a button (e.g. "← Back") */
+.link-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--primary-dark);
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+.link-btn:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Choice card (e.g. suggested date windows); the best one is printed */
+.option-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-3); }
+.option-card {
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  align-items: flex-start;
+}
+.option-card.is-best {
+  border-color: var(--primary);
+  background: var(--primary-pale);
+  box-shadow: var(--shadow-stamp);
+}
+.option-label { font-weight: 800; color: var(--text-muted); }
+.option-card.is-best .option-label { color: var(--primary-dark); }
+.option-dates { font-weight: 700; }
+.option-meta { font-size: .8rem; color: var(--text-muted); font-weight: 600; margin-bottom: var(--space-2); }
+
+.banner-warn {
+  background: var(--yellow-pale);
+  border-color: var(--yellow);
+  color: #92400E;
+}
+
+.btn-block { width: 100%; justify-content: center; padding: 14px; font-size: var(--text-body-lg); }
+.count-good { color: var(--green-dark); }
+.count-none { color: var(--text-faint); }
+
+.card-emphasis { border: 2px solid var(--primary); box-shadow: var(--shadow-stamp), var(--shadow); }
+.progress-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.progress-head strong { color: var(--primary-dark); }
+input.input-sm { width: auto; padding: 6px 10px; font-size: .9rem; }
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.best-so-far { display: flex; justify-content: center; margin: var(--space-2) 0 var(--space-6); }
+
+.card-warn { border: 2px solid var(--yellow); background: var(--yellow-pale); }
+.brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+  color: var(--text);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.loading-note { color: var(--text-muted); font-weight: 600; text-align: center; padding: var(--space-12) 0; }
+
+/* "Planned with Convene" footer on guest-facing pages */
+.page-foot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-8);
+  color: var(--text-faint);
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+}
+.page-foot a { color: var(--primary-dark); text-decoration: none; font-weight: 800; }
+.page-foot a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.page-foot img { width: 18px; height: 18px; }
 
 /* ── Page reveal (staggered load, key moment) ────────────────────── */
 @media (prefers-reduced-motion: no-preference) {

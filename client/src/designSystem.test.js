@@ -47,6 +47,31 @@ describe('storybook primitives', () => {
   });
 });
 
+// Components composed from the primitives; every page uses these.
+const COMPONENTS = [
+  'masthead', 'moment', 'moment-art', 'moment-title', 'section-title', 'chapter-sm',
+  'attendee-btn', 'toggle-pill', 'option-card', 'card-emphasis', 'card-warn',
+  'banner-warn', 'link-btn', 'btn-block', 'page-foot',
+];
+
+describe('storybook components', () => {
+  it.each(COMPONENTS)('index.css defines .%s', cls => {
+    expect(indexCss).toMatch(new RegExp(`\\.${cls}[\\s{,:.]`));
+  });
+  it.each(COMPONENTS)('the showcase page demonstrates .%s', cls => {
+    expect(showcase).toMatch(new RegExp(`class="[^"]*\\b${cls}\\b`));
+  });
+});
+
+// Routed pages take color from tokens/classes only. SummaryView is unrouted legacy.
+const ROUTED_PAGES = ['Landing', 'CreateEvent', 'ParticipantView', 'ResultsMatrix', 'AdminDashboard'];
+describe('routed pages use tokens, not hex colors', () => {
+  it.each(ROUTED_PAGES)('%s.jsx', page => {
+    const src = readFileSync(resolve(SRC, 'pages', `${page}.jsx`), 'utf8');
+    expect(src.match(/#[0-9a-fA-F]{6}\b|#[0-9a-fA-F]{3}\b(?![0-9a-fA-F])/g)).toBeNull();
+  });
+});
+
 describe('page stylesheets compose the system instead of forking it', () => {
   it.each(pageCss.map(p => [relative(SRC, p), p]))('%s', (_name, file) => {
     const css = readFileSync(file, 'utf8');

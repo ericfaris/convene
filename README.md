@@ -36,6 +36,8 @@ convene/
 │   └── src/
 │       ├── pages/   # Landing, CreateEvent, ParticipantView, AdminDashboard
 │       ├── landing/ # Landing story slides + styles
+│       ├── components/storybook/  # EventHeader, Moment, PageFoot, moment art
+│       ├── lib/     # date formatting
 │       └── components/  # CalendarGrid, HeatmapCalendar, FamilyList
 ├── server/          # Express API
 │   ├── models/      # Event, Response (Mongoose)
@@ -108,4 +110,4 @@ Client unit tests (Vitest + Testing Library, jsdom):
 cd client && npm test
 ```
 
-They cover the landing slideshow (navigation, autoplay/pause, reduced motion, CTAs) and top-level routing.
+They cover the landing slideshow, every page's states (participant, admin, results, create, with the API mocked), the storybook components, date formatting, routing, and a design-system contract test.

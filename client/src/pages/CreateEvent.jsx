@@ -1,18 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createEvent } from '../api/client.js';
-
-const DEFAULT_ATTENDEES = [
-  'April & Eric',
-  'Roy & Katy',
-  'Jane',
-  'Betty & Rob',
-  'Luk & Lauren',
-  'Lindsey & Jamie',
-  'Alice & Danny',
-  'Tyler & Abbie',
-  'Derek & Whitney',
-];
+import Moment from '../components/storybook/Moment.jsx';
+import { ART } from '../components/storybook/art.js';
 
 export default function CreateEvent() {
   const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6];
@@ -80,7 +70,7 @@ export default function CreateEvent() {
   }
 
   function copy(key, text) {
-    navigator.clipboard.writeText(text);
+    navigator.clipboard?.writeText(text).catch(() => {});
     setCopied(c => ({ ...c, [key]: true }));
     setTimeout(() => setCopied(c => ({ ...c, [key]: false })), 2000);
   }
@@ -88,38 +78,41 @@ export default function CreateEvent() {
   if (result) {
     return (
       <div className="container">
-        <div className="card">
-          <div style={{ fontSize: '3rem', marginBottom: 8, lineHeight: 1 }}>🎊</div>
-          <h1 style={{ marginBottom: 4 }}>You're all set!</h1>
-          <p className="subtitle">Share the link below with your attendees. Keep your admin link somewhere safe — you'll need it to manage the event.</p>
+        <Moment
+          art={ART.allSet}
+          headingLevel={1}
+          sticker={<><span aria-hidden="true">✓</span> Links ready</>}
+          stickerTone="green"
+          eyebrow="02 · Share"
+          title="You’re all set!"
+        >
+          Send the guest link to everyone. Keep the admin link for yourself. You’ll use it to see replies and lock in the date.
+        </Moment>
 
-          <div className="card" style={{ background: '#FFF7ED', border: '2px solid #FED7AA', marginBottom: 0 }}>
-            <h3 style={{ color: '#92400e' }}>⚠️ Save your admin link</h3>
-            <p style={{ margin: '0 0 12px', fontSize: '.9rem', color: '#92400e', fontWeight: 500 }}>
-              This is the only time it'll be shown. Don't lose it!
-            </p>
-            <label>Admin Link (keep this private)</label>
-            <div className="copy-box">
-              <input readOnly value={result.adminUrl} />
-              <button className="btn btn-secondary btn-sm" onClick={() => copy('admin', result.adminUrl)}>
-                {copied.admin ? '✓ Copied!' : 'Copy'}
-              </button>
-            </div>
+        <div className="card">
+          <label htmlFor="participant-url">Guest link: share this with everyone</label>
+          <div className="copy-box">
+            <input id="participant-url" readOnly value={result.participantUrl} />
+            <button className="btn btn-primary btn-sm" onClick={() => copy('participant', result.participantUrl)}>
+              {copied.participant ? '✓ Copied' : 'Copy'}
+            </button>
           </div>
         </div>
 
-        <div className="card">
-          <label>Participant Link — share this with everyone 🎉</label>
+        <div className="card card-warn">
+          <h2 className="section-title">Save your admin link</h2>
+          <p className="section-sub">It’s only shown once, and it’s the only way back to your dashboard. Bookmark it or email it to yourself.</p>
+          <label htmlFor="admin-url">Admin link (keep this private)</label>
           <div className="copy-box">
-            <input readOnly value={result.participantUrl} />
-            <button className="btn btn-primary btn-sm" onClick={() => copy('participant', result.participantUrl)}>
-              {copied.participant ? '✓ Copied!' : 'Copy'}
+            <input id="admin-url" readOnly value={result.adminUrl} />
+            <button className="btn btn-secondary btn-sm" onClick={() => copy('admin', result.adminUrl)}>
+              {copied.admin ? '✓ Copied' : 'Copy'}
             </button>
           </div>
         </div>
 
         <button className="btn btn-secondary" onClick={() => { setResult(null); setForm({ name: '', description: '', dateWindow: { start: '', end: '' }, attendees: [''], allowedDays: [0,1,2,3,4,5,6] }); }}>
-          ← Create Another Event
+          ← Plan another gathering
         </button>
       </div>
     );
@@ -128,20 +121,26 @@ export default function CreateEvent() {
   return (
     <div className="container">
       <div className="card">
-        <Link to="/" aria-label="Convene home" style={{ display: 'inline-block' }}>
-          <img src="/logo.svg" alt="Convene" style={{ width: 72, height: 72, marginBottom: 10, display: 'block' }} />
+        <Link to="/" aria-label="Convene home" className="brand-link">
+          <img src="/logo.svg" alt="" width="28" height="28" />
+          <span>Convene</span>
         </Link>
-        <h1>Convene</h1>
-        <p className="subtitle">Find the best dates for your gathering.</p>
+        <p className="chapter chapter-sm">
+          <span className="chapter-num">01</span>
+          <span className="eyebrow">Suggest</span>
+        </p>
+        <h1 className="masthead-title">Suggest a window.</h1>
+        <p className="subtitle">Name your gathering, pick a range of dates, and list who’s invited. No account needed.</p>
 
         {error && <div className="error">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="field">
-            <label>Event Name *</label>
+            <label htmlFor="ev-name">Event Name *</label>
             <input
               type="text"
               required
+              id="ev-name"
               placeholder="Piercefield Summer Bash 2026"
               value={form.name}
               onChange={e => setField('name', e.target.value)}
@@ -149,29 +148,32 @@ export default function CreateEvent() {
           </div>
 
           <div className="field">
-            <label>Description</label>
+            <label htmlFor="ev-desc">Description</label>
             <textarea
+              id="ev-desc"
               placeholder="Any details attendees should know…"
               value={form.description}
               onChange={e => setField('description', e.target.value)}
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 12 }}>
             <div className="field">
-              <label>Window Start *</label>
+              <label htmlFor="ev-start">Window Start *</label>
               <input
                 type="date"
                 required
+                id="ev-start"
                 value={form.dateWindow.start}
                 onChange={e => setDateWindow('start', e.target.value)}
               />
             </div>
             <div className="field">
-              <label>Window End *</label>
+              <label htmlFor="ev-end">Window End *</label>
               <input
                 type="date"
                 required
+                id="ev-end"
                 value={form.dateWindow.end}
                 onChange={e => setDateWindow('end', e.target.value)}
               />
@@ -179,28 +181,17 @@ export default function CreateEvent() {
           </div>
 
           <div className="field">
-            <label>Days of week to show</label>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
+            <label id="ev-days">Days of week to show</label>
+            <div role="group" aria-labelledby="ev-days" style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
               {ALL_DAYS.map(dow => {
                 const active = form.allowedDays.includes(dow);
                 return (
                   <button
                     key={dow}
                     type="button"
+                    className="toggle-pill"
+                    aria-pressed={active}
                     onClick={() => toggleDay(dow)}
-                    style={{
-                      padding: '7px 14px',
-                      borderRadius: 999,
-                      border: '2px solid',
-                      borderColor: active ? '#F97316' : '#E8DDD4',
-                      background: active ? '#FFF7ED' : '#fff',
-                      color: active ? '#EA580C' : '#A8A29E',
-                      fontWeight: active ? 700 : 500,
-                      fontSize: '.85rem',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                      transition: 'all .15s',
-                    }}
                   >
                     {DAY_NAMES[dow]}
                   </button>
@@ -208,7 +199,7 @@ export default function CreateEvent() {
               })}
             </div>
             {form.allowedDays.length < 7 && (
-              <div style={{ fontSize: '.8rem', color: '#78716C', marginTop: 6, fontWeight: 500 }}>
+              <div className="field-hint">
                 Only {form.allowedDays.map(d => DAY_NAMES[d]).join(', ')} will be shown to participants.
               </div>
             )}
@@ -221,12 +212,13 @@ export default function CreateEvent() {
                 <div key={i} style={{ display: 'flex', gap: 8 }}>
                   <input
                     type="text"
+                    aria-label={`Attendee ${i + 1} name`}
                     placeholder={`Attendee ${i + 1} name`}
                     value={attendee}
                     onChange={e => updateAttendee(i, e.target.value)}
                   />
                   {form.attendees.length > 1 && (
-                    <button type="button" className="btn btn-danger btn-sm" onClick={() => removeAttendee(i)}>✕</button>
+                    <button type="button" className="btn btn-danger btn-sm" aria-label={`Remove attendee ${i + 1}`} onClick={() => removeAttendee(i)}>✕</button>
                   )}
                 </div>
               ))}
@@ -234,15 +226,12 @@ export default function CreateEvent() {
                 <button type="button" className="btn btn-secondary btn-sm" onClick={addAttendee}>
                   + Add Attendee
                 </button>
-                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setField('attendees', DEFAULT_ATTENDEES)}>
-                  Load Defaults
-                </button>
               </div>
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%', justifyContent: 'center', padding: '14px', fontSize: '1.05rem', marginTop: 4 }}>
-            {loading ? 'Creating…' : 'Create Event 🎉'}
+          <button type="submit" className="btn btn-primary btn-block" disabled={loading} style={{ marginTop: 4 }}>
+            {loading ? 'Creating…' : 'Create my gathering'}
           </button>
         </form>
       </div>

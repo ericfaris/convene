@@ -219,7 +219,7 @@ before this pass, so no JSX changed.
   badges, uppercase caption type.
 - **`.progress-bar-wrap` / `.progress-bar`** — orange→yellow gradient fill,
   animates width on `--duration-page`.
-- **Attendee selector** (`AttendeeList.jsx`, inline-styled) — three states:
+- **Attendee selector** (`AttendeeList.jsx` → `.attendee-btn`, see §10; originally inline-styled) — three states:
   default (white, neutral border), responded (pale background, light-orange
   border, green "✓ Done" pill), selected (pale-orange background, full
   orange border, subtle scale + shadow). Given the outsized role this
@@ -289,6 +289,8 @@ charcoal accents"*.
 | `client/public/story/01-chaos.webp` … `06-gather.webp` | Landing story illustrations (Ideogram 4.5, 1024×768 WebP, 27–135 KB each) — see §10. |
 | `client/src/landing/landing.css` | Landing layout only (`.lp-*`); all riso styling comes from the §10 primitives. |
 | `client/src/designSystem.test.js` | Contract test: primitives defined once in `index.css`, shown in the showcase, never forked in page CSS. |
+| `client/public/story/moment-*.webp` | Six in-app moment illustrations (all-set, thanks, waiting, no-replies, finalized, lost); see §10. |
+| `client/src/components/storybook/` | `EventHeader`, `Moment`, `PageFoot`, `art.js` (moment art map). |
 | `client/src/landing/storySlides.js` | Story copy, art paths, alt text and UI-sticker data for the slideshow. |
 | `client/src/pages/Landing.jsx` | Landing page + carousel. |
 
@@ -359,6 +361,41 @@ low-stakes. Avoid anything that looks like enterprise scheduling software.
 | `.halftone` | Masked dot field behind a section | Hero and closing CTA sections | Put it behind dense reading text |
 | `.anim-print` / `.anim-stick` | Drop-in and slap-on entrances, reduced-motion gated | First paint of a print or sticker; carousels re-trigger them per slide | Loop them or attach them to routine UI |
 
+### Components (`index.css` + `client/src/components/storybook/`)
+
+Composed from the primitives. Every in-app page is assembled from these, so a
+new screen should need little or no page-specific styling.
+
+| Component | Class / React | Use |
+|---|---|---|
+| Event masthead | `.masthead` / `<EventHeader event eyebrow actions>` | Top of every event page: eyebrow (who's looking: "You're invited", "Results so far", "Organizer view"), status tag, Fraunces title, description, date-window **sticker**, actions |
+| Moment | `.moment` / `<Moment art sticker stickerTone eyebrow title actions headingLevel>` | Any emotional or terminal state: thanks, waiting, finalized, no replies, links ready, not found / load error. Printed art + pinned sticker with the key fact + display headline + 1–2 actions |
+| Step heading | `.chapter.chapter-sm` + `.section-title` + `.section-sub` | Numbered steps inside a card (participant 01 → 02 → 03; create 01 Suggest → 02 Share) |
+| Section heading | `.section-title` / `.section-sub` | Card headings ("Who's free when", "Responses") |
+| Attendee picker | `.attendee-list` / `.attendee-btn` (`.is-done`, `.is-selected`) | Primary participant control; riso lift on hover |
+| Toggle pill | `.toggle-pill[aria-pressed]` | Multi-select chips (days of week) |
+| Choice card | `.option-grid` / `.option-card` (`.is-best`) | Ranked options; the best one gets the stamp shadow |
+| Card variants | `.card-emphasis`, `.card-warn`, `.banner-warn` | Active form (finalize), one-time warnings (admin link), "still waiting on…" |
+| Misc | `.btn-block`, `.link-btn`, `.progress-head`, `.loading-note`, `.sr-only`, `.input-sm` | Full-width CTA, "← Back"-style text buttons, progress label row, loading text |
+| Footer | `.page-foot` / `<PageFoot>` | "Planned with Convene · Plan your own" on guest-facing pages |
+
+**Moment art** (`components/storybook/art.js`, files in `public/story/`):
+
+| Key | File | Where |
+|---|---|---|
+| `allSet` | `moment-all-set.webp`: Maya launching a paper airplane from a hill | Create → links ready |
+| `thanks` | `moment-thanks.webp`: grandmother mailing a ✓ envelope | Participant submitted |
+| `waiting` | `moment-waiting.webp`: Maya at the window with tea and a cat | Responses closed, not finalized |
+| `noReplies` | `moment-no-replies.webp`: Maya on porch steps, airplanes flying off | Admin/results with zero replies |
+| `finalized` | `moment-finalized.webp`: family car driving to the farmhouse | Finalized (participant + admin) |
+| `lost` | `moment-lost.webp`: dog sniffing a crumpled airplane | Unknown link / load error |
+
+Copy voice for moments: short declarative headline ending in a period or
+exclamation mark ("Waiting on the organizer.", "It's happening. See you
+there!"). The body says what happens next. Buttons name the action ("Change
+my dates", "Copy guest link"). No emoji in headings or buttons. A ✓ glyph is
+fine inside stickers and tags.
+
 ### Illustration recipe (Ideogram)
 
 All story art is generated, never stock. Use `ideogram_4_5`, size
@@ -391,9 +428,14 @@ not the style.
 4. Never hand-roll hard offset shadows, tilts, outlined numerals or grain in
    page CSS. Use the tokens and classes above. `src/designSystem.test.js`
    fails the build if a page stylesheet does.
-5. New primitives go into `index.css`, this section, and the Storybook
-   section of `design-system.html` together. The contract test checks that
-   every primitive appears in the showcase.
+5. New primitives/components go into `index.css`, this section, and the
+   Storybook sections of `design-system.html` together. The contract test
+   checks that every primitive and component appears in the showcase.
+6. Routed pages take colors from tokens/classes only. The contract test
+   fails on hex literals in `pages/*.jsx` (unrouted legacy `SummaryView` is
+   exempt).
+7. Any new terminal or empty state is a `<Moment>` with art. Generate new
+   art with the recipe below if none of the existing scenes fit.
 
 ### Landing page (`/`) — reference implementation
 
@@ -450,3 +492,15 @@ not autoplaying. All slides share one grid cell, so the height never jumps.
   `landing.css` into `index.css`. §10 rewritten as system-wide rules with a
   checklist and the Ideogram recipe. The showcase's "Storybook primitives"
   section demos every one. `designSystem.test.js` enforces it.
+- **2026-10-16 (evening)** — Applied the storybook layer to every in-app
+  page. New components (`.masthead`/`<EventHeader>`, `.moment`/`<Moment>`,
+  `.chapter-sm`, `.section-title`, `.attendee-btn`, `.toggle-pill`,
+  `.option-card`, card/banner variants, `.page-foot`) and six new moment
+  illustrations. Participant flow is now numbered steps 01 → 02 → 03 with
+  illustrated thanks/closed/finalized/not-found states. Admin and results
+  pages got masthead, best-pick and "best so far" stickers, and empty states.
+  Create became "01 · Suggest" → "02 · Share". `AttendeeList`,
+  `CalendarGrid` and `ResponseTable` moved off hex literals onto tokens.
+  Calendar day/weekend buttons gained `aria-pressed` and full-date labels.
+  Removed "Load Defaults" (it shipped a hard-coded personal guest list).
+  Fixed the 2-column date inputs overflowing at phone width.

@@ -1,3 +1,4 @@
+import { formatDay } from '../lib/dates.js';
 import { useMemo } from 'react';
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -70,7 +71,7 @@ function GroupedButtons({ dateWindow, allowedDays, selected, onToggleGroup, disa
               <div style={{
                 fontWeight: 800,
                 fontSize: '.8rem',
-                color: '#78716C',
+                color: 'var(--text-muted)',
                 margin: '16px 0 8px',
                 textTransform: 'uppercase',
                 letterSpacing: '.08em',
@@ -79,16 +80,18 @@ function GroupedButtons({ dateWindow, allowedDays, selected, onToggleGroup, disa
               </div>
             )}
             <button
+              type="button"
+              aria-pressed={allSelected ? true : someSelected ? 'mixed' : false}
               onClick={() => !disabled && onToggleGroup(dates)}
               disabled={disabled}
               style={{
                 width: '100%',
                 padding: '14px 18px',
                 border: '2px solid',
-                borderColor: allSelected ? '#65A30D' : someSelected ? '#FED7AA' : '#E8DDD4',
+                borderColor: allSelected ? 'var(--green)' : someSelected ? 'var(--primary-light)' : 'var(--border)',
                 borderRadius: 12,
-                background: allSelected ? '#65A30D' : someSelected ? '#FFF7ED' : disabled ? '#F5F0EB' : '#fff',
-                color: allSelected ? '#fff' : someSelected ? '#EA580C' : disabled ? '#A8A29E' : '#1C1917',
+                background: allSelected ? 'var(--green)' : someSelected ? 'var(--primary-pale)' : disabled ? 'var(--gray-light)' : '#fff',
+                color: allSelected ? '#fff' : someSelected ? 'var(--primary-dark)' : disabled ? 'var(--text-faint)' : 'var(--text)',
                 fontFamily: 'inherit',
                 fontSize: '1rem',
                 fontWeight: 700,
@@ -158,7 +161,7 @@ function FullGrid({ dateWindow, selected, onToggle, disabled }) {
             textAlign: 'center',
             fontSize: '.7rem',
             fontWeight: 800,
-            color: '#A8A29E',
+            color: 'var(--text-faint)',
             paddingBottom: 6,
             letterSpacing: '.04em',
             textTransform: 'uppercase',
@@ -173,7 +176,7 @@ function FullGrid({ dateWindow, selected, onToggle, disabled }) {
             <div style={{
               fontWeight: 800,
               fontSize: '.8rem',
-              color: '#78716C',
+              color: 'var(--text-muted)',
               margin: '14px 0 8px',
               textTransform: 'uppercase',
               letterSpacing: '.06em',
@@ -186,15 +189,18 @@ function FullGrid({ dateWindow, selected, onToggle, disabled }) {
               date ? (
                 <button
                   key={date}
+                  type="button"
+                  aria-label={formatDay(date)}
+                  aria-pressed={selected.has(date)}
                   onClick={() => !disabled && onToggle(date)}
                   disabled={disabled}
                   style={{
                     minHeight: 48, minWidth: 0,
                     border: '2px solid',
-                    borderColor: selected.has(date) ? '#65A30D' : '#E8DDD4',
+                    borderColor: selected.has(date) ? 'var(--green)' : 'var(--border)',
                     borderRadius: 10,
-                    background: selected.has(date) ? '#65A30D' : disabled ? '#F5F0EB' : '#fff',
-                    color: selected.has(date) ? '#fff' : disabled ? '#A8A29E' : '#1C1917',
+                    background: selected.has(date) ? 'var(--green)' : disabled ? 'var(--gray-light)' : '#fff',
+                    color: selected.has(date) ? '#fff' : disabled ? 'var(--text-faint)' : 'var(--text)',
                     fontFamily: 'inherit',
                     fontWeight: 700,
                     fontSize: '.9rem',

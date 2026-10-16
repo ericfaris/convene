@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getEvent } from '../api/client.js';
+import EventHeader from '../components/storybook/EventHeader.jsx';
+import Moment from '../components/storybook/Moment.jsx';
+import PageFoot from '../components/storybook/PageFoot.jsx';
+import { ART } from '../components/storybook/art.js';
 
 function isWeekendOnly(allowedDays) {
   return allowedDays.length > 0 && allowedDays.every(d => [0, 5, 6].includes(d));
@@ -44,8 +48,23 @@ export default function ResultsMatrix() {
       .finally(() => setLoading(false));
   }, [token]);
 
-  if (loading) return <div className="container"><p style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Loading…</p></div>;
-  if (error) return <div className="container"><div className="error">{error}</div></div>;
+  if (loading) return <div className="container"><p className="loading-note">Loading results…</p></div>;
+  if (error) {
+    const notFound = /not found/i.test(error);
+    return (
+      <div className="container">
+        <Moment
+          art={ART.lost}
+          headingLevel={1}
+          eyebrow={notFound ? 'Link not found' : 'Something went wrong'}
+          title={notFound ? 'We couldn’t find that gathering.' : 'That didn’t load.'}
+        >
+          {notFound ? 'The link may be mistyped, or the organizer removed the event.' : error}
+        </Moment>
+        <PageFoot />
+      </div>
+    );
+  }
   if (!event) return null;
 
   const allowedDays = event.allowedDays || [];
@@ -69,44 +88,53 @@ export default function ResultsMatrix() {
   });
 
   const notResponded = attendees.filter(f => !responses[f]);
+  const bestIndex = blockTotals.indexOf(maxTotal);
+  const anyReplies = notResponded.length < attendees.length;
 
   return (
     <div className="container">
-      {/* Header */}
-      <div className="card" style={{ marginBottom: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
-          <h1 style={{ margin: 0, fontSize: '1.6rem' }}>{event.name}</h1>
-          <span className={`tag tag-${event.status}`}>{event.status}</span>
-        </div>
-        {event.description && (
-          <p style={{ color: 'var(--text-muted)', margin: '0 0 6px', fontWeight: 500 }}>{event.description}</p>
-        )}
-        <div style={{ fontSize: '.85rem', color: '#A8A29E', fontWeight: 600, marginBottom: 16 }}>
-          📅 {event.dateWindow.start} → {event.dateWindow.end}
-        </div>
-        <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/e/${token}`)}>
-          ← Back
-        </button>
-      </div>
+      <EventHeader
+        event={event}
+        eyebrow="Results so far"
+        actions={
+          <button type="button" className="btn btn-secondary btn-sm" onClick={() => navigate(`/e/${token}`)}>
+            ← Back to my dates
+          </button>
+        }
+      />
 
-      {notResponded.length > 0 && (
-        <div style={{
-          background: 'var(--yellow-pale)',
-          border: '1.5px solid var(--yellow)',
-          borderRadius: 'var(--radius-sm)',
-          padding: '10px 14px',
-          marginBottom: 20,
-          fontSize: '.875rem',
-          fontWeight: 600,
-          color: '#92400E',
-        }}>
-          ⏳ Still waiting on: {notResponded.join(', ')}
+      {!anyReplies && (
+        <Moment
+          art={ART.noReplies}
+          sticker={`0 of ${attendees.length} replied`}
+          eyebrow="Nothing yet"
+          title="No one has picked dates yet."
+          actions={<button type="button" className="btn btn-primary" onClick={() => navigate(`/e/${token}`)}>Add my dates</button>}
+        >
+          Be the first. Results fill in here as people reply.
+        </Moment>
+      )}
+
+      {anyReplies && maxTotal > 0 && blockTotals[bestIndex] > 0 && (
+        <div className="best-so-far">
+          <span className="sticker sticker-green">
+            <span className="tag tag-finalized">Best so far</span>
+            <strong>{blockLabel(blocks[bestIndex])}</strong>
+            <span>· {maxTotal} of {attendees.length} free</span>
+          </span>
+        </div>
+      )}
+
+      {notResponded.length > 0 && anyReplies && (
+        <div className="banner banner-warn">
+          Still waiting on: {notResponded.join(', ')}
         </div>
       )}
 
       {/* Matrix */}
+      {anyReplies && (
       <div className="card" style={{ padding: 0, overflowX: 'auto' }}>
-        <h2 style={{ padding: '24px 24px 0' }}>{weekendOnly ? 'Weekend' : 'Date'} Availability</h2>
+        <h2 className="section-title" style={{ padding: '24px 24px 8px' }}>Who’s free {weekendOnly ? 'which weekend' : 'when'}</h2>
         <table style={{ tableLayout: 'auto', fontSize: '.85rem' }}>
           <thead>
             <tr>
@@ -171,6 +199,8 @@ export default function ResultsMatrix() {
           ✓ = all days available &nbsp;·&nbsp; ~ = partial &nbsp;·&nbsp; — = not available
         </p>
       </div>
+      )}
+      <PageFoot />
     </div>
   );
 }

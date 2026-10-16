@@ -29,14 +29,14 @@ export default function ResponseTable({ attendees, responses }) {
             const r = responseMap.get(name);
             return (
               <tr key={name}>
-                <td style={{ fontWeight: 700, color: '#1C1917' }}>{name}</td>
-                <td style={{ fontFamily: 'monospace', fontSize: '.8rem', color: '#78716C' }}>
+                <td style={{ fontWeight: 700, color: 'var(--text)' }}>{name}</td>
+                <td style={{ fontFamily: 'monospace', fontSize: '.8rem', color: 'var(--text-muted)' }}>
                   {r ? formatDates(r.availableDates) : '—'}
                 </td>
-                <td style={{ color: '#A8A29E', maxWidth: 200, fontSize: '.9rem' }}>
+                <td style={{ color: 'var(--text-faint)', maxWidth: 200, fontSize: '.9rem' }}>
                   {r?.notes || '—'}
                 </td>
-                <td style={{ whiteSpace: 'nowrap', color: '#A8A29E', fontSize: '.85rem' }}>
+                <td style={{ whiteSpace: 'nowrap', color: 'var(--text-faint)', fontSize: '.85rem' }}>
                   {r ? formatDate(r.updatedAt) : '—'}
                 </td>
                 <td>
@@ -45,8 +45,8 @@ export default function ResponseTable({ attendees, responses }) {
                       display: 'inline-block',
                       fontSize: '.75rem',
                       fontWeight: 800,
-                      color: '#65A30D',
-                      background: '#ECFCCB',
+                      color: 'var(--green)',
+                      background: 'var(--green-light)',
                       padding: '3px 10px',
                       borderRadius: 999,
                       letterSpacing: '.02em',
@@ -56,8 +56,8 @@ export default function ResponseTable({ attendees, responses }) {
                       display: 'inline-block',
                       fontSize: '.75rem',
                       fontWeight: 700,
-                      color: '#A8A29E',
-                      background: '#F5F0EB',
+                      color: 'var(--text-faint)',
+                      background: 'var(--gray-light)',
                       padding: '3px 10px',
                       borderRadius: 999,
                     }}>Pending</span>

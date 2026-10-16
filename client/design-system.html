@@ -56,6 +56,10 @@
       .ds-anim-demo { display: flex; align-items: center; gap: 28px; padding: 12px; }
       .ds-anim-demo:hover .anim-print, .ds-anim-demo:focus .anim-print { animation-name: none; }
       .ds-anim-demo:hover .anim-stick, .ds-anim-demo:focus .anim-stick { animation-name: none; }
+      .ds-moment-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 24px 20px; margin-top: 28px; }
+      .ds-moment-strip figure { margin: 0; }
+      .ds-moment-strip img { display: block; width: 100%; height: auto; }
+      .ds-moment-strip figcaption { margin-top: 12px; }
       .ds-story-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 28px 24px; }
       .ds-story-fig { margin: 0; }
       .ds-story-fig .print { margin-bottom: 14px; }
@@ -317,6 +321,96 @@
             <div class="print anim-print" style="width: 180px;"><img src="/story/02-suggest.webp" alt="" width="1024" height="768" loading="lazy" /></div>
             <div class="sticker anim-stick">Stuck on ✓</div>
           </div>
+        </div>
+      </section>
+
+      <!-- ══ STORYBOOK COMPONENTS ═════════════════════════════════ -->
+      <section class="ds-section" id="storybook-components">
+        <h2>Storybook components</h2>
+        <p class="ds-desc">Page-level components built from the primitives above. Every in-app page
+        (create, participant, results, admin) is assembled from these. React wrappers live in
+        <code class="ds-var">client/src/components/storybook/</code>.</p>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.masthead</code> — event header (<code class="ds-var">&lt;EventHeader&gt;</code>): eyebrow, status tag, display title, date-window sticker, actions</span>
+          <header class="card masthead" style="margin:0;">
+            <div class="masthead-top"><p class="eyebrow" style="margin:0;">You’re invited</p><span class="tag tag-open">open</span></div>
+            <h1 class="masthead-title">Summer Reunion 2026</h1>
+            <p class="masthead-desc">Lake house weekend. Bring a dish!</p>
+            <div class="masthead-meta">
+              <span class="sticker">Jun 1 – Aug 31, 2026</span>
+              <div class="masthead-actions"><button class="btn btn-secondary btn-sm" type="button">See results</button></div>
+            </div>
+          </header>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.moment</code> — illustrated state (<code class="ds-var">&lt;Moment&gt;</code>): thanks, waiting, finalized, no replies, links ready, not found</span>
+          <section class="card moment" style="margin:0;">
+            <figure class="moment-art">
+              <div class="print"><img src="/story/moment-thanks.webp" alt="A grandmother mailing an envelope with a green check" width="1024" height="768" loading="lazy" /></div>
+              <div class="sticker sticker-pinned sticker-green">✓ 3 weekends saved</div>
+            </figure>
+            <p class="eyebrow">03 · All done</p>
+            <h3 class="moment-title">Thanks, Jane!</h3>
+            <p class="moment-body">Your availability is saved. Come back to this link anytime to change it.</p>
+            <div class="moment-actions"><button class="btn btn-secondary" type="button">Change my dates</button><button class="btn btn-primary" type="button">See who else is free</button></div>
+          </section>
+          <div class="ds-moment-strip">
+            <figure><div class="print"><img src="/story/moment-all-set.webp" alt="" width="1024" height="768" loading="lazy" /></div><figcaption class="ds-label">allSet</figcaption></figure>
+            <figure><div class="print print-alt"><img src="/story/moment-waiting.webp" alt="" width="1024" height="768" loading="lazy" /></div><figcaption class="ds-label">waiting</figcaption></figure>
+            <figure><div class="print"><img src="/story/moment-no-replies.webp" alt="" width="1024" height="768" loading="lazy" /></div><figcaption class="ds-label">noReplies</figcaption></figure>
+            <figure><div class="print print-alt"><img src="/story/moment-finalized.webp" alt="" width="1024" height="768" loading="lazy" /></div><figcaption class="ds-label">finalized</figcaption></figure>
+            <figure><div class="print"><img src="/story/moment-lost.webp" alt="" width="1024" height="768" loading="lazy" /></div><figcaption class="ds-label">lost</figcaption></figure>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.chapter-sm</code> + <code class="ds-var">.section-title</code> + <code class="ds-var">.section-sub</code> — in-card step heading</span>
+          <p class="chapter chapter-sm"><span class="chapter-num">02</span><span class="eyebrow">Pick your days</span></p>
+          <h3 class="section-title">Hi, Jane! When are you free?</h3>
+          <p class="section-sub" style="margin:0;">Tap every date that works for you.</p>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.attendee-btn</code> — default / <code class="ds-var">.is-done</code> / <code class="ds-var">.is-selected</code> (hover for the riso lift)</span>
+          <div class="attendee-list" style="max-width: 420px;">
+            <button class="attendee-btn" type="button"><span>Betty &amp; Rob</span></button>
+            <button class="attendee-btn is-done" type="button"><span>Roy &amp; Katy</span><span class="tag tag-open">✓ Done</span></button>
+            <button class="attendee-btn is-selected" type="button" aria-pressed="true"><span>Jane</span></button>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.toggle-pill</code> — <code class="ds-var">aria-pressed</code> true / false</span>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="toggle-pill" type="button" aria-pressed="false">Thu</button>
+            <button class="toggle-pill" type="button" aria-pressed="true">Fri</button>
+            <button class="toggle-pill" type="button" aria-pressed="true">Sat</button>
+            <button class="toggle-pill" type="button" aria-pressed="true">Sun</button>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.option-card</code> / <code class="ds-var">.is-best</code> — ranked choices</span>
+          <div class="option-grid">
+            <div class="option-card is-best"><span class="option-label">★ Best pick</span><span class="option-dates">Jul 10 – Jul 12, 2026</span><span class="option-meta">8 of 9 available</span><button class="btn btn-sm btn-primary" type="button">Use these dates</button></div>
+            <div class="option-card"><span class="option-label">#2</span><span class="option-dates">Jul 17 – Jul 19, 2026</span><span class="option-meta">6 of 9 available</span><button class="btn btn-sm btn-secondary" type="button">Use these dates</button></div>
+          </div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.card-emphasis</code> / <code class="ds-var">.card-warn</code> / <code class="ds-var">.banner-warn</code></span>
+          <div class="card card-emphasis"><h3 class="section-title">Lock in the final dates</h3><p class="section-sub" style="margin:0;">Everyone with the guest link will see these.</p></div>
+          <div class="card card-warn"><h3 class="section-title">Save your admin link</h3><p class="section-sub" style="margin:0;">It’s only shown once.</p></div>
+          <div class="banner banner-warn" style="margin:0;">Still waiting on: Betty, Tyler &amp; Abbie</div>
+        </div>
+
+        <div class="ds-component-block">
+          <span class="ds-label"><code class="ds-var">.btn-block</code> / <code class="ds-var">.link-btn</code> / <code class="ds-var">.page-foot</code></span>
+          <button class="btn btn-primary btn-block" type="button" style="max-width: 420px;">Send my availability</button>
+          <p style="margin: 16px 0 0;"><button class="link-btn" type="button">← Not Jane?</button></p>
+          <footer class="page-foot"><img src="/logo.svg" alt="" width="18" height="18" /><span>Planned with Convene ·</span><a href="/">Plan your own</a></footer>
         </div>
       </section>
 

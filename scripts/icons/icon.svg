@@ -1,19 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<defs><filter id="sh" x="-30%" y="-30%" width="160%" height="160%">
-  <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#000" flood-opacity=".45"/></filter>
-<radialGradient id="bgg" cx="50%" cy="35%" r="75%"><stop offset="0" stop-color="#fdba74"/><stop offset="1" stop-color="#c2410c"/></radialGradient><linearGradient id="card" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#fff1e2"/></linearGradient><linearGradient id="hdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c2410c"/><stop offset="1" stop-color="#9a3412"/></linearGradient><radialGradient id="ok" cx="50%" cy="30%" r="75%"><stop offset="0" stop-color="#84cc16"/><stop offset="1" stop-color="#4d7c0f"/></radialGradient></defs>
-<g id="bg"><rect width="512" height="512" fill="url(#bgg)"/></g>
-<g id="mark"><g filter="url(#sh)">
-  <rect x="96" y="118" width="320" height="300" rx="36" fill="url(#card)"/>
-  <path d="M96 196V154a36 36 0 0 1 36-36h248a36 36 0 0 1 36 36v42Z" fill="url(#hdr)"/>
-  <rect x="126" y="224" width="72" height="72" rx="14" fill="#fed7aa"/><rect x="220" y="224" width="72" height="72" rx="14" fill="#fed7aa"/><rect x="314" y="224" width="72" height="72" rx="14" fill="#fed7aa"/><rect x="126" y="318" width="72" height="72" rx="14" fill="#fed7aa"/><rect x="220" y="318" width="72" height="72" rx="14" fill="#fed7aa"/>
-  <rect x="166" y="84" width="24" height="70" rx="12" fill="#431407"/>
-  <rect x="322" y="84" width="24" height="70" rx="12" fill="#431407"/>
-  <rect x="171" y="88" width="7" height="58" rx="3.5" fill="#fff" opacity=".25"/>
-  <rect x="327" y="88" width="7" height="58" rx="3.5" fill="#fff" opacity=".25"/>
-</g>
-<g filter="url(#sh)">
-  <circle cx="372" cy="374" r="78" fill="url(#ok)" stroke="#fff" stroke-width="10"/>
-  <path d="M336 376l26 26 48-54" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
-</g></g>
+<!-- The in-app logo (client/public/logo.svg: orange calendar-cell C + green
+     confirmed-date dot) on a paper tile. #mark-small blows it up for favicons. -->
+<defs><symbol id="logo" viewBox="0 0 256 256">
+  <rect x="31" y="31" width="58" height="58" rx="16" fill="#F97316"/><rect x="99" y="31" width="58" height="58" rx="16" fill="#F97316"/><rect x="167" y="31" width="58" height="58" rx="16" fill="#F97316"/>
+  <rect x="31" y="99" width="58" height="58" rx="16" fill="#F97316"/>
+  <rect x="31" y="167" width="58" height="58" rx="16" fill="#F97316"/><rect x="99" y="167" width="58" height="58" rx="16" fill="#F97316"/><rect x="167" y="167" width="58" height="58" rx="16" fill="#F97316"/>
+  <circle cx="128" cy="128" r="22" fill="#65A30D"/>
+</symbol></defs>
+<g id="bg"><rect width="512" height="512" fill="#FFFBF5"/></g>
+<g id="mark"><use href="#logo" x="32" y="32" width="448" height="448"/></g>
+<g id="mark-small"><use href="#logo" x="-16" y="-16" width="544" height="544"/></g>
 </svg>

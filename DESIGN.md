@@ -279,7 +279,7 @@ charcoal accents"*.
 
 | File | Role |
 |---|---|
-| `client/public/favicon.ico`, `apple-touch-icon.png`, `icon-192/512.png`, `icon-maskable-512.png`, `manifest.webmanifest` | App icon on the house standard shared with every mooseflip app (2026-10-16): a calendar page with a green "this date works" check on a bold orange tile. Rendered from `scripts/icons/icon.svg` by `python3 scripts/icons/build.py`; `client/src/icons.test.js` guards the wiring. |
+| `client/public/favicon.ico`, `apple-touch-icon.png`, `icon-192/512.png`, `icon-maskable-512.png`, `manifest.webmanifest` | App icon on the house standard shared with every mooseflip app (2026-10-16): the in-app Open Table logo (orange calendar-cell C + green confirmed-date dot) on a `--bg` paper tile, enlarged for favicons (2026-10-17). Rendered from `scripts/icons/icon.svg` by `python3 scripts/icons/build.py`; `client/src/icons.test.js` guards the wiring. |
 | `client/public/logo.svg`, `logo-lockup.svg` | Open Table mark (calendar-cell C + green confirmed-date dot) and horizontal lockup, used in the UI. |
 | `client/src/index.css` | Token source of truth + all component styles (this pass: reorganized into a documented scale, added `--space-*`, `--radius-lg`, `--shadow-lg`, `--heat-0…4`, motion tokens, `.input-error`, focus-visible rules, reduced-motion handling, page-reveal animation, `.display-lg/md`, `.eyebrow`). |
 | `client/design-system.html` | New — static showcase page (Vite multi-entry), see below. |

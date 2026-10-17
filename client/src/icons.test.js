@@ -46,4 +46,10 @@ describe('app icons', () => {
     expect(svg).toContain('id="bg"');
     expect(svg).toContain('id="mark"');
   });
+
+  it('the icon draws the same mark as the in-app logo', () => {
+    const shapes = (svg) => svg.match(/<(rect|circle) [^>]*\/>/g).filter((s) => !s.includes('width="512"'));
+    const logo = shapes(readFileSync(resolve(PUBLIC, 'logo.svg'), 'utf8'));
+    expect(shapes(readFileSync(MASTER, 'utf8'))).toEqual(logo);
+  });
 });

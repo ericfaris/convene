@@ -35,7 +35,6 @@ const COLOR_TOKENS = [
 const colorGrid = document.getElementById('color-swatches');
 COLOR_TOKENS.forEach(([token, label]) => {
   const value = val(token);
-  const textColor = ['--text', '--primary-dark', '--green-dark', '--red', '--heat-4'].includes(token) ? '#fff' : 'inherit';
   colorGrid.appendChild(
     el('div', { class: 'ds-swatch' }, [
       el('div', { class: 'ds-swatch-fill', style: { background: `var(${token})` } }),

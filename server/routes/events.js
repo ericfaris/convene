@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
     const adminToken = crypto.randomBytes(24).toString('hex');
     const participantToken = crypto.randomBytes(16).toString('hex');
 
-    const event = await Event.create({
+    await Event.create({
       name, description, dateWindow, attendees, allowedDays,
       adminToken, participantToken
     });

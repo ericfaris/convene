@@ -55,7 +55,7 @@ convene/
 1. Clone the repo
 2. Create `server/.env`:
    ```
-   MONGODB_URI=mongodb+srv://<user>:<pass>@cluster0.../convene-test?retryWrites=true&w=majority
+   MONGODB_URI=mongodb+srv://convene-test-rw:<pass>@cluster0.../convene-test?retryWrites=true&w=majority
    PORT=3000
    BASE_URL=http://localhost:5173
    ADMIN_SECRET=<secret>
